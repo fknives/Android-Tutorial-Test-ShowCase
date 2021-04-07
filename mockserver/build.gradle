@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    api project(":model")
+
+    api "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+    api "com.squareup.okhttp3:okhttp-tls:$okhttp_version"
+
+    implementation "org.skyscreamer:jsonassert:$testing_json_assert_version"
+    implementation "junit:junit:$testing_junit4_version"
+
+}

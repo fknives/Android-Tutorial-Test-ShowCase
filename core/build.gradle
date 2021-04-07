@@ -1,0 +1,32 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'started', 'passed', 'skipped', 'failed'
+        exceptionFormat "full"
+        showStandardStreams true
+    }
+}
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
+    api project(":model")
+    implementation project(":network")
+
+    testImplementation "org.koin:koin-test:$koin_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+}
