@@ -60,4 +60,14 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+task unitTests(dependsOn: ["app:testDebugUnitTest", "core:test", "network:test"]){
+    group = 'Tests'
+    description = 'Run all unit tests'
+}
+
+task androidTests(dependsOn: "app:connectedAndroidTest"){
+    group = 'Tests'
+    description = 'Run all Android tests'
+}
+
 apply from: 'gradlescripts/versions.gradle'

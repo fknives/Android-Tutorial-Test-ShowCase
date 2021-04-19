@@ -110,14 +110,66 @@ It contains a way to setup responses to requests in a unified way. Contains all 
 The actual server when running the application is [mockapi.io](https://www.mockapi.io/) so don't expect actual functionalities in the application.
 
 ## Code Kata
-TODO
 
-The kata will be in a separate branch with instructions and empty tests to be filled.
+### Preperation
+Download the project, open it in [Android Studio](https://developer.android.com/studio?gclid=Cj0KCQjw1PSDBhDbARIsAPeTqrfKrSx8qD_B9FegOmpVgxtPWFHhBHeqnml8n4ak-I5wPvqlwGdwrUQaAtobEALw_wcB&gclsrc=aw.ds).
+
+* In the gradle window you can see in the root gradle there is a "tests" group. In this group you will see a unitTests and androidTests task.
+* First run the unitTests.
+* When that finished, build the application to your phone.
+* Login with whatever credentials and look over the app, what will you test.
+* When finished, run androidTests.
+
+This will ensure the testing setup is proper, the project can resolve all the dependencies and such issues won't come up during your exercise.
+
+If everything is right, change branch to codeKata and look for into the [codekata](./codekata) folder for the instruction sets.
+
+### Structure
+
+The Code Kata is structured into 5 different section, each section in different what we are testing and how we are testing it.
+
+Since our layering is "app", "core" and "networking", of course we will jump right into the middle and start with core.
+
+#### Core
+Open the [core instruction set](./codekata/core.instructionset).
+
+The core tests are the simplest, we will look into how to use mockito to mock class dependencies and write our first simple tests.
+
+Next we will look how to test flows.
+
+#### Networking
+Open the [networking instruction set](./codekata/networking.instructionset).
+
+The networking instruction set will show you how to test network request with mockwebserver.
+
+It will also show you that you can write tests not only for one class mocking all the dependencies, but a component.
+
+#### App ViewModel Unit Tests
+Open the [app viewModel unit tests instruction set](./codekata/viewmodel.instructionset).
+
+This section we will see how to replace the dispatcher to testDispatcher to control the ViewModel's coroutines.
+
+We will also see how to test with LiveData.
+
+We will introduce Rules, aka easy to reuse "Before" and "After" components.
+
+#### App Robolectric Unit Tests.
+Open the [app storage unit tests instruction set](./codekata/storage.instructionset).
+
+In this section we will see how to test component depending on context such as Room database.
+
+#### Robolectric and Android Tests.
+Open the [shared tests instruction set](./codekata/sharedtests.instructionset).
+
+In this tests we will see how to interact with View components in tests via Espresso.
+
+We will also see how to test a specific Activity (same concept can be applied to fragments)
+
+We will also see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
 
 ## Future Plans for Myself
 This just contains todos for myself when next time I am exercising testing on this project
 
-- Finish Code Kata section, by adding new branch with empty tests and instructions
 - Add Room migration tests
 - Update RecyclerView tests with [Espresso.onData](https://developer.android.com/training/testing/espresso/lists)
 - Add [NavController](https://developer.android.com/reference/androidx/navigation/NavController) functionality and tests to it
