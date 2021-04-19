@@ -17,7 +17,7 @@ class AndroidTestMainDispatcherTestRule : MainDispatcherTestRule {
         object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
-                DatabaseInitialization.dispatcher = Dispatchers.Main.immediate
+                DatabaseInitialization.dispatcher = Dispatchers.Main
                 base.evaluate()
             }
         }
