@@ -14,16 +14,9 @@ import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.content.ContentRemoteSource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doSuspendableAnswer
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 
 @Suppress("TestFunctionName")
 internal class ContentRepositoryTest {
@@ -35,93 +28,111 @@ internal class ContentRepositoryTest {
     @BeforeEach
     fun setUp() {
         testDispatcher = TestCoroutineDispatcher()
+        testDispatcher.pauseDispatcher()
         mockContentRemoteSource = mock()
         sut = ContentRepository(mockContentRemoteSource)
     }
 
+    @DisplayName("GIVEN no interaction THEN remote source is not called")
     @Test
-    fun GIVEN_no_interaction_THEN_remote_source_is_not_called() {
+    fun fetchingIsLazy() {
         verifyNoMoreInteractions(mockContentRemoteSource)
     }
 
+    @DisplayName("GIVEN content response WHEN content observed THEN loading AND data is returned")
     @Test
-    fun GIVEN_no_response_from_remote_source_WHEN_content_observed_THEN_loading_is_returned() =
-        runBlockingTest(testDispatcher) {
-            val expected = Resource.Loading<List<Content>>()
-            val suspendedRequest = CompletableDeferred<Unit>()
-            whenever(mockContentRemoteSource.get()).doSuspendableAnswer {
-                suspendedRequest.await()
-                emptyList()
-            }
-            val actual = sut.contents.take(1).toList()
-
-            Assertions.assertEquals(listOf(expected), actual)
-            suspendedRequest.complete(Unit)
-        }
-
-    @Test
-    fun GIVEN_content_response_WHEN_content_observed_THEN_loading_AND_data_is_returned() =
-        runBlockingTest(testDispatcher) {
-            val expected = listOf(
+    fun happyFlow() = runBlockingTest {
+        val expected = listOf(
                 Resource.Loading(),
                 Resource.Success(listOf(Content(ContentId("a"), "", "", ImageUrl(""))))
-            )
-            whenever(mockContentRemoteSource.get())
-                .doReturn(listOf(Content(ContentId("a"), "", "", ImageUrl(""))))
+        )
+        whenever(mockContentRemoteSource.get()).doReturn(listOf(Content(ContentId("a"), "", "", ImageUrl(""))))
 
-            val actual = sut.contents.take(2).toList()
+        val actual = sut.contents.take(2).toList()
 
-            Assertions.assertEquals(expected, actual)
-        }
+        Assertions.assertEquals(expected, actual)
+    }
 
+    @DisplayName("GIVEN content error WHEN content observed THEN loading AND data is returned")
     @Test
-    fun GIVEN_content_error_WHEN_content_observed_THEN_loading_AND_data_is_returned() =
-        runBlockingTest(testDispatcher) {
-            val exception = RuntimeException()
-            val expected = listOf(
+    fun errorFlow() = runBlockingTest {
+        val exception = RuntimeException()
+        val expected = listOf(
                 Resource.Loading(),
                 Resource.Error<List<Content>>(UnexpectedException(exception))
-            )
-            whenever(mockContentRemoteSource.get()).doThrow(exception)
+        )
+        whenever(mockContentRemoteSource.get()).doThrow(exception)
 
-            val actual = sut.contents.take(2).toList()
+        val actual = sut.contents.take(2).toList()
 
-            Assertions.assertEquals(expected, actual)
+        Assertions.assertEquals(expected, actual)
+    }
+
+    @DisplayName("GIVEN saved cache WHEN collected THEN cache is returned")
+    @Test
+    fun verifyCaching() = runBlockingTest {
+        val content = Content(ContentId("1"), "", "", ImageUrl(""))
+        val expected = listOf(Resource.Success(listOf(content)))
+        whenever(mockContentRemoteSource.get()).doReturn(listOf(content))
+        sut.contents.take(2).toList()
+
+        val actual = sut.contents.take(1).toList()
+
+        verify(mockContentRemoteSource, times(1)).get()
+        Assertions.assertEquals(expected, actual)
+    }
+
+    @DisplayName("GIVEN no response from remote source WHEN content observed THEN loading is returned")
+    @Test
+    fun loadingIsShownBeforeTheRequestIsReturned() = runBlockingTest {
+        val expected = Resource.Loading<List<Content>>()
+        val suspendedRequest = CompletableDeferred<Unit>()
+        whenever(mockContentRemoteSource.get()).doSuspendableAnswer {
+            suspendedRequest.await()
+            emptyList()
         }
 
+        val actual = sut.contents.take(1).toList()
+
+        Assertions.assertEquals(listOf(expected), actual)
+        suspendedRequest.complete(Unit)
+    }
+
+    @DisplayName("GIVEN content response THEN error WHEN fetched THEN returned states are loading data loading error")
     @Test
-    fun GIVEN_content_response_THEN_error_WHEN_fetched_THEN_returned_states_are_loading_data_loading_error() =
-        runBlockingTest(testDispatcher) {
-            val exception = RuntimeException()
-            val expected = listOf(
-                Resource.Loading(),
-                Resource.Success(emptyList()),
-                Resource.Loading(),
-                Resource.Error<List<Content>>(UnexpectedException(exception))
-            )
-            var first = true
-            whenever(mockContentRemoteSource.get()).doAnswer {
-                if (first) emptyList<Content>().also { first = false } else throw exception
+    fun whenFetchingRequestIsCalledAgain() =
+            runBlockingTest(testDispatcher) {
+                val exception = RuntimeException()
+                val expected = listOf(
+                        Resource.Loading(),
+                        Resource.Success(emptyList()),
+                        Resource.Loading(),
+                        Resource.Error<List<Content>>(UnexpectedException(exception))
+                )
+                var first = true
+                whenever(mockContentRemoteSource.get()).doAnswer {
+                    if (first) emptyList<Content>().also { first = false } else throw exception
+                }
+
+                val actual = async(testDispatcher) { sut.contents.take(4).toList() }
+                testDispatcher.advanceUntilIdle()
+                sut.fetch()
+                testDispatcher.advanceUntilIdle()
+
+                Assertions.assertEquals(expected, actual.await())
             }
 
-            val actual = async(testDispatcher) { sut.contents.take(4).toList() }
-            testDispatcher.advanceUntilIdle()
-            sut.fetch()
-            testDispatcher.advanceUntilIdle()
-
-            Assertions.assertEquals(expected, actual.await())
-        }
-
+    @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
     @Test
-    fun GIVEN_content_response_THEN_error_WHEN_fetched_THEN_only_4_items_are_emitted() {
+    fun noAdditionalItemsEmitted() {
         Assertions.assertThrows(IllegalStateException::class.java) {
             runBlockingTest(testDispatcher) {
                 val exception = RuntimeException()
                 val expected = listOf(
-                    Resource.Loading(),
-                    Resource.Success(emptyList()),
-                    Resource.Loading(),
-                    Resource.Error<List<Content>>(UnexpectedException(exception))
+                        Resource.Loading(),
+                        Resource.Success(emptyList()),
+                        Resource.Loading(),
+                        Resource.Error<List<Content>>(UnexpectedException(exception))
                 )
                 var first = true
                 whenever(mockContentRemoteSource.get()).doAnswer {
@@ -136,18 +147,5 @@ internal class ContentRepositoryTest {
                 Assertions.assertEquals(expected, actual.await())
             }
         }
-    }
-
-    @Test
-    fun GIVEN_saved_cache_WHEN_collected_THEN_cache_is_returned() = runBlockingTest {
-        val content = Content(ContentId("1"), "", "", ImageUrl(""))
-        val expected = listOf(Resource.Success(listOf(content)))
-        whenever(mockContentRemoteSource.get()).doReturn(listOf(content))
-        sut.contents.take(2).toList()
-
-        val actual = sut.contents.take(1).toList()
-
-        verify(mockContentRemoteSource, times(1)).get()
-        Assertions.assertEquals(expected, actual)
     }
 }

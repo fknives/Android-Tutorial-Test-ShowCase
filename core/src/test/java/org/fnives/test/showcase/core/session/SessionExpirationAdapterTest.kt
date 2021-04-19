@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.core.session
 
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -20,16 +21,18 @@ internal class SessionExpirationAdapterTest {
         sut = SessionExpirationAdapter(mockSessionExpirationListener)
     }
 
+    @DisplayName("WHEN nothing is changed THEN delegate is not touched")
     @Test
-    fun WHEN_onSessionExpired_is_called_THEN_its_delegated() {
+    fun verifyNoInteractionsIfNoInvocations() {
+        verifyZeroInteractions(mockSessionExpirationListener)
+    }
+
+    @DisplayName("WHEN onSessionExpired is called THEN delegated is also called")
+    @Test
+    fun verifyOnSessionExpirationIsDelegated() {
         sut.onSessionExpired()
 
         verify(mockSessionExpirationListener, times(1)).onSessionExpired()
         verifyNoMoreInteractions(mockSessionExpirationListener)
-    }
-
-    @Test
-    fun WHEN_nothing_is_changed_THEN_delegate_is_not_touched() {
-        verifyZeroInteractions(mockSessionExpirationListener)
     }
 }

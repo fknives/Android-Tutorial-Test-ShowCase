@@ -11,14 +11,10 @@ import org.fnives.test.showcase.network.auth.LoginRemoteSource
 import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyZeroInteractions
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
+import java.util.stream.Stream
 
 @Suppress("TestFunctionName")
 internal class LoginUseCaseTest {
@@ -34,8 +30,9 @@ internal class LoginUseCaseTest {
         sut = LoginUseCase(mockLoginRemoteSource, mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN empty username WHEN trying to login THEN invalid username is returned")
     @Test
-    fun GIVEN_empty_username_WHEN_trying_to_login_THEN_invalid_username_is_returned() = runBlockingTest {
+    fun emptyUserNameReturnsLoginStatusError() = runBlockingTest {
         val expected = Answer.Success(LoginStatus.INVALID_USERNAME)
 
         val actual = sut.invoke(LoginCredentials("", "a"))
@@ -45,8 +42,9 @@ internal class LoginUseCaseTest {
         verifyZeroInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN empty password WHEN trying to login THEN invalid password is returned")
     @Test
-    fun GIVEN_empty_password_WHEN_trying_to_login_THEN_invalid_password_is_returned() = runBlockingTest {
+    fun emptyPasswordNameReturnsLoginStatusError() = runBlockingTest {
         val expected = Answer.Success(LoginStatus.INVALID_PASSWORD)
 
         val actual = sut.invoke(LoginCredentials("a", ""))
@@ -56,8 +54,9 @@ internal class LoginUseCaseTest {
         verifyZeroInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN invalid credentials response WHEN trying to login THEN invalid credentials is returned ")
     @Test
-    fun GIVEN_login_invalid_credentials_response_WHEN_trying_to_login_THEN_invalid_credentials_is_returned() = runBlockingTest {
+    fun invalidLoginResponseReturnInvalidCredentials() = runBlockingTest {
         val expected = Answer.Success(LoginStatus.INVALID_CREDENTIALS)
         whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
             .doReturn(LoginStatusResponses.InvalidCredentials)
@@ -68,8 +67,9 @@ internal class LoginUseCaseTest {
         verifyZeroInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN success response WHEN trying to login THEN session is saved and success is returned")
     @Test
-    fun GIVEN_valid_login_response_WHEN_trying_to_login_THEN_Success_is_returned() = runBlockingTest {
+    fun validResponseResultsInSavingSessionAndSuccessReturned() = runBlockingTest {
         val expected = Answer.Success(LoginStatus.SUCCESS)
         whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
             .doReturn(LoginStatusResponses.Success(Session("c", "d")))
@@ -78,10 +78,12 @@ internal class LoginUseCaseTest {
 
         Assertions.assertEquals(expected, actual)
         verify(mockUserDataLocalStorage, times(1)).session = Session("c", "d")
+        verifyNoMoreInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN error resposne WHEN trying to login THEN session is not touched and error is returned")
     @Test
-    fun GIVEN_throwing_remote_source_WHEN_trying_to_login_THEN_error_is_returned() = runBlockingTest {
+    fun invalidResponseResultsInErrorReturned() = runBlockingTest {
         val exception = RuntimeException()
         val expected = Answer.Error<LoginStatus>(UnexpectedException(exception))
         whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))

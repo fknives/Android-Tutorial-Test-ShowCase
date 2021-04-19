@@ -1,1 +1,606 @@
-TODO
+# Starting of testing
+
+In this testing instruction set you will learn how to write simple tests using mockito.
+
+Every test will be around one class and all of it's dependencies will be mocked out.
+Also suspend functions will be tested so you will see how to do that as well.
+
+I would suggest to open this document in your browser, while working in Android Studio.
+
+## Our First Class Test with basic mocking
+
+- First let's check out the class we will test:
+
+    ```kotlin
+    org.fnives.test.showcase.core.session.SessionExpirationAdapter
+    ```
+
+    As you can see it's a simple adapter between an interface and it's received parameter.
+
+- Now navigate to the test class:
+
+    ```kotlin
+    org.fnives.test.showcase.core.session.CodeKataFirstSessionExpirationAdapterTest
+    ```
+
+### 1. Setup
+
+As you can see the test is empty, so let's declare our System Under Testing (`sut`) and our mocked dependency:
+
+```kotlin
+private lateinit var sut: SessionExpirationAdapter // System Under Testing
+private lateinit var mockSessionExpirationListener: SessionExpirationListener
+```
+
+Now we need to initialize it, create a method names `setUp` and annotate it with `@BeforeEach`
+and initialize the `sut` variable, we will see that the adapter expects a constructor argument
+
+```kotlin
+@BeforeEach // this means this method will be invoked before each test in this class
+fun setUp() {
+    mockSessionExpirationListener = mock() // this creates a mock instance of the interface
+    sut = SessionExpirationAdapter(mockSessionExpirationListener)
+}
+```
+
+Great, now what is that mock? Simply put, it's a empty implementation of the interface. We can manipulate
+that mock object to return what we want and verify it's method calls.
+
+### 2. First simple test
+
+So now you need to write your first test. When testing, first you should start with the simplest test, so let's just do that.
+
+When the class is created, the delegate should not yet be touched, so create a test for that:
+
+```kotlin
+@DisplayName("WHEN nothing is changed THEN delegate is not touched") // this will show up when running our tests and is a great way to document what we are testing
+@Test // this defines that this method is a test, needs to be org.junit.jupiter.api.Test
+fun verifyNoInteractionsIfNoInvocations() {
+    verifyZeroInteractions(mockSessionExpirationListener) // we verify that our mock object's functions / properties have not been touched
+}
+```
+
+Now let's run out Test, to do this:
+ - on project overview right click on FirstSessionExpirationAdapterTest
+ - click run
+ - => At this point we should see Tests passed: 1 of 1 test.
+
+### 3. Test verifying actual method call
+
+Now let's add an actual method test, we will call the `onSessionExpired` and verify that the delegate is called exactly once:
+
+```kotlin
+@DisplayName("WHEN onSessionExpired is called THEN delegated is also called")
+@Test
+fun verifyOnSessionExpirationIsDelegated() {
+    sut.onSessionExpired() // the action we do on our sut
+
+    // verifications
+    verify(mockSessionExpirationListener, times(1)).onSessionExpired() // onSessionExpired was called exactly once
+    verifyNoMoreInteractions(mockSessionExpirationListener) // there were no more additional touches to this mock object
+}
+```
+
+Now let's run our tests with coverage: to do this:
+- right click on the file
+- click "Run with coverage".
+- => We can see the SessionExpirationAdapter is fully covered.
+
+If we did everything right, our test should be identical to SessionExpirationAdapterTest.
+
+## Second Class test with suspend functions and mocking
+
+Our System Under Test will be `org.fnives.test.showcase.core.login.LoginUseCase`.
+
+What it does is:
+- verifies parameters,
+- if they are invalid it returns an Error Answer with the error
+- if valid then calls the remote source
+- if that's successful it saves the received data and returns Success Answer
+- if the request fails Error Answer is returned
+
+Now this is a bit more complicated, let's open our test file:
+
+```kotlin
+org.fnives.test.showcase.core.login.CodeKataSecondLoginUseCaseTest
+```
+
+- declare the `sut` variable and it's dependencies, you should be familiar how to do this by now.
+
+### 1. `emptyUserNameReturnsLoginStatusError`
+
+now let's write our first test: `emptyUserNameReturnsLoginStatusError`
+
+first we declare what kind of result we expect:
+
+```kotlin
+val expected = Answer.Success(LoginStatus.INVALID_USERNAME)
+```
+
+next we do the actual invokation:
+
+```kotlin
+val actual = sut.invoke(LoginCredentials("", "a"))
+```
+
+lastly we add verification:
+
+```kotlin
+Assertions.assertEquals(expected, actual) // assert the result is what we expected
+verifyZeroInteractions(mockLoginRemoteSource) // assert no request was called
+verifyZeroInteractions(mockUserDataLocalStorage) // assert we didn't modify our storage
+```
+
+But something is wrong, the invoke method cannot be executed since it's a suspending function.
+
+To test coroutines we will use `runBlockingTest`, this creates a blocking coroutine for us to test suspend functions, together it will look like:
+
+```kotlin
+@DisplayName("GIVEN empty username WHEN trying to login THEN invalid username is returned")
+@Test
+fun emptyUserNameReturnsLoginStatusError() = runBlockingTest {
+    val expected = Answer.Success(LoginStatus.INVALID_USERNAME)
+
+    val actual = sut.invoke(LoginCredentials("", "a"))
+
+    Assertions.assertEquals(expected, actual)
+    verifyZeroInteractions(mockLoginRemoteSource)
+    verifyZeroInteractions(mockUserDataLocalStorage)
+}
+```
+
+`Assertions.assertEquals` throws an exception if the `expected` is not equal to the `actual` value. The first parameter is the expected in all assertion methods.
+
+### 2. `emptyPasswordNameReturnsLoginStatusError`
+
+Next do the same thing for `emptyPasswordNameReturnsLoginStatusError`
+
+This is really similar, so try to write it on your own, but for progress the code is here:
+
+```kotlin
+@DisplayName("GIVEN empty password WHEN trying to login THEN invalid password is returned")
+@Test
+fun emptyPasswordNameReturnsLoginStatusError() = runBlockingTest {
+    val expected = Answer.Success(LoginStatus.INVALID_PASSWORD)
+
+    val actual = sut.invoke(LoginCredentials("a", ""))
+
+    Assertions.assertEquals(expected, actual)
+    verifyZeroInteractions(mockLoginRemoteSource)
+    verifyZeroInteractions(mockUserDataLocalStorage)
+}
+```
+
+You may think that's bad to duplicate code in such a way, but you need to remember in testing it's not as important to not duplicate code.
+Also we have the possibility to reduce this duplication, we will touch this in the app module test.
+
+### 3. `invalidLoginResponseReturnInvalidCredentials`
+
+Let's continue with `invalidLoginResponseReturnInvalidCredentials`
+
+As before we declare what we expect:
+
+```kotlin
+val expected = Answer.Success(LoginStatus.INVALID_CREDENTIALS)
+```
+
+Now we need to mock the response on our RemoteSource, since we actually expect some kind of response from it. To do this we add the following line:
+
+```kotlin
+whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b"))).doReturn(LoginStatusResponses.InvalidCredentials)
+```
+
+This means whenever our `mockLoginRemoteSource` login function is called with an argument equal to `LoginCredentials("a", "b")`, then `LoginStatusResponses.InvalidCredentials` is returned.
+Otherwise by default usually null is returned.
+
+It reads nicely in my opinion.
+
+Next our invocation:
+
+```kotlin
+val actual = sut.invoke(LoginCredentials("a", "b"))
+```
+
+And finally verification:
+
+```kotlin
+Assertions.assertEquals(expected, actual)
+verifyZeroInteractions(mockUserDataLocalStorage)
+```
+
+Together:
+```kotlin
+@DisplayName("GIVEN invalid credentials response WHEN trying to login THEN invalid credentials is returned")
+@Test
+fun invalidLoginResponseReturnInvalidCredentials() = runBlockingTest {
+    val expected = Answer.Success(LoginStatus.INVALID_CREDENTIALS)
+    whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
+        .doReturn(LoginStatusResponses.InvalidCredentials)
+
+    val actual = sut.invoke(LoginCredentials("a", "b"))
+
+    Assertions.assertEquals(expected, actual)
+    verifyZeroInteractions(mockUserDataLocalStorage)
+}
+```
+
+Now we see how we can mock responses.
+
+### 4. `validResponseResultsInSavingSessionAndSuccessReturned`,
+
+Now continue with `validResponseResultsInSavingSessionAndSuccessReturned`, You should have almost every tool to do this test:
+- declare the expected value
+- do the mock response
+- call the system under test
+- verify the actual result to the expected
+- verify the localStorage's session was saved once, and only once: `verify(mockUserDataLocalStorage, times(1)).session = Session("c", "d")`
+- verify the localStorage was not touched anymore.
+
+The full code:
+```kotlin
+@DisplayName("GIVEN success response WHEN trying to login THEN session is saved and success is returned")
+@Test
+fun validResponseResultsInSavingSessionAndSuccessReturned() = runBlockingTest {
+    val expected = Answer.Success(LoginStatus.SUCCESS)
+    whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
+        .doReturn(LoginStatusResponses.Success(Session("c", "d")))
+
+    val actual = sut.invoke(LoginCredentials("a", "b"))
+
+    Assertions.assertEquals(expected, actual)
+    verify(mockUserDataLocalStorage, times(1)).session = Session("c", "d")
+    verifyNoMoreInteractions(mockUserDataLocalStorage)
+}
+```
+
+### 5. `invalidResponseResultsInErrorReturned`
+
+this is really similar to our previous test, however now somehow we have to mock throwing an exception
+
+to do this let's create an exception:
+
+```kotlin
+val exception = RuntimeException()
+```
+
+declare our expected value:
+
+```kotlin
+val expected = Answer.Error<LoginStatus>(UnexpectedException(exception))
+```
+
+Do the mocking:
+
+```kotlin
+whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b"))).doThrow(exception)
+```
+
+invocation:
+
+```kotlin
+val actual = sut.invoke(LoginCredentials("a", "b"))
+```
+
+verification:
+
+```kotlin
+Assertions.assertEquals(expected, actual)
+verifyZeroInteractions(mockUserDataLocalStorage)
+
+- Now we saw how to mock invocations on our mock objects
+- How to test suspend functions
+- and the pattern of GIVEN-WHEN-THEN description.
+```
+
+together:
+
+```kotlin
+@DisplayName("GIVEN error resposne WHEN trying to login THEN session is not touched and error is returned")
+@Test
+fun invalidResponseResultsInErrorReturned() = runBlockingTest {
+    val exception = RuntimeException()
+    val expected = Answer.Error<LoginStatus>(UnexpectedException(exception))
+    whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
+        .doThrow(exception)
+
+    val actual = sut.invoke(LoginCredentials("a", "b"))
+
+    Assertions.assertEquals(expected, actual)
+    verifyZeroInteractions(mockUserDataLocalStorage)
+    }
+```
+
+## Our third Class Test with flows
+
+Our system under test will be org.fnives.test.showcase.core.content.ContentRepository
+
+It has two methods:
+- getContents: that returns a Flow, which emits loading, error and content data
+- fetch: which suppose to clear cache and if the flow is observed then start loading
+
+The content data come from a RemoteSource class.
+Additionally the Content is cached. So observing again should not yield loading.
+
+The inner workings of the class shouldn't matter, just the public apis, since that's what we want to test.
+
+For setup we declare the system under test and it's mock argument.
+
+```kotlin
+private lateinit var sut: ContentRepository
+private lateinit var mockContentRemoteSource: ContentRemoteSource
+
+@BeforeEach
+fun setUp() {
+    mockContentRemoteSource = mock()
+    sut = ContentRepository(mockContentRemoteSource)
+}
+```
+
+### 1. `fetchingIsLazy`
+
+As usual we are staring with the easiest test. We verify that the request is not called until the flow is not touched.
+
+So just verify the request is not called yet:
+
+```kotlin
+@DisplayName("GIVEN no interaction THEN remote source is not called")
+@Test
+fun fetchingIsLazy() {
+   verifyNoMoreInteractions(mockContentRemoteSource)
+}
+```
+
+### 2. `happyFlow`
+
+Next logical step is to verify the Happy flow. We setup the request to succeed and expect a Loading and Success state to be returned.
+
+```kotlin
+val expected = listOf(
+    Resource.Loading(),
+    Resource.Success(listOf(Content(ContentId("a"), "", "", ImageUrl(""))))
+)
+whenever(mockContentRemoteSource.get()).doReturn(listOf(Content(ContentId("a"), "", "", ImageUrl(""))))
+```
+
+Next the action:
+
+```kotlin
+val actual = sut.contents.take(2).toList()
+```
+
+Now just the verifications
+
+```kotlin
+Assertions.assertEquals(expected, actual)
+````
+
+Note we don't verify the request has been called, since it's implied. It returns the same data we returned from the request, so it must have been called.
+
+### 3. ```errorFlow```
+
+This is really similar to the happy flow, only we throw and expect specific errors:
+
+```kotlin
+val exception = RuntimeException()
+val expected = listOf(
+    Resource.Loading(),
+    Resource.Error<List<Content>>(UnexpectedException(exception)) // Note since RuntimeException is not usually sent from NetworkRequest we expect an UnexpectedException.
+)
+whenever(mockContentRemoteSource.get()).doThrow(exception)
+```
+
+The action and verification stays the same:
+```koltin
+val actual = sut.contents.take(2).toList()
+
+Assertions.assertEquals(expected, actual)
+```
+
+### 4. `verifyCaching`
+
+Still sticking to just that function, we should verify it's caching behaviour, aka if a data was loaded once the next time we observe the flow that data is returned:
+
+The setup is similar to the happy flow, but take a look at the last line closely
+```kotlin
+val content = Content(ContentId("1"), "", "", ImageUrl(""))
+val expected = listOf(Resource.Success(listOf(content)))
+whenever(mockContentRemoteSource.get()).doReturn(listOf(content))
+sut.contents.take(2).toList() // note this is part of the setup since we want the class in a state where it has a cache!
+```
+
+The action will only take one element which we expect to be the cache
+```kotlin
+val actual = sut.contents.take(1).toList()
+```
+
+In the verification state, we will also make sure the request indead was called only once:
+```kotlin
+verify(mockContentRemoteSource, times(1)).get()
+Assertions.assertEquals(expected, actual)
+```
+
+### 5. `loadingIsShownBeforeTheRequestIsReturned`
+
+So far we just expected the first element is "loading", but it could easily happen that the flow set up in such a way that the loading is not emitted
+before the request already finished.
+
+This can be an easy mistake with such flows, but would be really bad UX, so let's see how we can verify something like that:
+
+We need to suspend the request calling and verify that before that is finished the Loading is already emitted.
+So the issue becomes how can we suspend the mock until a signal is given.
+
+Generally we could still use mockito mocks OR we could create our own Mock.
+
+#### Creating our own mock.
+
+We can simply implement the interface of ContentRemoteSource. Have a it's method suspend until a signal.
+
+Something along the way of:
+
+```kotlin
+class SuspendingContentRemoteSource {
+
+    private var completableDeferred = CompletableDeferred<Unit>()
+
+    @Throws(NetworkException::class, ParsingException::class)
+    suspend fun get(): List<Content> {
+       completableDeferred = CompletableDeferred()
+       completableDeferred.await()
+       return emptyList()
+    }
+
+    fun signal() = completableDeferred.complete(Unit)
+}
+```
+
+In this case we should recreate our sut in the test and feed it our own remote source.
+
+#### Still using mockito
+
+To mock such behaviour with mockito is not as straight forward as creating our own.
+That's because mockito is not aware of the nature of suspend functions, like our code is in the custom mock.
+
+However mockito give us the arguments passed into the function.
+And since we know the Continuation object is passed as a last argument in suspend functions we can take advantage of that.
+This then can be abstracted away and used wherevere without needing to create Custom Mocks for every such case.
+
+To get arguments when creating a response for the mock you need to use thenAnswer { } and this lambda will receive InvocationOnMock containing the arguments.
+
+Similarly our suspendable answer is named as such `doSuspendableAnswer`
+
+The point here is not exactly how the doSuspendableAnswer is created, just that we can get arguments while mocking with mockito, and also extend it in a way that helps us in common patterns.
+
+#### Back to the actual test
+
+Our setup as mentioned will suspend the request answer but expect a Loading state regardless:
+
+```kotlin
+val expected = Resource.Loading<List<Content>>()
+val suspendedRequest = CompletableDeferred<Unit>()
+whenever(mockContentRemoteSource.get()).doSuspendableAnswer {
+    suspendedRequest.await()
+    emptyList()
+}
+```
+
+Our action simply takes the first element:
+
+```kotlin
+val actual = sut.contents.take(1).toList()
+```
+
+In verification we verify that value is as expected and clean up the suspension of the request (just so it's explicit what we are testing)
+
+```kotlin
+Assertions.assertEquals(listOf(expected), actual)
+suspendedRequest.complete(Unit)
+```
+
+### 6. `whenFetchingRequestIsCalledAgain`
+
+We still didn't even touch the fetch method so let's test the that behaviour next:
+
+However the main issue here is, when to call fetch. If we call after `take()` we will never reach it, but if we call it before then it doesn't test the right behaviour.
+We need to do it async, but async means it's not linear, thus our request could become shaky. For this we will use TestCoroutineDispatcher.
+
+Let's add this to our setup:
+```kotlin
+private lateinit var sut: ContentRepository
+private lateinit var mockContentRemoteSource: ContentRemoteSource
+private lateinit var testDispatcher: TestCoroutineDispatcher
+
+@BeforeEach
+fun setUp() {
+    testDispatcher = TestCoroutineDispatcher()
+    testDispatcher.pauseDispatcher() // we pause the dispatcher so we have full control over it
+    mockContentRemoteSource = mock()
+    sut = ContentRepository(mockContentRemoteSource)
+}
+```
+
+Next we should use the same dispatcher in our test so:
+```kotlin
+fun whenFetchingRequestIsCalledAgain() = runBlockingTest(testDispatcher) {
+
+}
+```
+
+Okay with this we should write our setup:
+```kotlin
+val exception = RuntimeException()
+val expected = listOf(
+    Resource.Loading(),
+    Resource.Success(emptyList()),
+    Resource.Loading(),
+    Resource.Error<List<Content>>(UnexpectedException(exception))
+)
+    var first = true
+whenever(mockContentRemoteSource.get()).doAnswer {
+    if (first) emptyList<Content>().also { first = false } else throw exception // notice first time we return success next we return error
+}
+```
+
+Our action will need to use async and advance to coroutines so we can are testing the correct behaviour:
+```kotlin
+val actual = async(testDispatcher) { sut.contents.take(4).toList() }
+testDispatcher.advanceUntilIdle() // we ensure the async is progressing as much as it can (thus receiving the first to values)
+sut.fetch()
+testDispatcher.advanceUntilIdle() // ensure the async progresses further now, since we give it additional action to take.
+```
+
+Our verification as usual is really simple
+```kotlin
+Assertions.assertEquals(expected, actual.await())
+```
+
+Now we can test even complicated interactions between methods and classes with TestCoroutineDispatcher.
+
+### 7. `noAdditionalItemsEmitted`
+
+Lastly so far we always assumed that we are getting the exact number of values take(4), take(2). However it's possible our flow may send out additional unexpected data.
+So we also need to test that this assumption is correct.
+
+I think the best place to start from is our most complicated test `whenFetchingRequestIsCalledAgain` since this is the one most likely add additional unexpected values.
+
+Luckily `runBlockingTest` is helpful here: if a coroutine didn't finish properly it will throw an IllegalStateException.
+
+So all we need to do is to request more than elements it should send out and expect an IllegalStateException from runBlocking.
+
+So our method looks just like `whenFetchingRequestIsCalledAgain` except wrapped into an IllegalStateException expectation, and requesting 5 elements instead of 4.
+```kotlin
+Assertions.assertThrows(IllegalStateException::class.java) {
+    runBlockingTest(testDispatcher) {
+        val exception = RuntimeException()
+        val expected = listOf(
+            Resource.Loading(),
+            Resource.Success(emptyList()),
+            Resource.Loading(),
+            Resource.Error<List<Content>>(UnexpectedException(exception))
+        )
+        var first = true
+        whenever(mockContentRemoteSource.get()).doAnswer {
+            if (first) emptyList<Content>().also { first = false } else throw exception
+        }
+
+        val actual = async(testDispatcher) { sut.contents.take(5).toList() }
+        testDispatcher.advanceUntilIdle()
+        sut.fetch()
+        testDispatcher.advanceUntilIdle()
+
+        Assertions.assertEquals(expected, actual.await())
+    }
+}
+```
+
+## Conclusion
+
+Here we went over most common cases when you need to test simple java / kotlin files with no reference to networking or android:
+
+- how to setup and structure your test
+- how to run your tests
+- a convention to naming your tests
+- how to use mockito to mock dependencies of your system under test
+- how to test suspend functions
+- how to test flows
+- how to verify your mock usage
+- how to verify success and error states
