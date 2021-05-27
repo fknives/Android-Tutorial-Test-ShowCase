@@ -12,10 +12,7 @@ import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -34,11 +31,10 @@ class LoginRemoteSourceTest : KoinTest {
     val mockServerScenarioSetupExtensions = MockServerScenarioSetupExtensions()
     private val mockServerScenarioSetup
         get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
-    private lateinit var mockNetworkSessionLocalStorage: NetworkSessionLocalStorage
 
     @BeforeEach
     fun setUp() {
-        mockNetworkSessionLocalStorage = mock()
+        val mockNetworkSessionLocalStorage = mock<NetworkSessionLocalStorage>()
         startKoin {
             modules(
                 createNetworkModules(
@@ -56,8 +52,9 @@ class LoginRemoteSourceTest : KoinTest {
         stopKoin()
     }
 
+    @DisplayName("GIVEN successful response WHEN request is fired THEN login status success is returned")
     @Test
-    fun GIVEN_successful_response_WHEN_request_is_fired_THEN_login_status_success_is_returned() = runBlocking {
+    fun successResponseIsParsedProperly() = runBlocking {
         mockServerScenarioSetup.setScenario(AuthScenario.Success("a", "b"))
         val expected = LoginStatusResponses.Success(ContentData.loginSuccessResponse)
 
@@ -66,8 +63,9 @@ class LoginRemoteSourceTest : KoinTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN successful response WHEN request is fired THEN the request is setup properly")
     @Test
-    fun GIVEN_successful_response_WHEN_request_is_fired_THEN_the_request_is_setup_properly() = runBlocking {
+    fun requestProperlySetup() = runBlocking {
         mockServerScenarioSetup.setScenario(AuthScenario.Success("a", "b"), false)
 
         sut.login(LoginCredentials("a", "b"))
@@ -81,8 +79,9 @@ class LoginRemoteSourceTest : KoinTest {
         JSONAssert.assertEquals(loginRequest, request.body.readUtf8(), JSONCompareMode.NON_EXTENSIBLE)
     }
 
+    @DisplayName("GIVEN bad request response WHEN request is fired THEN login status invalid credentials is returned")
     @Test
-    fun GIVEN_bad_request_response_WHEN_request_is_fired_THEN_login_status_invalid_credentials_is_returned() = runBlocking {
+    fun badRequestMeansInvalidCredentials() = runBlocking {
         mockServerScenarioSetup.setScenario(AuthScenario.InvalidCredentials("a", "b"))
         val expected = LoginStatusResponses.InvalidCredentials
 
@@ -91,8 +90,9 @@ class LoginRemoteSourceTest : KoinTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN_internal_error_response_WHEN_request_is_fired_THEN_network_exception_is_thrown")
     @Test
-    fun GIVEN_internal_error_response_WHEN_request_is_fired_THEN_network_exception_is_thrown() {
+    fun genericErrorMeansNetworkError() {
         mockServerScenarioSetup.setScenario(AuthScenario.GenericError("a", "b"))
 
         Assertions.assertThrows(NetworkException::class.java) {
@@ -100,8 +100,9 @@ class LoginRemoteSourceTest : KoinTest {
         }
     }
 
+    @DisplayName("GIVEN invalid json response WHEN request is fired THEN network exception is thrown")
     @Test
-    fun GIVEN_invalid_json_response_WHEN_request_is_fired_THEN_network_exception_is_thrown() {
+    fun invalidJsonMeansParsingException() {
         mockServerScenarioSetup.setScenario(AuthScenario.UnexpectedJsonAsSuccessResponse("a", "b"))
 
         Assertions.assertThrows(ParsingException::class.java) {
@@ -109,8 +110,9 @@ class LoginRemoteSourceTest : KoinTest {
         }
     }
 
+    @DisplayName("GIVEN malformed json response WHEN request is fired THEN network exception is thrown")
     @Test
-    fun GIVEN_malformed_json_response_WHEN_request_is_fired_THEN_network_exception_is_thrown() {
+    fun malformedJsonMeansParsingException() {
         mockServerScenarioSetup.setScenario(AuthScenario.MalformedJsonAsSuccessResponse("a", "b"))
 
         Assertions.assertThrows(ParsingException::class.java) {

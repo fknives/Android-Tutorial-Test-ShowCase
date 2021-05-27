@@ -11,10 +11,7 @@ import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -64,9 +61,9 @@ class SessionExpirationTest : KoinTest {
         stopKoin()
     }
 
+    @DisplayName("GIVEN_401_THEN_refresh_token_ok_response_WHEN_content_requested_THE_tokens_are_refreshed_and_request_retried_with_new_tokens")
     @Test
-    fun GIVEN_401_THEN_refresh_token_ok_response_WHEN_content_requested_THE_tokens_are_refreshed_and_request_retried_with_new_tokens() =
-        runBlocking {
+    fun successRefreshResultsInRequestRetry() = runBlocking {
             var sessionToReturnByMock: Session? = ContentData.loginSuccessResponse
             mockServerScenarioSetup.setScenario(
                 ContentScenario.Unauthorized(false)
@@ -97,8 +94,9 @@ class SessionExpirationTest : KoinTest {
             verifyZeroInteractions(mockNetworkSessionExpirationListener)
         }
 
+    @DisplayName("GIVEN 401 THEN failing refresh WHEN content requested THE error is returned and callback is Called")
     @Test
-    fun GIVEN_401_THEN_failing_refresh_WHEN_content_requested_THE_error_is_returned_and_callback_is_Called() = runBlocking {
+    fun failingRefreshResultsInSessionExpiration() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.Unauthorized(false))
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error)
