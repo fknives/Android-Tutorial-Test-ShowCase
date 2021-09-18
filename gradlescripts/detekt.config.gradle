@@ -2,13 +2,12 @@
 detekt {
     toolVersion = "$detekt_version"
 
-    source = files(
-            "$projectDir/app/src/main/java",
-            "$projectDir/core/src/main/java",
-            "$projectDir/mockserver/src/main/java",
-            "$projectDir/model/src/main/java",
-            "$projectDir/network/src/main/java"
-    )
+    def projectPaths = subprojects.collect {
+        def projectName = it.name
+        "$projectDir/$projectName/src/main/java"
+    }
+
+    source = files(*projectPaths)
     config = files("$projectDir/detekt/detekt.yml")
     baseline = file("$projectDir/detekt/baseline.xml")
     reports {
