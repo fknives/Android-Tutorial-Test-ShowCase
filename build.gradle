@@ -45,7 +45,7 @@ task unitTests(dependsOn: ["app:testKoinDebugUnitTest", "app:testHiltDebugUnitTe
     description = 'Run all unit tests'
 }
 
-task androidTests(dependsOn: "app:connectedAndroidTest"){
+task androidTests(dependsOn: ["app:connectedKoinDebugAndroidTest", "app:connectedHiltDebugAndroidTest"]){
     group = 'Tests'
     description = 'Run all Android tests'
 }

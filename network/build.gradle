@@ -17,9 +17,12 @@ dependencies {
     implementation "com.squareup.moshi:moshi:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    // koin
     api "io.insert-koin:koin-core:$koin_version"
+
+    // hilt
     implementation "com.google.dagger:hilt-core:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     api project(":model")
 
@@ -30,5 +33,6 @@ dependencies {
     testImplementation "io.insert-koin:koin-test-junit5:$koin_version"
     testImplementation "org.skyscreamer:jsonassert:$testing_json_assert_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
     kaptTest "com.google.dagger:dagger-compiler:$hilt_version"
 }

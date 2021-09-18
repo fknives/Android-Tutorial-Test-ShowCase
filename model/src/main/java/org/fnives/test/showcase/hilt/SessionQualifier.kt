@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.network.di.hilt
+package org.fnives.test.showcase.hilt
 
 import javax.inject.Qualifier
 

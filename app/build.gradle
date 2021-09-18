@@ -32,6 +32,7 @@ android {
         hilt {
             dimension 'di'
             applicationId "org.fnives.test.showcase.hilt"
+            testInstrumentationRunner "org.fnives.test.showcase.testutils.configuration.HiltTestRunner"
         }
         koin {
             dimension 'di'
@@ -47,15 +48,24 @@ android {
         androidTest {
             java.srcDirs += "src/sharedTest/java"
         }
+        androidTestHilt {
+            java.srcDirs += "src/sharedTestHilt/java"
+        }
+        androidTestKoin {
+            java.srcDirs += "src/sharedTestKoin/java"
+        }
+
         test {
             java.srcDirs += "src/sharedTest/java"
             java.srcDirs += "src/robolectricTest/java"
         }
         testHilt {
+            java.srcDirs += "src/sharedTestHilt/java"
             java.srcDirs += "src/robolectricTestHilt/java"
             resources.srcDirs += "src/robolectricTestHilt/resources"
         }
         testKoin {
+            java.srcDirs += "src/sharedTestKoin/java"
             java.srcDirs += "src/robolectricTestKoin/java"
         }
     }
@@ -147,4 +157,5 @@ dependencies {
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
+    androidTestImplementation project(":network") // hilt needs it
 }

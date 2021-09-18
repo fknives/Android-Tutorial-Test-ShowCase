@@ -5,6 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import org.fnives.test.showcase.hilt.SessionLessQualifier
+import org.fnives.test.showcase.hilt.SessionQualifier
 import org.fnives.test.showcase.network.auth.LoginRemoteSource
 import org.fnives.test.showcase.network.auth.LoginRemoteSourceImpl
 import org.fnives.test.showcase.network.auth.LoginService
@@ -31,7 +33,6 @@ object HiltNetworkModule {
 
     @Provides
     @Singleton
-    @SessionLessQualifier
     fun provideSessionLessOkHttpClient(enableLogging: Boolean) =
         OkHttpClient.Builder()
             .addInterceptor(PlatformInterceptor())

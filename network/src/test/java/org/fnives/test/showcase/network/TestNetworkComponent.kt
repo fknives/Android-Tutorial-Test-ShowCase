@@ -6,13 +6,14 @@ import org.fnives.test.showcase.network.auth.hilt.LoginRemoteSourceRefreshAction
 import org.fnives.test.showcase.network.auth.hilt.LoginRemoteSourceTest
 import org.fnives.test.showcase.network.content.hilt.ContentRemoteSourceImplTest
 import org.fnives.test.showcase.network.content.hilt.SessionExpirationTest
+import org.fnives.test.showcase.network.di.hilt.BindsBaseOkHttpClient
 import org.fnives.test.showcase.network.di.hilt.HiltNetworkModule
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [HiltNetworkModule::class])
+@Component(modules = [HiltNetworkModule::class, BindsBaseOkHttpClient::class])
 interface TestNetworkComponent {
 
 
