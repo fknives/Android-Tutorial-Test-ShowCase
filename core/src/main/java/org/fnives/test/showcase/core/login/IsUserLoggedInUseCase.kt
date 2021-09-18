@@ -1,8 +1,11 @@
 package org.fnives.test.showcase.core.login
 
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
+import javax.inject.Inject
 
-class IsUserLoggedInUseCase(private val userDataLocalStorage: UserDataLocalStorage) {
+class IsUserLoggedInUseCase @Inject constructor(
+    private val userDataLocalStorage: UserDataLocalStorage
+) {
 
     fun invoke(): Boolean = userDataLocalStorage.session != null
 }

@@ -9,12 +9,12 @@ import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.snackbar.Snackbar
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.databinding.ActivityAuthenticationBinding
-import org.fnives.test.showcase.ui.home.MainActivity
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.fnives.test.showcase.ui.IntentCoordinator
+import org.fnives.test.showcase.ui.viewModels
 
-class AuthActivity : AppCompatActivity() {
+open class AuthActivity : AppCompatActivity() {
 
-    private val viewModel by viewModel<AuthViewModel>()
+    private val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +35,7 @@ class AuthActivity : AppCompatActivity() {
         }
         viewModel.navigateToHome.observe(this) {
             it.consume() ?: return@observe
-            startActivity(MainActivity.getStartIntent(this))
+            startActivity(IntentCoordinator.mainActivitygetStartIntent(this))
             finishAffinity()
         }
         setContentView(binding.root)

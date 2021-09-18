@@ -7,13 +7,20 @@ import org.fnives.test.showcase.model.session.Session
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class SharedPreferencesManagerImpl(private val sharedPreferences: SharedPreferences) : UserDataLocalStorage {
+class SharedPreferencesManagerImpl(
+    private val sharedPreferences: SharedPreferences
+) : UserDataLocalStorage {
 
     override var session: Session? by SessionDelegate(SESSION_KEY)
 
-    private class SessionDelegate(private val key: String) : ReadWriteProperty<SharedPreferencesManagerImpl, Session?> {
+    private class SessionDelegate(private val key: String) :
+        ReadWriteProperty<SharedPreferencesManagerImpl, Session?> {
 
-        override fun setValue(thisRef: SharedPreferencesManagerImpl, property: KProperty<*>, value: Session?) {
+        override fun setValue(
+            thisRef: SharedPreferencesManagerImpl,
+            property: KProperty<*>,
+            value: Session?
+        ) {
             if (value == null) {
                 thisRef.sharedPreferences.edit().remove(key).apply()
             } else {
@@ -25,7 +32,10 @@ class SharedPreferencesManagerImpl(private val sharedPreferences: SharedPreferen
             }
         }
 
-        override fun getValue(thisRef: SharedPreferencesManagerImpl, property: KProperty<*>): Session? {
+        override fun getValue(
+            thisRef: SharedPreferencesManagerImpl,
+            property: KProperty<*>
+        ): Session? {
             val values = thisRef.sharedPreferences.getStringSet(key, null)?.toList()
             val accessToken = values?.firstOrNull { it.startsWith(ACCESS_TOKEN_KEY) }
                 ?.drop(ACCESS_TOKEN_KEY.length) ?: return null

@@ -4,8 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
+import javax.inject.Inject
 
-class FavouriteContentLocalStorageImpl(private val favouriteDao: FavouriteDao) : FavouriteContentLocalStorage {
+class FavouriteContentLocalStorageImpl @Inject constructor(
+    private val favouriteDao: FavouriteDao
+) : FavouriteContentLocalStorage {
+
     override fun observeFavourites(): Flow<List<ContentId>> =
         favouriteDao.get().map { it.map(FavouriteEntity::contentId).map(::ContentId) }
 
