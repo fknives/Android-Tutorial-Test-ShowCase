@@ -167,13 +167,5 @@ We will also see how to test a specific Activity (same concept can be applied to
 
 We will also see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
 
-## Future Plans for Myself
-This just contains todos for myself when next time I am exercising testing on this project
-
-- Add Room migration tests
-- Update RecyclerView tests with [Espresso.onData](https://developer.android.com/training/testing/espresso/lists)
-- Add [NavController](https://developer.android.com/reference/androidx/navigation/NavController) functionality and tests to it
-- Update test names with [DisplayName](https://junit.org/junit5/docs/5.0.2/api/org/junit/jupiter/api/DisplayName.html) annotation
-
 ## License
 [License file](./LICENSE)
