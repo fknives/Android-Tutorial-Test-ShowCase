@@ -111,7 +111,7 @@ The actual server when running the application is [mockapi.io](https://www.mocka
 
 ## Code Kata
 
-### Preperation
+### Preparation
 Download the project, open it in [Android Studio](https://developer.android.com/studio?gclid=Cj0KCQjw1PSDBhDbARIsAPeTqrfKrSx8qD_B9FegOmpVgxtPWFHhBHeqnml8n4ak-I5wPvqlwGdwrUQaAtobEALw_wcB&gclsrc=aw.ds).
 
 * In the gradle window you can see in the root gradle there is a "tests" group. In this group you will see a unitTests and androidTests task.
