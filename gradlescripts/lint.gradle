@@ -1,0 +1,34 @@
+subprojects { module ->
+    plugins.withType(JavaPlugin).whenPluginAdded {
+        configure(module) {
+            apply plugin: "com.android.lint"
+            lintOptions {
+                warningsAsErrors true
+                abortOnError true
+                textReport true
+                ignore 'Overdraw'
+                textOutput "stdout"
+            }
+        }
+    }
+
+    plugins.withId("com.android.application") {
+        module.android.lintOptions {
+            warningsAsErrors true
+            abortOnError true
+            textReport true
+            ignore 'Overdraw'
+            textOutput "stdout"
+        }
+    }
+
+    plugins.withId("com.android.library") {
+        module.android.lintOptions {
+            warningsAsErrors true
+            abortOnError true
+            textReport true
+            ignore 'Overdraw'
+            textOutput "stdout"
+        }
+    }
+}

@@ -1,0 +1,71 @@
+name: Verify Pull request is publishable
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+env:
+  GITHUB_USERNAME: "fknives"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  run-code-analysis:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Run clean
+        run: ./gradlew clean
+      - name: Run detekt
+        run: ./gradlew detekt
+      - name: Upload Detekt Results
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Detekt Results
+          path: build/reports/detekt/detekt.html
+          retention-days: 1
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck
+      - name: Upload ktLint Results
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ktLint Results
+          path: ./**/build/reports/ktlint/**/*ktlint*Check.txt
+          retention-days: 1
+      - name: Run Lint
+        run: ./gradlew lint
+      - name: Upload Lint Results
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Lint Results
+          path: ./**/build/reports/*lint-results*.html
+          retention-days: 1
+
+  run-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Run Unit Tests
+        run: ./gradlew testReleaseUnit
+      - name: Upload Test Results
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results
+          path: ./**/build/reports/tests/**/index.html
+          retention-days: 1

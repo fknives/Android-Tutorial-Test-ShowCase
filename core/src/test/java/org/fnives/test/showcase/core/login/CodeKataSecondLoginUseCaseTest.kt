@@ -1,16 +1,9 @@
 package org.fnives.test.showcase.core.login
 
-import kotlinx.coroutines.test.runBlockingTest
-import org.fnives.test.showcase.core.shared.UnexpectedException
-import org.fnives.test.showcase.core.storage.UserDataLocalStorage
-import org.fnives.test.showcase.model.auth.LoginCredentials
-import org.fnives.test.showcase.model.auth.LoginStatus
-import org.fnives.test.showcase.model.session.Session
-import org.fnives.test.showcase.model.shared.Answer
-import org.fnives.test.showcase.network.auth.LoginRemoteSource
-import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
-import org.junit.jupiter.api.*
-import org.mockito.kotlin.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 @Disabled("CodeKata")
 class CodeKataSecondLoginUseCaseTest {

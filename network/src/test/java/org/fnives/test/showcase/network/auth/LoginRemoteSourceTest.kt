@@ -12,7 +12,11 @@ import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -26,6 +30,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 class LoginRemoteSourceTest : KoinTest {
 
     private val sut by inject<LoginRemoteSource>()
+
     @RegisterExtension
     @JvmField
     val mockServerScenarioSetupExtensions = MockServerScenarioSetupExtensions()
@@ -76,7 +81,11 @@ class LoginRemoteSourceTest : KoinTest {
         Assertions.assertEquals(null, request.getHeader("Authorization"))
         Assertions.assertEquals("/login", request.path)
         val loginRequest = createExpectedLoginRequestJson("a", "b")
-        JSONAssert.assertEquals(loginRequest, request.body.readUtf8(), JSONCompareMode.NON_EXTENSIBLE)
+        JSONAssert.assertEquals(
+            loginRequest,
+            request.body.readUtf8(),
+            JSONCompareMode.NON_EXTENSIBLE
+        )
     }
 
     @DisplayName("GIVEN bad request response WHEN request is fired THEN login status invalid credentials is returned")

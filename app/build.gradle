@@ -6,7 +6,6 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "org.fnives.test.showcase"
@@ -25,15 +24,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+
     buildFeatures {
         viewBinding true
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 
     sourceSets {
@@ -46,33 +39,12 @@ android {
         }
     }
 
-    testOptions.unitTests.all {
-        useJUnitPlatform()
-        testLogging {
-            events 'started', 'passed', 'skipped', 'failed'
-            exceptionFormat "full"
-            showStandardStreams true
-        }
-    }
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
-    }
     // needed for androidTest
     packagingOptions {
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/AL2.0'
         exclude 'META-INF/LICENSE.md'
         exclude 'META-INF/LICENSE-notice.md'
-    }
-
-    lintOptions {
-        warningsAsErrors true
-        abortOnError true
-        textReport true
-        ignore 'Overdraw'
-        textOutput "stdout"
     }
 }
 

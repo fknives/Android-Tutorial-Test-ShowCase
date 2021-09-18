@@ -8,15 +8,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-test {
-    useJUnitPlatform()
-    testLogging {
-        events 'started', 'passed', 'skipped', 'failed'
-        exceptionFormat "full"
-        showStandardStreams true
-    }
-}
-
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"

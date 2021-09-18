@@ -27,24 +27,20 @@ class CodeKataAuthViewModel {
     @DisplayName("GIVEN_initialized_viewModel_WHEN_observed_THEN_loading_false_other_fields_are_empty")
     @Test
     fun initialSetup() {
-
     }
 
     @DisplayName("GIVEN_password_text_WHEN_onPasswordChanged_is_called_THEN_password_livedata_is_updated")
     @Test
     fun whenPasswordChangedLiveDataIsUpdated() {
-
     }
 
     @DisplayName("GIVEN_username_text_WHEN_onUsernameChanged_is_called_THEN_username_livedata_is_updated")
     @Test
     fun whenUsernameChangedLiveDataIsUpdated() {
-
     }
 
     @DisplayName("GIVEN_no_password_or_username_WHEN_login_is_Called_THEN_empty_credentials_are_used_in_usecase")
     @Test
     fun noPasswordUsesEmptyStringInLoginUseCase() {
-
     }
 }
