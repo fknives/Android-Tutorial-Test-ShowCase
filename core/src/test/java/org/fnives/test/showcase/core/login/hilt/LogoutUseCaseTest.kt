@@ -1,8 +1,9 @@
-package org.fnives.test.showcase.core.login
+package org.fnives.test.showcase.core.login.hilt
 
 import kotlinx.coroutines.test.runBlockingTest
 import org.fnives.test.showcase.core.content.ContentRepository
 import org.fnives.test.showcase.core.di.koin.createCoreModule
+import org.fnives.test.showcase.core.login.LogoutUseCase
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.fnives.test.showcase.model.network.BaseUrl
 import org.junit.jupiter.api.AfterEach
@@ -17,33 +18,28 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.verifyZeroInteractions
+import javax.inject.Inject
 
 @Suppress("TestFunctionName")
-internal class LogoutUseCaseTest : KoinTest {
+internal class LogoutUseCaseTest {
 
-    private lateinit var sut: LogoutUseCase
+    @Inject
+    lateinit var sut: LogoutUseCase
     private lateinit var mockUserDataLocalStorage: UserDataLocalStorage
+    private lateinit var testCoreComponent: TestCoreComponent
+    @Inject
+    lateinit var contentRepository: ContentRepository
 
     @BeforeEach
     fun setUp() {
         mockUserDataLocalStorage = mock()
-        sut = LogoutUseCase(mockUserDataLocalStorage, null)
-        startKoin {
-            modules(
-                createCoreModule(
-                    baseUrl = BaseUrl("https://a.b.com"),
-                    enableNetworkLogging = true,
-                    favouriteContentLocalStorageProvider = { mock() },
-                    sessionExpirationListenerProvider = { mock() },
-                    userDataLocalStorageProvider = { mock() }
-                ).toList()
-            )
-        }
-    }
-
-    @AfterEach
-    fun tearDown() {
-        stopKoin()
+        testCoreComponent = DaggerTestCoreComponent.builder()
+            .setBaseUrl("https://a.b.com")
+            .setEnableLogging(true)
+            .setSessionExpirationListener(mock())
+            .setUserDataLocalStorage(mockUserDataLocalStorage)
+            .build()
+        testCoreComponent.inject(this)
     }
 
     @Test
@@ -53,11 +49,12 @@ internal class LogoutUseCaseTest : KoinTest {
 
     @Test
     fun WHEN_logout_invoked_THEN_storage_is_cleared() = runBlockingTest {
-        val repositoryBefore = getKoin().get<ContentRepository>()
+        val repositoryBefore = contentRepository
 
         sut.invoke()
 
-        val repositoryAfter = getKoin().get<ContentRepository>()
+        testCoreComponent.inject(this@LogoutUseCaseTest)
+        val repositoryAfter = contentRepository
         verify(mockUserDataLocalStorage, times(1)).session = null
         verifyNoMoreInteractions(mockUserDataLocalStorage)
         Assertions.assertNotSame(repositoryBefore, repositoryAfter)

@@ -36,4 +36,6 @@ dependencies {
     testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    kaptTest "com.google.dagger:dagger-compiler:$hilt_version"
+    testImplementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 }
