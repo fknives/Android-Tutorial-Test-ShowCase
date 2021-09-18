@@ -14,11 +14,15 @@ internal class SessionAuthenticator(
     private val networkSessionExpirationListener: NetworkSessionExpirationListener
 ) : Authenticator {
 
+    @Suppress("SwallowedException")
     override fun authenticate(route: Route?, response: Response): Request? {
         if (authenticationHeaderUtils.hasToken(response.request)) {
             return runBlocking {
                 try {
-                    val newSession = loginRemoteSource.refresh(networkSessionLocalStorage.session?.refreshToken.orEmpty())
+                    val refreshToken = networkSessionLocalStorage.session
+                        ?.refreshToken
+                        .orEmpty()
+                    val newSession = loginRemoteSource.refresh(refreshToken)
                     networkSessionLocalStorage.session = newSession
                     return@runBlocking authenticationHeaderUtils.attachToken(response.request)
                 } catch (throwable: Throwable) {

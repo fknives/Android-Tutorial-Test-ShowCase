@@ -9,8 +9,6 @@ java {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
     api project(":model")
 
     api "com.squareup.okhttp3:mockwebserver:$okhttp_version"

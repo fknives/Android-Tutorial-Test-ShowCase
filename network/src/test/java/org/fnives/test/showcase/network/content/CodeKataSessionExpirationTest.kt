@@ -1,22 +1,23 @@
 package org.fnives.test.showcase.network.content
 
 import kotlinx.coroutines.runBlocking
-import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.model.session.Session
-import org.fnives.test.showcase.network.auth.CodeKataLoginRemoteSourceTest.Companion.readResourceFile
 import org.fnives.test.showcase.network.di.createNetworkModules
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
-import org.fnives.test.showcase.network.shared.exceptions.NetworkException
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import org.mockito.kotlin.*
+import org.mockito.kotlin.mock
 
+@Disabled("CodeKata")
 class CodeKataSessionExpirationTest : KoinTest {
 
     private val sut by inject<ContentRemoteSource>()
@@ -32,12 +33,12 @@ class CodeKataSessionExpirationTest : KoinTest {
         mockNetworkSessionExpirationListener = mock()
         startKoin {
             modules(
-                    createNetworkModules(
-                            baseUrl = BaseUrl(mockWebServer.url("mockserver/").toString()),
-                            enableLogging = true,
-                            networkSessionExpirationListenerProvider = { mockNetworkSessionExpirationListener },
-                            networkSessionLocalStorageProvider = { mockNetworkSessionLocalStorage }
-                    ).toList()
+                createNetworkModules(
+                    baseUrl = BaseUrl(mockWebServer.url("mockserver/").toString()),
+                    enableLogging = true,
+                    networkSessionExpirationListenerProvider = { mockNetworkSessionExpirationListener },
+                    networkSessionLocalStorageProvider = { mockNetworkSessionLocalStorage }
+                ).toList()
             )
         }
     }
@@ -56,6 +57,5 @@ class CodeKataSessionExpirationTest : KoinTest {
     @DisplayName("GIVEN 401 THEN failing refresh WHEN content requested THE error is returned and callback is Called")
     @Test
     fun failingRefreshResultsInSessionExpiration() = runBlocking {
-
     }
 }

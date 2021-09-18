@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = FavouriteContentAdapter(viewModel.mapToAdapterListener())
         binding.recycler.layoutManager = LinearLayoutManager(this)
-        binding.recycler.addItemDecoration(VerticalSpaceItemDecoration(resources.getDimensionPixelOffset(R.dimen.padding)))
+        binding.recycler.addItemDecoration(
+            VerticalSpaceItemDecoration(resources.getDimensionPixelOffset(R.dimen.padding))
+        )
         binding.recycler.adapter = adapter
 
         viewModel.content.observe(this) {

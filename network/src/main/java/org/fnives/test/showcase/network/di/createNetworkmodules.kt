@@ -50,7 +50,7 @@ private fun contentModule() = module {
 
 private fun sessionlessNetworkingModule(baseUrl: BaseUrl, enableLogging: Boolean) = module {
     factory { MoshiConverterFactory.create() }
-    single(qualifier = sessionless, override = true) {
+    single(qualifier = sessionless) {
         OkHttpClient.Builder()
             .addInterceptor(PlatformInterceptor())
             .setupLogging(enableLogging)

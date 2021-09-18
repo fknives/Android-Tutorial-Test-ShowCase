@@ -1,0 +1,44 @@
+subprojects { module ->
+    plugins.withType(JavaPlugin).whenPluginAdded {
+        module.test {
+            useJUnitPlatform()
+            testLogging {
+                events 'started', 'passed', 'skipped', 'failed'
+                exceptionFormat "full"
+                showStandardStreams true
+            }
+        }
+    }
+
+    plugins.withId("com.android.application") {
+        module.android.testOptions.unitTests.all {
+            useJUnitPlatform()
+            testLogging {
+                events 'started', 'passed', 'skipped', 'failed'
+                exceptionFormat "full"
+                showStandardStreams true
+            }
+        }
+        module.android.testOptions {
+            unitTests {
+                includeAndroidResources = true
+            }
+        }
+    }
+
+    plugins.withId("com.android.library") {
+        module.android.testOptions.unitTests.all {
+            useJUnitPlatform()
+            testLogging {
+                events 'started', 'passed', 'skipped', 'failed'
+                exceptionFormat "full"
+                showStandardStreams true
+            }
+        }
+        module.android.testOptions {
+            unitTests {
+                includeAndroidResources = true
+            }
+        }
+    }
+}

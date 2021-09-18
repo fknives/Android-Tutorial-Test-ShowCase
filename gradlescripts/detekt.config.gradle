@@ -1,0 +1,24 @@
+
+detekt {
+    toolVersion = "$detekt_version"
+
+    source = files(
+            "$projectDir/app/src/main/java",
+            "$projectDir/core/src/main/java",
+            "$projectDir/mockserver/src/main/java",
+            "$projectDir/model/src/main/java",
+            "$projectDir/network/src/main/java"
+    )
+    config = files("$projectDir/detekt/detekt.yml")
+    baseline = file("$projectDir/detekt/baseline.xml")
+    reports {
+        txt {
+            enabled = true
+            destination = file("build/reports/detekt.txt")
+        }
+        html {
+            enabled = true
+            destination = file("build/reports/detekt.html")
+        }
+    }
+}

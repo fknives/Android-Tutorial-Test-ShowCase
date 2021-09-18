@@ -11,7 +11,11 @@ import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -64,35 +68,39 @@ class SessionExpirationTest : KoinTest {
     @DisplayName("GIVEN_401_THEN_refresh_token_ok_response_WHEN_content_requested_THE_tokens_are_refreshed_and_request_retried_with_new_tokens")
     @Test
     fun successRefreshResultsInRequestRetry() = runBlocking {
-            var sessionToReturnByMock: Session? = ContentData.loginSuccessResponse
-            mockServerScenarioSetup.setScenario(
-                ContentScenario.Unauthorized(false)
-                    .then(ContentScenario.Success(true)),
-                false
-            )
-            mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
-            whenever(mockNetworkSessionLocalStorage.session).doAnswer { sessionToReturnByMock }
-            doAnswer { sessionToReturnByMock = it.arguments[0] as Session? }
-                .whenever(mockNetworkSessionLocalStorage).session = anyOrNull()
+        var sessionToReturnByMock: Session? = ContentData.loginSuccessResponse
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Unauthorized(false)
+                .then(ContentScenario.Success(true)),
+            false
+        )
+        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
+        whenever(mockNetworkSessionLocalStorage.session).doAnswer { sessionToReturnByMock }
+        doAnswer { sessionToReturnByMock = it.arguments[0] as Session? }
+            .whenever(mockNetworkSessionLocalStorage).session = anyOrNull()
 
-            sut.get()
+        sut.get()
 
-            mockServerScenarioSetup.takeRequest()
-            val refreshRequest = mockServerScenarioSetup.takeRequest()
-            val retryAfterTokenRefreshRequest = mockServerScenarioSetup.takeRequest()
+        mockServerScenarioSetup.takeRequest()
+        val refreshRequest = mockServerScenarioSetup.takeRequest()
+        val retryAfterTokenRefreshRequest = mockServerScenarioSetup.takeRequest()
 
-            Assertions.assertEquals("PUT", refreshRequest.method)
-            Assertions.assertEquals("/login/${ContentData.loginSuccessResponse.refreshToken}", refreshRequest.path)
-            Assertions.assertEquals(null, refreshRequest.getHeader("Authorization"))
-            Assertions.assertEquals("Android", refreshRequest.getHeader("Platform"))
-            Assertions.assertEquals("", refreshRequest.body.readUtf8())
-            Assertions.assertEquals(
-                ContentData.refreshSuccessResponse.accessToken,
-                retryAfterTokenRefreshRequest.getHeader("Authorization")
-            )
-            verify(mockNetworkSessionLocalStorage, times(1)).session = ContentData.refreshSuccessResponse
-            verifyZeroInteractions(mockNetworkSessionExpirationListener)
-        }
+        Assertions.assertEquals("PUT", refreshRequest.method)
+        Assertions.assertEquals(
+            "/login/${ContentData.loginSuccessResponse.refreshToken}",
+            refreshRequest.path
+        )
+        Assertions.assertEquals(null, refreshRequest.getHeader("Authorization"))
+        Assertions.assertEquals("Android", refreshRequest.getHeader("Platform"))
+        Assertions.assertEquals("", refreshRequest.body.readUtf8())
+        Assertions.assertEquals(
+            ContentData.refreshSuccessResponse.accessToken,
+            retryAfterTokenRefreshRequest.getHeader("Authorization")
+        )
+        verify(mockNetworkSessionLocalStorage, times(1)).session =
+            ContentData.refreshSuccessResponse
+        verifyZeroInteractions(mockNetworkSessionExpirationListener)
+    }
 
     @DisplayName("GIVEN 401 THEN failing refresh WHEN content requested THE error is returned and callback is Called")
     @Test

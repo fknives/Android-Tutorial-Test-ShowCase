@@ -8,6 +8,7 @@ import java.io.EOFException
 
 internal object ExceptionWrapper {
 
+    @Suppress("RethrowCaughtException")
     @Throws(NetworkException::class, ParsingException::class)
     suspend fun <T> wrap(request: suspend () -> T) = try {
         request()

@@ -1,59 +1,28 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.4.32"
-    ext.detekt_version = "1.16.0"
+    ext.kotlin_version = "1.5.30"
+    ext.detekt_version = "1.18.1"
     repositories {
+        mavenCentral()
         google()
         maven { url "https://plugins.gradle.org/m2/" }
-        jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.1.3"
+        classpath 'com.android.tools.build:gradle:7.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:10.0.0"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"
     }
 }
 
-//apply plugin: "io.gitlab.arturbosch.detekt" version "$detekt_version"
 plugins {
     id "io.gitlab.arturbosch.detekt" version "$detekt_version"
-}
-detekt {
-    toolVersion = "$detekt_version"
-
-    input = files(
-            "$projectDir/app/src/main/java",
-            "$projectDir/core/src/main/java",
-            "$projectDir/mockserver/src/main/java",
-            "$projectDir/model/src/main/java",
-            "$projectDir/network/src/main/java"
-    )
-    config = files("$projectDir/detekt/detekt.yml")
-    baseline = file("$projectDir/detekt/baseline.xml")
-    reports {
-        txt {
-            enabled = true
-            destination = file("build/reports/detekt.txt")
-        }
-        html {
-            enabled = true
-            destination = file("build/reports/detekt.html")
-        }
-    }
 }
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
     }
-}
-
-subprojects {
-    apply plugin: "org.jlleitschuh.gradle.ktlint"
 }
 
 task clean(type: Delete) {
@@ -71,3 +40,7 @@ task androidTests(dependsOn: "app:connectedAndroidTest"){
 }
 
 apply from: 'gradlescripts/versions.gradle'
+apply from: 'gradlescripts/detekt.config.gradle'
+apply from: 'gradlescripts/ktlint.gradle'
+apply from: 'gradlescripts/lint.gradle'
+apply from: 'gradlescripts/testoptions.gradle'

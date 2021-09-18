@@ -14,7 +14,10 @@ class GetAllContentUseCase internal constructor(
 ) {
 
     fun get(): Flow<Resource<List<FavouriteContent>>> =
-        contentRepository.contents.combine(favouriteContentLocalStorage.observeFavourites(), ::combineContentWithFavourites)
+        contentRepository.contents.combine(
+            favouriteContentLocalStorage.observeFavourites(),
+            ::combineContentWithFavourites
+        )
 
     companion object {
         private fun combineContentWithFavourites(
@@ -24,10 +27,18 @@ class GetAllContentUseCase internal constructor(
             when (contentResource) {
                 is Resource.Error -> Resource.Error(contentResource.error)
                 is Resource.Loading -> Resource.Loading()
-                is Resource.Success -> Resource.Success(combineContentWithFavourites(contentResource.data, favouriteContents))
+                is Resource.Success ->
+                    Resource.Success(
+                        combineContentWithFavourites(contentResource.data, favouriteContents)
+                    )
             }
 
-        private fun combineContentWithFavourites(content: List<Content>, favourite: List<ContentId>): List<FavouriteContent> =
-            content.map { FavouriteContent(content = it, isFavourite = favourite.contains(it.id)) }
+        private fun combineContentWithFavourites(
+            content: List<Content>,
+            favourite: List<ContentId>
+        ): List<FavouriteContent> =
+            content.map {
+                FavouriteContent(content = it, isFavourite = favourite.contains(it.id))
+            }
     }
 }

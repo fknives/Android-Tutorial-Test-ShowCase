@@ -6,11 +6,11 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "org.fnives.test.showcase"
         minSdkVersion 21
+        //noinspection OldTargetApi // todo
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -25,15 +25,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+
     buildFeatures {
         viewBinding true
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 
     sourceSets {
@@ -46,33 +40,12 @@ android {
         }
     }
 
-    testOptions.unitTests.all {
-        useJUnitPlatform()
-        testLogging {
-            events 'started', 'passed', 'skipped', 'failed'
-            exceptionFormat "full"
-            showStandardStreams true
-        }
-    }
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
-    }
     // needed for androidTest
     packagingOptions {
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/AL2.0'
         exclude 'META-INF/LICENSE.md'
         exclude 'META-INF/LICENSE-notice.md'
-    }
-
-    lintOptions {
-        warningsAsErrors true
-        abortOnError true
-        textReport true
-        ignore 'Overdraw'
-        textOutput "stdout"
     }
 }
 
@@ -83,20 +56,17 @@ afterEvaluate {
 }
 
 dependencies {
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "com.google.android.material:material:$androidx_material_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
     implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:$androidx_livedata_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidx_livedata_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_livedata_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefreshlayout_version"
 
     // Koin
-    implementation "org.koin:koin-androidx-scope:$koin_version"
-    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
-    implementation "org.koin:koin-androidx-fragment:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
 
     implementation "androidx.room:room-runtime:$androidx_room_version"
     kapt "androidx.room:room-compiler:$androidx_room_version"
@@ -113,7 +83,7 @@ dependencies {
     testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "com.jraska.livedata:testing-ktx:$testing_livedata_version"
-    testImplementation "org.koin:koin-test:$koin_version"
+    testImplementation "io.insert-koin:koin-test-junit5:$koin_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
 
     // robolectric specific
@@ -130,7 +100,7 @@ dependencies {
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
 
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    androidTestImplementation "org.koin:koin-test:$koin_version"
+    androidTestImplementation "io.insert-koin:koin-test-junit4:$koin_version"
     androidTestImplementation "junit:junit:$testing_junit4_version"
     androidTestImplementation "androidx.test:core:$testing_androidx_code_version"
     androidTestImplementation "androidx.test:runner:$testing_androidx_code_version"

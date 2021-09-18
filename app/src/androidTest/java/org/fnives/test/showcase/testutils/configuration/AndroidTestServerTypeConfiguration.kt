@@ -22,7 +22,7 @@ object AndroidTestServerTypeConfiguration : ServerTypeConfiguration, KoinTest {
             .build()
         loadKoinModules(
             module {
-                single(qualifier = sessionless, override = true) { okHttpClientWithCertificate }
+                single(qualifier = sessionless) { okHttpClientWithCertificate }
             }
         )
     }

@@ -70,7 +70,7 @@ class MockServerScenarioSetup internal constructor(
 
     companion object {
         const val PORT: Int = 7335
-        val HTTP_BASE_URL get() = "http://${InetAddress.getLocalHost().hostName}"
+        val HTTP_BASE_URL get() = "http://${InetAddress.getLocalHost().canonicalHostName}"
         val HTTPS_BASE_URL get() = "https://localhost"
 
         private fun MockWebServer.useHttps(): HandshakeCertificates {

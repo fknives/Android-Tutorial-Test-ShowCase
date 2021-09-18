@@ -1,3 +1,4 @@
 package org.fnives.test.showcase.model.content
 
-inline class ImageUrl(val url: String)
+@JvmInline
+value class ImageUrl(val url: String)

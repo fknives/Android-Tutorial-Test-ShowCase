@@ -14,7 +14,8 @@
         android:name=".TestShowcaseApplication"
         android:theme="@style/Theme.TestShowCase"
         tools:ignore="AllowBackup">
-        <activity android:name=".ui.splash.SplashActivity">
+        <activity android:name=".ui.splash.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

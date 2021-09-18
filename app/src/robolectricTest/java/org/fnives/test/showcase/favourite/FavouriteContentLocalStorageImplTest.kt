@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.favourite
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.take
@@ -20,6 +21,7 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 internal class FavouriteContentLocalStorageImplTest : KoinTest {
 
@@ -48,21 +50,23 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
     }
 
     @Test
-    fun GIVEN_content_id_added_WHEN_removed_to_Favourite_THEN_it_no_longer_can_be_read_out() = runBlocking {
-        val expected = listOf<ContentId>()
-        sut.markAsFavourite(ContentId("b"))
+    fun GIVEN_content_id_added_WHEN_removed_to_Favourite_THEN_it_no_longer_can_be_read_out() =
+        runBlocking {
+            val expected = listOf<ContentId>()
+            sut.markAsFavourite(ContentId("b"))
 
-        sut.deleteAsFavourite(ContentId("b"))
-        val actual = sut.observeFavourites().first()
+            sut.deleteAsFavourite(ContentId("b"))
+            val actual = sut.observeFavourites().first()
 
-        Assert.assertEquals(expected, actual)
-    }
+            Assert.assertEquals(expected, actual)
+        }
 
     @Test
     fun GIVEN_empty_database_WHILE_observing_content_WHEN_favourite_added_THEN_change_is_emitted() =
         runBlocking<Unit> {
             val expected = listOf(listOf(), listOf(ContentId("a")))
 
+            val testDispatcher = TestCoroutineDispatcher()
             val actual = async(testDispatcher) {
                 sut.observeFavourites().take(2).toList()
             }
@@ -79,6 +83,7 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
             val expected = listOf(listOf(ContentId("a")), listOf())
             sut.markAsFavourite(ContentId("a"))
 
+            val testDispatcher = TestCoroutineDispatcher()
             val actual = async(testDispatcher) {
                 sut.observeFavourites().take(2).toList()
             }
