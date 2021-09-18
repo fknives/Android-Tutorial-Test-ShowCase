@@ -37,7 +37,7 @@ fun createCoreModule(
         .plus(repositoryModule())
 
 fun repositoryModule() = module {
-    single(override = true) { ContentRepository(get()) }
+    single { ContentRepository(get()) }
 }
 
 fun useCaseModule() = module {

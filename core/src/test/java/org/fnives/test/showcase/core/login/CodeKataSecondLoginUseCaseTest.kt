@@ -9,12 +9,10 @@ import org.fnives.test.showcase.model.session.Session
 import org.fnives.test.showcase.model.shared.Answer
 import org.fnives.test.showcase.network.auth.LoginRemoteSource
 import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.mockito.kotlin.*
 
+@Disabled("CodeKata")
 class CodeKataSecondLoginUseCaseTest {
 
     @BeforeEach

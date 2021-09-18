@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.content
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.take
@@ -20,6 +21,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class GetAllContentUseCaseTest {
 
     private lateinit var sut: GetAllContentUseCase
@@ -36,71 +38,78 @@ internal class GetAllContentUseCaseTest {
         mockContentRepository = mock()
         favouriteContentIdFlow = MutableStateFlow(emptyList())
         contentFlow = MutableStateFlow(Resource.Loading())
-        whenever(mockFavouriteContentLocalStorage.observeFavourites()).doReturn(favouriteContentIdFlow)
+        whenever(mockFavouriteContentLocalStorage.observeFavourites()).doReturn(
+            favouriteContentIdFlow
+        )
         whenever(mockContentRepository.contents).doReturn(contentFlow)
         sut = GetAllContentUseCase(mockContentRepository, mockFavouriteContentLocalStorage)
     }
 
     @Test
-    fun GIVEN_loading_AND_empty_favourite_WHEN_observed_THEN_loading_is_shown() = runBlockingTest(testDispatcher) {
-        favouriteContentIdFlow.value = emptyList()
-        contentFlow.value = Resource.Loading()
-        val expected = Resource.Loading<List<FavouriteContent>>()
+    fun GIVEN_loading_AND_empty_favourite_WHEN_observed_THEN_loading_is_shown() =
+        runBlockingTest(testDispatcher) {
+            favouriteContentIdFlow.value = emptyList()
+            contentFlow.value = Resource.Loading()
+            val expected = Resource.Loading<List<FavouriteContent>>()
 
-        val actual = sut.get().take(1).toList()
+            val actual = sut.get().take(1).toList()
 
-        Assertions.assertEquals(listOf(expected), actual)
-    }
-
-    @Test
-    fun GIVEN_loading_AND_listOfFavourite_WHEN_observed_THEN_loading_is_shown() = runBlockingTest(testDispatcher) {
-        favouriteContentIdFlow.value = listOf(ContentId("a"))
-        contentFlow.value = Resource.Loading()
-        val expected = Resource.Loading<List<FavouriteContent>>()
-
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
-    }
+            Assertions.assertEquals(listOf(expected), actual)
+        }
 
     @Test
-    fun GIVEN_error_AND_empty_favourite_WHEN_observed_THEN_error_is_shown() = runBlockingTest(testDispatcher) {
-        favouriteContentIdFlow.value = emptyList()
-        val exception = Throwable()
-        contentFlow.value = Resource.Error(exception)
-        val expected = Resource.Error<List<FavouriteContent>>(exception)
+    fun GIVEN_loading_AND_listOfFavourite_WHEN_observed_THEN_loading_is_shown() =
+        runBlockingTest(testDispatcher) {
+            favouriteContentIdFlow.value = listOf(ContentId("a"))
+            contentFlow.value = Resource.Loading()
+            val expected = Resource.Loading<List<FavouriteContent>>()
 
-        val actual = sut.get().take(1).toList()
+            val actual = sut.get().take(1).toList()
 
-        Assertions.assertEquals(listOf(expected), actual)
-    }
-
-    @Test
-    fun GIVEN_error_AND_listOfFavourite_WHEN_observed_THEN_error_is_shown() = runBlockingTest(testDispatcher) {
-        favouriteContentIdFlow.value = listOf(ContentId("b"))
-        val exception = Throwable()
-        contentFlow.value = Resource.Error(exception)
-        val expected = Resource.Error<List<FavouriteContent>>(exception)
-
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
-    }
+            Assertions.assertEquals(listOf(expected), actual)
+        }
 
     @Test
-    fun GIVEN_listOfContent_AND_empty_favourite_WHEN_observed_THEN_favourites_are_returned() = runBlockingTest(testDispatcher) {
-        favouriteContentIdFlow.value = emptyList()
-        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-        contentFlow.value = Resource.Success(listOf(content))
-        val items = listOf(
-            FavouriteContent(content, false)
-        )
-        val expected = Resource.Success(items)
+    fun GIVEN_error_AND_empty_favourite_WHEN_observed_THEN_error_is_shown() =
+        runBlockingTest(testDispatcher) {
+            favouriteContentIdFlow.value = emptyList()
+            val exception = Throwable()
+            contentFlow.value = Resource.Error(exception)
+            val expected = Resource.Error<List<FavouriteContent>>(exception)
 
-        val actual = sut.get().take(1).toList()
+            val actual = sut.get().take(1).toList()
 
-        Assertions.assertEquals(listOf(expected), actual)
-    }
+            Assertions.assertEquals(listOf(expected), actual)
+        }
+
+    @Test
+    fun GIVEN_error_AND_listOfFavourite_WHEN_observed_THEN_error_is_shown() =
+        runBlockingTest(testDispatcher) {
+            favouriteContentIdFlow.value = listOf(ContentId("b"))
+            val exception = Throwable()
+            contentFlow.value = Resource.Error(exception)
+            val expected = Resource.Error<List<FavouriteContent>>(exception)
+
+            val actual = sut.get().take(1).toList()
+
+            Assertions.assertEquals(listOf(expected), actual)
+        }
+
+    @Test
+    fun GIVEN_listOfContent_AND_empty_favourite_WHEN_observed_THEN_favourites_are_returned() =
+        runBlockingTest(testDispatcher) {
+            favouriteContentIdFlow.value = emptyList()
+            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+            contentFlow.value = Resource.Success(listOf(content))
+            val items = listOf(
+                FavouriteContent(content, false)
+            )
+            val expected = Resource.Success(items)
+
+            val actual = sut.get().take(1).toList()
+
+            Assertions.assertEquals(listOf(expected), actual)
+        }
 
     @Test
     fun GIVEN_listOfContent_AND_other_favourite_id_WHEN_observed_THEN_favourites_are_returned() =

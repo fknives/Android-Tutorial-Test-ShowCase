@@ -12,10 +12,7 @@ import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.ImageUrl
 import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.content.ContentRemoteSource
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
@@ -26,6 +23,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
+@Disabled("CodeKata")
 class CodeKataContentRepositoryTest {
 
     @BeforeEach

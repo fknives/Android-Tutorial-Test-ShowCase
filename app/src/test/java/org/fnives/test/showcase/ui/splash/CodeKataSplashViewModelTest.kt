@@ -5,6 +5,7 @@ import org.fnives.test.showcase.testutils.InstantExecutorExtension
 import org.fnives.test.showcase.testutils.TestMainDispatcher
 import org.fnives.test.showcase.ui.shared.Event
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -12,6 +13,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
+@Disabled("CodeKata")
 internal class CodeKataSplashViewModelTest {
 
     @BeforeEach

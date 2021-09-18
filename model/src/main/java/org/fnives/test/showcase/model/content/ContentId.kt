@@ -1,3 +1,4 @@
 package org.fnives.test.showcase.model.content
 
-inline class ContentId(val id: String)
+@JvmInline
+value class ContentId(val id: String)

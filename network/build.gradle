@@ -19,7 +19,6 @@ test {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
@@ -27,15 +26,15 @@ dependencies {
     implementation "com.squareup.moshi:moshi:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    api "org.koin:koin-core:$koin_version"
+    api "io.insert-koin:koin-core:$koin_version"
 
     api project(":model")
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.7.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
     testImplementation project(':mockserver')
-    testImplementation "org.koin:koin-test:$koin_version"
+    testImplementation "io.insert-koin:koin-test-junit5:$koin_version"
     testImplementation "org.skyscreamer:jsonassert:$testing_json_assert_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
 }

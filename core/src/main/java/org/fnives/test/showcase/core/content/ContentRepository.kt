@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.content
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,6 +25,8 @@ internal class ContentRepository(private val contentRemoteSource: ContentRemoteS
         }
         emit(response)
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     val contents: Flow<Resource<List<Content>>> = mutableContentFlow.flatMapLatest {
         if (it.item != null) flowOf(Resource.Success(it.item)) else requestFlow
     }

@@ -17,6 +17,7 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.mockito.kotlin.*
 
+@Disabled("CodeKata")
 class CodeKataSessionExpirationTest : KoinTest {
 
     private val sut by inject<ContentRemoteSource>()

@@ -22,6 +22,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+@Disabled("CodeKata")
 class CodeKataLoginRemoteSourceTest {
 
     @BeforeEach
