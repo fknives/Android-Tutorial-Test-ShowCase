@@ -6,17 +6,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.databinding.ActivityMainBinding
 import org.fnives.test.showcase.model.content.ContentId
-import org.fnives.test.showcase.ui.auth.AuthActivity
+import org.fnives.test.showcase.ui.IntentCoordinator
 import org.fnives.test.showcase.ui.shared.VerticalSpaceItemDecoration
 import org.fnives.test.showcase.ui.shared.getThemePrimaryColor
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.fnives.test.showcase.ui.viewModels
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
 
-    private val viewModel by viewModel<MainViewModel>()
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.navigateToAuth.observe(this) {
             it.consume() ?: return@observe
-            startActivity(AuthActivity.getStartIntent(this))
+            startActivity(IntentCoordinator.authActivitygetStartIntent(this))
             finishAffinity()
         }
         viewModel.loading.observe(this) {

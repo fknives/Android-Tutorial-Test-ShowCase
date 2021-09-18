@@ -7,7 +7,7 @@ import org.fnives.test.showcase.model.session.Session
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class SharedPreferencesManagerImpl(private val sharedPreferences: SharedPreferences) : UserDataLocalStorage {
+class SharedPreferencesManagerImpl constructor(private val sharedPreferences: SharedPreferences) : UserDataLocalStorage {
 
     override var session: Session? by SessionDelegate(SESSION_KEY)
 

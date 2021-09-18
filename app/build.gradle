@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    // hilt specific
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -23,6 +25,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions 'di'
+    productFlavors {
+        hilt {
+            dimension 'di'
+            applicationId "org.fnives.test.showcase.hilt"
+        }
+        koin {
+            dimension 'di'
+            applicationId "org.fnives.test.showcase.koin"
         }
     }
 
@@ -49,10 +62,17 @@ android {
     }
 }
 
+hilt {
+    enableAggregatingTask = true
+    enableExperimentalClasspathAggregation = true
+}
+
 afterEvaluate {
     // making sure the :mockserver is assembled after :clean when running tests
-    testDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
-    testReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testKoinDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testKoinReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testHiltDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testHiltReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
 }
 
 dependencies {
@@ -66,7 +86,14 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefreshlayout_version"
 
     // Koin
-    implementation "io.insert-koin:koin-android:$koin_version"
+    koinImplementation "io.insert-koin:koin-android:$koin_version"
+
+    // Hilt
+//    hiltImplementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+//    implementation "com.google.dagger:hilt-core:$hilt_version"
+    kaptHilt "com.google.dagger:hilt-compiler:$hilt_version"
+    hiltImplementation "androidx.activity:activity-ktx:$activity_ktx_version"
 
     implementation "androidx.room:room-runtime:$androidx_room_version"
     kapt "androidx.room:room-compiler:$androidx_room_version"
@@ -98,6 +125,8 @@ dependencies {
     testImplementation "com.jakewharton.espresso:okhttp3-idling-resource:$testing_okhttp3_idling_resource_version"
     testImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     androidTestImplementation "io.insert-koin:koin-test-junit4:$koin_version"
@@ -111,4 +140,6 @@ dependencies {
     androidTestImplementation "com.jakewharton.espresso:okhttp3-idling-resource:$testing_okhttp3_idling_resource_version"
     androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
 }

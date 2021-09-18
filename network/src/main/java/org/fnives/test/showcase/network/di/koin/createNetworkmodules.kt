@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.network.di
+package org.fnives.test.showcase.network.di.koin
 
 import okhttp3.OkHttpClient
 import org.fnives.test.showcase.model.network.BaseUrl
@@ -9,6 +9,7 @@ import org.fnives.test.showcase.network.auth.LoginService
 import org.fnives.test.showcase.network.content.ContentRemoteSource
 import org.fnives.test.showcase.network.content.ContentRemoteSourceImpl
 import org.fnives.test.showcase.network.content.ContentService
+import org.fnives.test.showcase.network.di.setupLogging
 import org.fnives.test.showcase.network.session.AuthenticationHeaderInterceptor
 import org.fnives.test.showcase.network.session.AuthenticationHeaderUtils
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener

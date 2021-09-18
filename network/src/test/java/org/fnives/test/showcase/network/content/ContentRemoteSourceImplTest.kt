@@ -2,7 +2,7 @@ package org.fnives.test.showcase.network.content
 
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.network.di.createNetworkModules
+import org.fnives.test.showcase.network.di.koin.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage

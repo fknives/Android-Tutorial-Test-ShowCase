@@ -6,8 +6,9 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import org.fnives.test.showcase.network.auth.LoginRemoteSourceImpl
+import javax.inject.Inject
 
-internal class SessionAuthenticator(
+internal class SessionAuthenticator @Inject constructor(
     private val networkSessionLocalStorage: NetworkSessionLocalStorage,
     private val loginRemoteSource: LoginRemoteSourceImpl,
     private val authenticationHeaderUtils: AuthenticationHeaderUtils,

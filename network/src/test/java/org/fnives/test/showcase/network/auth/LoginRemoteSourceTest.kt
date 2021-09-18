@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
-import org.fnives.test.showcase.network.di.createNetworkModules
+import org.fnives.test.showcase.network.di.koin.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.ContentData.createExpectedLoginRequestJson
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario

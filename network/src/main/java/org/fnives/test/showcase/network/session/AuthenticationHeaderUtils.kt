@@ -1,8 +1,9 @@
 package org.fnives.test.showcase.network.session
 
 import okhttp3.Request
+import javax.inject.Inject
 
-internal class AuthenticationHeaderUtils(private val networkSessionLocalStorage: NetworkSessionLocalStorage) {
+internal class AuthenticationHeaderUtils @Inject constructor(private val networkSessionLocalStorage: NetworkSessionLocalStorage) {
 
     fun hasToken(okhttpRequest: Request): Boolean =
         okhttpRequest.header(KEY) == networkSessionLocalStorage.session?.accessToken

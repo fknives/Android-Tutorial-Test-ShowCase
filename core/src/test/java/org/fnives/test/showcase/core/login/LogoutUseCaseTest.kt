@@ -2,7 +2,7 @@ package org.fnives.test.showcase.core.login
 
 import kotlinx.coroutines.test.runBlockingTest
 import org.fnives.test.showcase.core.content.ContentRepository
-import org.fnives.test.showcase.core.di.createCoreModule
+import org.fnives.test.showcase.core.di.koin.createCoreModule
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.fnives.test.showcase.model.network.BaseUrl
 import org.junit.jupiter.api.AfterEach

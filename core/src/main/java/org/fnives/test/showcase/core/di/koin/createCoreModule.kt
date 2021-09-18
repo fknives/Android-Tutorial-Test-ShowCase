@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.core.di
+package org.fnives.test.showcase.core.di.koin
 
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.ContentRepository
@@ -14,7 +14,7 @@ import org.fnives.test.showcase.core.storage.NetworkSessionLocalStorageAdapter
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.network.di.createNetworkModules
+import org.fnives.test.showcase.network.di.koin.createNetworkModules
 import org.koin.core.module.Module
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
@@ -42,7 +42,7 @@ fun repositoryModule() = module {
 
 fun useCaseModule() = module {
     factory { LoginUseCase(get(), get()) }
-    factory { LogoutUseCase(get()) }
+    factory { LogoutUseCase(get(), null) }
     factory { GetAllContentUseCase(get(), get()) }
     factory { AddContentToFavouriteUseCase(get()) }
     factory { RemoveContentFromFavouritesUseCase(get()) }

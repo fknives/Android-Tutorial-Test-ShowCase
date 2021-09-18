@@ -1,6 +1,6 @@
 package org.fnives.test.showcase.di
 
-import org.fnives.test.showcase.core.di.createCoreModule
+import org.fnives.test.showcase.core.di.koin.createCoreModule
 import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.session.SessionExpirationListenerImpl
 import org.fnives.test.showcase.storage.LocalDatabase

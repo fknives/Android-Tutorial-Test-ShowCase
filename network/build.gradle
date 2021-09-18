@@ -18,6 +18,8 @@ dependencies {
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     api "io.insert-koin:koin-core:$koin_version"
+    implementation "com.google.dagger:hilt-core:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     api project(":model")
 

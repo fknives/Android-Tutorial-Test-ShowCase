@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'kotlin'
+    id 'kotlin-kapt'
 }
 
 java {
@@ -14,11 +15,21 @@ compileKotlin {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     api project(":model")
     implementation project(":network")
+
+    // hilt
+    implementation "com.google.dagger:hilt-core:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    implementation "org.fnives.library.reloadable.module:annotation:$reloadable_module_version"
+    kapt "org.fnives.library.reloadable.module:annotation-processor:$reloadable_module_version"
 
     testImplementation "io.insert-koin:koin-test-junit5:$koin_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
