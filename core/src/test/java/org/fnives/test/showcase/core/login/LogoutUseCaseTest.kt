@@ -27,7 +27,7 @@ internal class LogoutUseCaseTest : KoinTest {
     @BeforeEach
     fun setUp() {
         mockUserDataLocalStorage = mock()
-        sut = LogoutUseCase(mockUserDataLocalStorage)
+        sut = LogoutUseCase(mockUserDataLocalStorage, null)
         startKoin {
             modules(
                 createCoreModule(

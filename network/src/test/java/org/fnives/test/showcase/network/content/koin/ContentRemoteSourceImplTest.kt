@@ -1,7 +1,8 @@
-package org.fnives.test.showcase.network.content
+package org.fnives.test.showcase.network.content.koin
 
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.model.network.BaseUrl
+import org.fnives.test.showcase.network.content.ContentRemoteSourceImpl
 import org.fnives.test.showcase.network.di.koin.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario

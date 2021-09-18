@@ -1,29 +1,26 @@
-package org.fnives.test.showcase.network.auth
+package org.fnives.test.showcase.network.auth.hilt
 
 import kotlinx.coroutines.runBlocking
-import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.network.di.koin.createNetworkModules
+import org.fnives.test.showcase.network.DaggerTestNetworkComponent
+import org.fnives.test.showcase.network.auth.LoginRemoteSourceImpl
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
-import org.koin.test.KoinTest
-import org.koin.test.inject
 import org.mockito.kotlin.mock
+import javax.inject.Inject
 
 @Suppress("TestFunctionName")
-class LoginRemoteSourceRefreshActionImplTest : KoinTest {
+class LoginRemoteSourceRefreshActionImplTest {
 
-    private val sut by inject<LoginRemoteSourceImpl>()
+    @Inject
+    internal lateinit var sut: LoginRemoteSourceImpl
     private lateinit var mockNetworkSessionLocalStorage: NetworkSessionLocalStorage
 
     @RegisterExtension
@@ -35,21 +32,13 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
     @BeforeEach
     fun setUp() {
         mockNetworkSessionLocalStorage = mock()
-        startKoin {
-            modules(
-                createNetworkModules(
-                    baseUrl = BaseUrl(mockServerScenarioSetupExtensions.url),
-                    enableLogging = true,
-                    networkSessionExpirationListenerProvider = { mock() },
-                    networkSessionLocalStorageProvider = { mockNetworkSessionLocalStorage }
-                ).toList()
-            )
-        }
-    }
-
-    @AfterEach
-    fun tearDown() {
-        stopKoin()
+        DaggerTestNetworkComponent.builder()
+            .setBaseUrl(mockServerScenarioSetupExtensions.url)
+            .setEnableLogging(true)
+            .setNetworkSessionLocalStorage(mockNetworkSessionLocalStorage)
+            .setNetworkSessionExpirationListener(mock())
+            .build()
+            .inject(this)
     }
 
     @Test
@@ -63,18 +52,22 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
     }
 
     @Test
-    fun GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_the_request_is_setup_properly() = runBlocking {
-        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
+    fun GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_the_request_is_setup_properly() =
+        runBlocking {
+            mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
 
-        sut.refresh(ContentData.refreshSuccessResponse.refreshToken)
-        val request = mockServerScenarioSetup.takeRequest()
+            sut.refresh(ContentData.refreshSuccessResponse.refreshToken)
+            val request = mockServerScenarioSetup.takeRequest()
 
-        Assertions.assertEquals("PUT", request.method)
-        Assertions.assertEquals("Android", request.getHeader("Platform"))
-        Assertions.assertEquals(null, request.getHeader("Authorization"))
-        Assertions.assertEquals("/login/${ContentData.refreshSuccessResponse.refreshToken}", request.path)
-        Assertions.assertEquals("", request.body.readUtf8())
-    }
+            Assertions.assertEquals("PUT", request.method)
+            Assertions.assertEquals("Android", request.getHeader("Platform"))
+            Assertions.assertEquals(null, request.getHeader("Authorization"))
+            Assertions.assertEquals(
+                "/login/${ContentData.refreshSuccessResponse.refreshToken}",
+                request.path
+            )
+            Assertions.assertEquals("", request.body.readUtf8())
+        }
 
     @Test
     fun GIVEN_internal_error_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
