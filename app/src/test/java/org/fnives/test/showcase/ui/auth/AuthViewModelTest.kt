@@ -10,6 +10,7 @@ import org.fnives.test.showcase.testutils.InstantExecutorExtension
 import org.fnives.test.showcase.testutils.TestMainDispatcher
 import org.fnives.test.showcase.ui.shared.Event
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -35,13 +36,14 @@ internal class AuthViewModelTest {
     @BeforeEach
     fun setUp() {
         mockLoginUseCase = mock()
-        testDispatcher.pauseDispatcher()
         sut = AuthViewModel(mockLoginUseCase)
     }
 
+    @DisplayName("GIVEN_initialized_viewModel_WHEN_observed_THEN_loading_false_other_fields_are_empty")
     @Test
-    fun GIVEN_initialized_viewModel_WHEN_observed_THEN_loading_false_other_fields_are_empty() {
+    fun initialSetup() {
         testDispatcher.resumeDispatcher()
+
         sut.username.test().assertNoValue()
         sut.password.test().assertNoValue()
         sut.loading.test().assertValue(false)
@@ -49,8 +51,9 @@ internal class AuthViewModelTest {
         sut.navigateToHome.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN_password_text_WHEN_onPasswordChanged_is_called_THEN_password_livedata_is_updated")
     @Test
-    fun GIVEN_password_text_WHEN_onPasswordChanged_is_called_THEN_password_livedata_is_updated() {
+    fun whenPasswordChangedLiveDataIsUpdated() {
         testDispatcher.resumeDispatcher()
         val passwordTestObserver = sut.password.test()
 
@@ -64,8 +67,9 @@ internal class AuthViewModelTest {
         sut.navigateToHome.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN_username_text_WHEN_onUsernameChanged_is_called_THEN_username_livedata_is_updated")
     @Test
-    fun GIVEN_username_text_WHEN_onUsernameChanged_is_called_THEN_username_livedata_is_updated() {
+    fun whenUsernameChangedLiveDataIsUpdated() {
         testDispatcher.resumeDispatcher()
         val usernameTestObserver = sut.username.test()
 
@@ -79,8 +83,9 @@ internal class AuthViewModelTest {
         sut.navigateToHome.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN_no_password_or_username_WHEN_login_is_Called_THEN_empty_credentials_are_used_in_usecase")
     @Test
-    fun GIVEN_no_password_or_username_WHEN_login_is_Called_THEN_empty_credentials_are_used_in_usecase() {
+    fun noPasswordUsesEmptyStringInLoginUseCase() {
         val loadingTestObserver = sut.loading.test()
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
@@ -95,7 +100,7 @@ internal class AuthViewModelTest {
     }
 
     @Test
-    fun WHEN_login_is_Called_twise_THEN_use_case_is_only_called_once() {
+    fun WHEN_login_is_Called_twice_THEN_use_case_is_only_called_once() {
         runBlocking { whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable())) }
 
         sut.onLogin()
@@ -107,7 +112,7 @@ internal class AuthViewModelTest {
     }
 
     @Test
-    fun GIVEN_password_and_username_WHEN_login_is_Called_THEN_empty_credentials_are_used_in_usecase() {
+    fun GIVEN_password_and_username_WHEN_login_is_Called_THEN_not_empty_credentials_are_used_in_usecase() {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
         }

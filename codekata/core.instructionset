@@ -1,4 +1,4 @@
-# Starting of testing
+# 1. Starting of testing
 
 In this testing instruction set you will learn how to write simple tests using mockito.
 
@@ -457,18 +457,20 @@ In this case we should recreate our sut in the test and feed it our own remote s
 
 #### Still using mockito
 
-To mock such behaviour with mockito is not as straight forward as creating our own.
-That's because mockito is not aware of the nature of suspend functions, like our code is in the custom mock.
+To mock such behaviour with mockito with our current tool set is not as straight forward as creating our own.
+That's because how we used mockito so far it is not aware of the nature of suspend functions, like our code is in the custom mock.
 
 However mockito give us the arguments passed into the function.
 And since we know the Continuation object is passed as a last argument in suspend functions we can take advantage of that.
-This then can be abstracted away and used wherevere without needing to create Custom Mocks for every such case.
+This then can be abstracted away and used wherever without needing to create Custom Mocks for every such case.
 
 To get arguments when creating a response for the mock you need to use thenAnswer { } and this lambda will receive InvocationOnMock containing the arguments.
 
-Similarly our suspendable answer is named as such `doSuspendableAnswer`
+Luckily this has already be done in "org.mockito.kotlin" and it's called `doSuspendableAnswer`
 
-The point here is not exactly how the doSuspendableAnswer is created, just that we can get arguments while mocking with mockito, and also extend it in a way that helps us in common patterns.
+The point here is that we can get arguments while mocking with mockito, and we are able to extend it in a way that helps us in common patterns.
+
+This `doSuspendableAnswer` wasn't available for a while, but we could still create it, if needed.
 
 #### Back to the actual test
 

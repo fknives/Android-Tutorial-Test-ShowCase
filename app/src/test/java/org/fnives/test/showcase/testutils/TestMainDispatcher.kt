@@ -14,6 +14,7 @@ class TestMainDispatcher : BeforeEachCallback, AfterEachCallback {
     override fun beforeEach(context: ExtensionContext?) {
         val testDispatcher = TestCoroutineDispatcher()
         privateTestDispatcher = testDispatcher
+        testDispatcher.pauseDispatcher()
         DatabaseInitialization.dispatcher = testDispatcher
         Dispatchers.setMain(testDispatcher)
     }
