@@ -51,6 +51,13 @@ android {
             java.srcDirs += "src/sharedTest/java"
             java.srcDirs += "src/robolectricTest/java"
         }
+        testHilt {
+            java.srcDirs += "src/robolectricTestHilt/java"
+            resources.srcDirs += "src/robolectricTestHilt/resources"
+        }
+        testKoin {
+            java.srcDirs += "src/robolectricTestKoin/java"
+        }
     }
 
     // needed for androidTest
@@ -89,9 +96,7 @@ dependencies {
     koinImplementation "io.insert-koin:koin-android:$koin_version"
 
     // Hilt
-//    hiltImplementation "com.google.dagger:hilt-android:$hilt_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
-//    implementation "com.google.dagger:hilt-core:$hilt_version"
     kaptHilt "com.google.dagger:hilt-compiler:$hilt_version"
     hiltImplementation "androidx.activity:activity-ktx:$activity_ktx_version"
 
