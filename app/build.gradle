@@ -10,6 +10,7 @@ android {
     defaultConfig {
         applicationId "org.fnives.test.showcase"
         minSdkVersion 21
+        //noinspection OldTargetApi // todo
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"

@@ -6,6 +6,7 @@ import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 
+@Suppress("RethrowCaughtException")
 internal suspend fun <T> wrapIntoAnswer(callback: suspend () -> T): Answer<T> =
     try {
         Answer.Success(callback())
