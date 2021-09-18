@@ -6,7 +6,9 @@ import org.fnives.test.showcase.model.content.ImageUrl
 import org.fnives.test.showcase.network.shared.ExceptionWrapper
 import javax.inject.Inject
 
-internal class ContentRemoteSourceImpl @Inject constructor(private val contentService: ContentService) : ContentRemoteSource {
+internal class ContentRemoteSourceImpl @Inject constructor(
+    private val contentService: ContentService
+) : ContentRemoteSource {
 
     override suspend fun get(): List<Content> =
         ExceptionWrapper.wrap {

@@ -2,17 +2,11 @@ package org.fnives.test.showcase.core.login.hilt
 
 import kotlinx.coroutines.test.runBlockingTest
 import org.fnives.test.showcase.core.content.ContentRepository
-import org.fnives.test.showcase.core.di.koin.createCoreModule
 import org.fnives.test.showcase.core.login.LogoutUseCase
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
-import org.fnives.test.showcase.model.network.BaseUrl
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
-import org.koin.test.KoinTest
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify

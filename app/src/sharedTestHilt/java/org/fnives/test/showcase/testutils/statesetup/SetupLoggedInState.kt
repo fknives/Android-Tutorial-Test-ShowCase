@@ -10,8 +10,8 @@ import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import javax.inject.Inject
 
 class SetupLoggedInState @Inject constructor(
-    private val logoutUseCase : LogoutUseCase,
-    private val loginUseCase : LoginUseCase,
+    private val logoutUseCase: LogoutUseCase,
+    private val loginUseCase: LoginUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase
 ) {
 

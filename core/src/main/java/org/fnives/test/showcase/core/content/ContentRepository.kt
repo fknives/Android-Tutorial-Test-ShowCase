@@ -15,7 +15,9 @@ import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.content.ContentRemoteSource
 
-internal class ContentRepository @LoggedInModuleInject constructor(private val contentRemoteSource: ContentRemoteSource) {
+internal class ContentRepository @LoggedInModuleInject constructor(
+    private val contentRemoteSource: ContentRemoteSource
+) {
 
     private val mutableContentFlow = MutableStateFlow(Optional<List<Content>>(null))
     private val requestFlow: Flow<Resource<List<Content>>> = flow {

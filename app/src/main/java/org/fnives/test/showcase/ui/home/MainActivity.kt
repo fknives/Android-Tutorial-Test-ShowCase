@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import dagger.hilt.android.AndroidEntryPoint
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.databinding.ActivityMainBinding
 import org.fnives.test.showcase.model.content.ContentId

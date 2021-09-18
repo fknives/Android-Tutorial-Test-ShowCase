@@ -11,14 +11,11 @@ import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.koin.core.context.stopKoin
-import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer

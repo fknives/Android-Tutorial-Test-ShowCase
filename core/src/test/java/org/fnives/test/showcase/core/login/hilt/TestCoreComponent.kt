@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @Component(modules = [CoreModule::class, HiltNetworkModule::class, ReloadLoggedInModuleInjectModuleImpl::class, BindsBaseOkHttpClient::class])
 internal interface TestCoreComponent {
 
-
     @Component.Builder
     interface Builder {
 

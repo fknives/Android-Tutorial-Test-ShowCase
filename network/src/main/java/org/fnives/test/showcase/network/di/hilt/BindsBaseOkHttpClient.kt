@@ -13,5 +13,5 @@ abstract class BindsBaseOkHttpClient {
 
     @Binds
     @SessionLessQualifier
-    abstract fun bindsSessionLess(okHttpClient: OkHttpClient) : OkHttpClient
+    abstract fun bindsSessionLess(okHttpClient: OkHttpClient): OkHttpClient
 }

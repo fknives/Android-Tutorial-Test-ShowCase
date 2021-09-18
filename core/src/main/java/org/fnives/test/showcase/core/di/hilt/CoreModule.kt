@@ -10,7 +10,6 @@ import org.fnives.test.showcase.core.storage.NetworkSessionLocalStorageAdapter
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
-import org.fnives.test.showcase.core.di.hilt.ReloadLoggedInModuleInjectModule
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -30,5 +29,5 @@ object CoreModule {
     fun provideLogoutUseCase(
         storage: UserDataLocalStorage,
         reloadLoggedInModuleInjectModule: ReloadLoggedInModuleInjectModule
-    ) : LogoutUseCase = LogoutUseCase(storage, reloadLoggedInModuleInjectModule)
+    ): LogoutUseCase = LogoutUseCase(storage, reloadLoggedInModuleInjectModule)
 }

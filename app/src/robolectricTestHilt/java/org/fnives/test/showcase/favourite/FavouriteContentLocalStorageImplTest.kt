@@ -30,7 +30,7 @@ internal class FavouriteContentLocalStorageImplTest {
     val hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var sut : FavouriteContentLocalStorage
+    lateinit var sut: FavouriteContentLocalStorage
     private lateinit var testDispatcher: TestCoroutineDispatcher
 
     @Before

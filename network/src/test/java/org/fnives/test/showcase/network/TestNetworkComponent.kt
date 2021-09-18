@@ -16,7 +16,6 @@ import javax.inject.Singleton
 @Component(modules = [HiltNetworkModule::class, BindsBaseOkHttpClient::class])
 interface TestNetworkComponent {
 
-
     @Component.Builder
     interface Builder {
 

@@ -48,6 +48,5 @@ object AppModule {
     @Provides
     internal fun bindSessionExpirationListener(
         sessionExpirationListenerImpl: SessionExpirationListenerImpl
-    ) : SessionExpirationListener = sessionExpirationListenerImpl
-
+    ): SessionExpirationListener = sessionExpirationListenerImpl
 }

@@ -1,33 +1,26 @@
 package org.fnives.test.showcase.network.content.hilt
 
 import kotlinx.coroutines.runBlocking
-import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.network.TestNetworkComponent
+import org.fnives.test.showcase.network.DaggerTestNetworkComponent
 import org.fnives.test.showcase.network.content.ContentRemoteSourceImpl
-import org.fnives.test.showcase.network.di.koin.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
-import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import org.fnives.test.showcase.network.DaggerTestNetworkComponent
 import javax.inject.Inject
 
 @Suppress("TestFunctionName")
-class ContentRemoteSourceImplTest  {
+class ContentRemoteSourceImplTest {
 
     @Inject
     internal lateinit var sut: ContentRemoteSourceImpl
