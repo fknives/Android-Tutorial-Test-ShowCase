@@ -12,6 +12,7 @@ import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 import java.io.IOException
@@ -26,8 +27,9 @@ class LoginErrorConverterTest {
         sut = LoginErrorConverter()
     }
 
+    @DisplayName("GIVEN throwing lambda WHEN parsing login error THEN network exception is thrown")
     @Test
-    fun GIVEN_throwing_lambda_WHEN_parsing_login_error_THEN_network_exception_is_thrown() {
+    fun generallyThrowingLambdaResultsInNetworkException() {
         Assertions.assertThrows(NetworkException::class.java) {
             runBlocking {
                 sut.invoke { throw IOException() }
@@ -35,8 +37,9 @@ class LoginErrorConverterTest {
         }
     }
 
+    @DisplayName("GIVEN jsonException throwing lambda WHEN parsing login error THEN network exception is thrown")
     @Test
-    fun GIVEN_jsonException_throwing_lambda_WHEN_parsing_login_error_THEN_network_exception_is_thrown() {
+    fun jsonDataThrowingLambdaResultsInParsingException() {
         Assertions.assertThrows(ParsingException::class.java) {
             runBlocking {
                 sut.invoke { throw JsonDataException("") }
@@ -44,8 +47,9 @@ class LoginErrorConverterTest {
         }
     }
 
+    @DisplayName("GIVEN 400 error response WHEN parsing login error THEN invalid credentials is returned")
     @Test
-    fun GIVEN_400_error_response_WHEN_parsing_login_error_THEN_invalid_credentials_is_returned() = runBlockingTest {
+    fun code400ResponseResultsInInvalidCredentials() = runBlockingTest {
         val expected = LoginStatusResponses.InvalidCredentials
 
         val actual = sut.invoke {
@@ -56,8 +60,9 @@ class LoginErrorConverterTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN successful response WHEN parsing login error THEN successful response is returned")
     @Test
-    fun GIVEN_successful_response_WHEN_parsing_login_error_THEN_successful_response_is_returned() = runBlockingTest {
+    fun successResponseResultsInSessionResponse() = runBlockingTest {
         val loginResponse = LoginResponse("a", "r")
         val expectedSession = Session(accessToken = loginResponse.accessToken, refreshToken = loginResponse.refreshToken)
         val expected = LoginStatusResponses.Success(expectedSession)
