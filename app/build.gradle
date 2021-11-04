@@ -7,13 +7,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "org.fnives.test.showcase"
         minSdkVersion 21
-        //noinspection OldTargetApi // todo
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BASE_URL", '"https://606844a10add49001733fe6b.mockapi.io/"'
@@ -31,11 +30,13 @@ android {
     productFlavors {
         hilt {
             dimension 'di'
+            resValue "string", "app_name", "Hilt Test-ShowCase"
             applicationId "org.fnives.test.showcase.hilt"
             testInstrumentationRunner "org.fnives.test.showcase.testutils.configuration.HiltTestRunner"
         }
         koin {
             dimension 'di'
+            resValue "string", "app_name", "Koin Test-ShowCase"
             applicationId "org.fnives.test.showcase.koin"
         }
     }

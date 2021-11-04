@@ -1,11 +1,13 @@
 package org.fnives.test.showcase.ui.splash
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.ui.IntentCoordinator
 import org.fnives.test.showcase.ui.viewModels
 
+@SuppressLint("CustomSplashScreen")
 open class SplashActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<SplashViewModel>()
