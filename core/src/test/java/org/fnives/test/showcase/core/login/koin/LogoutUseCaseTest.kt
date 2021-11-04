@@ -9,6 +9,7 @@ import org.fnives.test.showcase.model.network.BaseUrl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -47,13 +48,15 @@ internal class LogoutUseCaseTest : KoinTest {
         stopKoin()
     }
 
+    @DisplayName("WHEN no call THEN storage is not interacted")
     @Test
-    fun WHEN_no_call_THEN_storage_is_not_interacted() {
+    fun initializedDoesntAffectStorage() {
         verifyZeroInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("WHEN logout invoked THEN storage is cleared")
     @Test
-    fun WHEN_logout_invoked_THEN_storage_is_cleared() = runBlockingTest {
+    fun logoutResultsInStorageCleaning() = runBlockingTest {
         val repositoryBefore = getKoin().get<ContentRepository>()
 
         sut.invoke()

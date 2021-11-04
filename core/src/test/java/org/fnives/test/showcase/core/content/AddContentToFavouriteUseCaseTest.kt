@@ -6,6 +6,7 @@ import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorag
 import org.fnives.test.showcase.model.content.ContentId
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
@@ -27,22 +28,27 @@ internal class AddContentToFavouriteUseCaseTest {
         sut = AddContentToFavouriteUseCase(mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("WHEN_nothing_happens_THEN_the_storage_is_not_touched")
     @Test
-    fun WHEN_nothing_happens_THEN_the_storage_is_not_touched() {
+    fun initializationDoesntAffectStorage() {
         verifyZeroInteractions(mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("GIVEN_contentId_WHEN_called_THEN_storage_is_called")
     @Test
-    fun GIVEN_contentId_WHEN_called_THEN_storage_is_called() = runBlockingTest {
+    fun contentIdIsDelegatedToStorage() = runBlockingTest {
         sut.invoke(ContentId("a"))
 
         verify(mockFavouriteContentLocalStorage, times(1)).markAsFavourite(ContentId("a"))
         verifyNoMoreInteractions(mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("GIVEN_throwing_local_storage_WHEN_thrown_THEN_its_propagated")
     @Test
-    fun GIVEN_throwing_local_storage_WHEN_thrown_THEN_its_thrown() = runBlockingTest {
-        whenever(mockFavouriteContentLocalStorage.markAsFavourite(ContentId("a"))).doThrow(RuntimeException())
+    fun storageThrowingIsPropagated() = runBlockingTest {
+        whenever(mockFavouriteContentLocalStorage.markAsFavourite(ContentId("a"))).doThrow(
+            RuntimeException()
+        )
 
         assertThrows(RuntimeException::class.java) {
             runBlocking { sut.invoke(ContentId("a")) }
