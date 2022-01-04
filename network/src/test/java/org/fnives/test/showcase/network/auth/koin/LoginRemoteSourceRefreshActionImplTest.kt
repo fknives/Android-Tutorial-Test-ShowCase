@@ -54,7 +54,7 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         stopKoin()
     }
 
-    @DisplayName("GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_session_is_returned")
+    @DisplayName("GIVEN successful response WHEN refresh request is fired THEN session is returned")
     @Test
     fun successResponseResultsInSession() = runBlocking {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success)
@@ -65,7 +65,7 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         Assertions.assertEquals(expected, actual)
     }
 
-    @DisplayName("GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_the_request_is_setup_properly")
+    @DisplayName("GIVEN successful response WHEN refresh request is fired THEN the request is setup properly")
     @Test
     fun refreshRequestIsSetupProperly() = runBlocking {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
@@ -80,7 +80,7 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         Assertions.assertEquals("", request.body.readUtf8())
     }
 
-    @DisplayName("GIVEN_internal_error_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown")
+    @DisplayName("GIVEN internal error response WHEN refresh request is fired THEN network exception is thrown")
     @Test
     fun generalErrorResponseResultsInNetworkException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error)
@@ -90,7 +90,7 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         }
     }
 
-    @DisplayName("GIVEN_invalid_json_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown")
+    @DisplayName("GIVEN invalid json response WHEN refresh request is fired THEN network exception is thrown")
     @Test
     fun jsonErrorResponseResultsInParsingException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.UnexpectedJsonAsSuccessResponse)
@@ -100,7 +100,7 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         }
     }
 
-    @DisplayName("GIVEN_malformed_json_response_WHEN_refresh_request_is_fired_THEN_parsing_exception_is_thrown")
+    @DisplayName("GIVEN malformed json response WHEN refresh request is fired THEN parsing exception is thrown")
     @Test
     fun malformedJsonErrorResponseResultsInParsingException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.MalformedJson)

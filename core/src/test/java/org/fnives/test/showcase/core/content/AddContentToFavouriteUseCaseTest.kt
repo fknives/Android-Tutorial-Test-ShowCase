@@ -28,13 +28,13 @@ internal class AddContentToFavouriteUseCaseTest {
         sut = AddContentToFavouriteUseCase(mockFavouriteContentLocalStorage)
     }
 
-    @DisplayName("WHEN_nothing_happens_THEN_the_storage_is_not_touched")
+    @DisplayName("WHEN nothing happens THEN the storage is not touched")
     @Test
     fun initializationDoesntAffectStorage() {
         verifyZeroInteractions(mockFavouriteContentLocalStorage)
     }
 
-    @DisplayName("GIVEN_contentId_WHEN_called_THEN_storage_is_called")
+    @DisplayName("GIVEN contentId WHEN called THEN storage is called")
     @Test
     fun contentIdIsDelegatedToStorage() = runBlockingTest {
         sut.invoke(ContentId("a"))
@@ -43,7 +43,7 @@ internal class AddContentToFavouriteUseCaseTest {
         verifyNoMoreInteractions(mockFavouriteContentLocalStorage)
     }
 
-    @DisplayName("GIVEN_throwing_local_storage_WHEN_thrown_THEN_its_propagated")
+    @DisplayName("GIVEN throwing local storage WHEN thrown THEN its propagated")
     @Test
     fun storageThrowingIsPropagated() = runBlockingTest {
         whenever(mockFavouriteContentLocalStorage.markAsFavourite(ContentId("a"))).doThrow(

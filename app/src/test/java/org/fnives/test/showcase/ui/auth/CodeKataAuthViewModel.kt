@@ -24,22 +24,22 @@ class CodeKataAuthViewModel {
         sut = AuthViewModel(mockLoginUseCase)
     }
 
-    @DisplayName("GIVEN_initialized_viewModel_WHEN_observed_THEN_loading_false_other_fields_are_empty")
+    @DisplayName("GIVEN initialized viewModel WHEN observed THEN loading false other fields are empty")
     @Test
     fun initialSetup() {
     }
 
-    @DisplayName("GIVEN_password_text_WHEN_onPasswordChanged_is_called_THEN_password_livedata_is_updated")
+    @DisplayName("GIVEN password text WHEN onPasswordChanged is called THEN password livedata is updated")
     @Test
     fun whenPasswordChangedLiveDataIsUpdated() {
     }
 
-    @DisplayName("GIVEN_username_text_WHEN_onUsernameChanged_is_called_THEN_username_livedata_is_updated")
+    @DisplayName("GIVEN username text WHEN onUsernameChanged is called THEN username livedata is updated")
     @Test
     fun whenUsernameChangedLiveDataIsUpdated() {
     }
 
-    @DisplayName("GIVEN_no_password_or_username_WHEN_login_is_Called_THEN_empty_credentials_are_used_in_usecase")
+    @DisplayName("GIVEN no password or username WHEN login is Called THEN empty credentials are used in usecase")
     @Test
     fun noPasswordUsesEmptyStringInLoginUseCase() {
     }

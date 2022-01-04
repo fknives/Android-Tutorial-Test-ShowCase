@@ -100,7 +100,7 @@ class LoginRemoteSourceTest : KoinTest {
         Assertions.assertEquals(expected, actual)
     }
 
-    @DisplayName("GIVEN_internal_error_response_WHEN_request_is_fired_THEN_network_exception_is_thrown")
+    @DisplayName("GIVEN internal error response WHEN request is fired THEN network exception is thrown")
     @Test
     fun genericErrorMeansNetworkError() {
         mockServerScenarioSetup.setScenario(AuthScenario.GenericError("a", "b"))

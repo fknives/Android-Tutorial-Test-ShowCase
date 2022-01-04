@@ -49,7 +49,7 @@ class CodeKataSessionExpirationTest : KoinTest {
         mockWebServer.shutdown()
     }
 
-    @DisplayName("GIVEN_401_THEN_refresh_token_ok_response_WHEN_content_requested_THE_tokens_are_refreshed_and_request_retried_with_new_tokens")
+    @DisplayName("GIVEN 401 THEN refresh token ok response WHEN content requested THE tokens are refreshed and request retried with new tokens")
     @Test
     fun successRefreshResultsInRequestRetry() = runBlocking {
     }
