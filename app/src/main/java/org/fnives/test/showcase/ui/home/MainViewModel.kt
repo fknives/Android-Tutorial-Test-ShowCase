@@ -3,6 +3,7 @@ package org.fnives.test.showcase.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +53,7 @@ class MainViewModel @Inject constructor(
     }
     val content: LiveData<List<FavouriteContent>> = _content
     private val _errorMessage = MutableLiveData<Boolean>(false)
-    val errorMessage: LiveData<Boolean> = _errorMessage
+    val errorMessage: LiveData<Boolean> = _errorMessage.distinctUntilChanged()
     private val _navigateToAuth = MutableLiveData<Event<Unit>>()
     val navigateToAuth: LiveData<Event<Unit>> = _navigateToAuth
 

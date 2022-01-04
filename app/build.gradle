@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdk 31
 
     defaultConfig {
         applicationId "org.fnives.test.showcase"
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdk 21
+        targetSdk 31
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BASE_URL", '"https://606844a10add49001733fe6b.mockapi.io/"'
@@ -138,7 +138,6 @@ dependencies {
     testImplementation "androidx.test.espresso:espresso-core:$testing_espresso_version"
     testImplementation "androidx.test.espresso:espresso-intents:$testing_espresso_version"
     testImplementation project(':mockserver')
-    testImplementation "com.jakewharton.espresso:okhttp3-idling-resource:$testing_okhttp3_idling_resource_version"
     testImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
     testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
@@ -153,10 +152,19 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$testing_espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$testing_espresso_version"
     androidTestImplementation project(':mockserver')
-    androidTestImplementation "com.jakewharton.espresso:okhttp3-idling-resource:$testing_okhttp3_idling_resource_version"
     androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
     androidTestImplementation project(":network") // hilt needs it
+
+    implementation "io.reactivex.rxjava3:rxjava:3.1.2"
 }
+
+
+///Users/gergelyhegedus/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.5.31/ff5d99aecd328872494e8921b72bf6e3af97af3e/kotlin-stdlib-jdk8-1.5.31.jar (version 1.5)
+///Users/gergelyhegedus/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.5.31/77e0f2568912e45d26c31fd417a332458508acdf/kotlin-stdlib-jdk7-1.5.31.jar (version 1.5)
+///Users/gergelyhegedus/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.6.0/a40b8b22529b733892edf4b73468ce598bb17f04/kotlin-stdlib-1.6.0.jar (version 1.6)
+///Users/gergelyhegedus/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.6.0/7857e365f925cfa060f941c1357cda1f8790502c/kotlin-stdlib-common-1.6.0.jar (version 1.6)
+//w: Some runtime JAR files in the classpath have an incompatible version. Consider removing them from the classpath
+//dagger.lint.DaggerIssueRegistry in /Users/gergelyhegedus/.gradle/caches/transforms-3/7d8d9a87fed97b25e3e147795231ede4/transformed/jetified-dagger-lint-aar-2.40/jars/lint.jar does not specify a vendor; see IssueRegistry#vendor

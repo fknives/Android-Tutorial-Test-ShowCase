@@ -11,6 +11,7 @@ import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.test.inject
@@ -44,8 +45,9 @@ class ContentRemoteSourceImplTest {
             .inject(this)
     }
 
+    @DisplayName("GIVEN successful response WHEN getting content THEN its parsed and returned correctly")
     @Test
-    fun GIVEN_successful_response_WHEN_getting_content_THEN_its_parsed_and_returned_correctly() = runBlocking {
+    fun successResponseParsing() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.Success(false))
         val expected = ContentData.contentSuccess
@@ -55,8 +57,9 @@ class ContentRemoteSourceImplTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN successful response WHEN getting content THEN the request is setup properly")
     @Test
-    fun GIVEN_successful_response_WHEN_getting_content_THEN_the_request_is_setup_properly() = runBlocking {
+    fun successResponseRequestIsCorrect() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.Success(false), false)
 
@@ -70,8 +73,9 @@ class ContentRemoteSourceImplTest {
         Assertions.assertEquals("", request.body.readUtf8())
     }
 
+    @DisplayName("GIVEN response with missing Field WHEN getting content THEN invalid is ignored others are returned")
     @Test
-    fun GIVEN_response_with_missing_Field_WHEN_getting_content_THEN_invalid_is_ignored_others_are_returned() = runBlocking {
+    fun dataMissingFieldIsIgnored() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.SuccessWithMissingFields(false))
 
@@ -82,8 +86,9 @@ class ContentRemoteSourceImplTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN error response WHEN getting content THEN network request is thrown")
     @Test
-    fun GIVEN_error_response_WHEN_getting_content_THEN_network_request_is_thrown() {
+    fun errorResponseResultsInNetworkException() {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.Error(false))
 
@@ -92,8 +97,9 @@ class ContentRemoteSourceImplTest {
         }
     }
 
+    @DisplayName("GIVEN unexpected json response WHEN getting content THEN parsing request is thrown")
     @Test
-    fun GIVEN_unexpected_json_response_WHEN_getting_content_THEN_parsing_request_is_thrown() {
+    fun unexpectedJSONResultsInParsingException() {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.UnexpectedJsonAsSuccessResponse(false))
 
@@ -102,8 +108,9 @@ class ContentRemoteSourceImplTest {
         }
     }
 
+    @DisplayName("GIVEN malformed json response WHEN getting content THEN parsing request is thrown")
     @Test
-    fun GIVEN_malformed_json_response_WHEN_getting_content_THEN_parsing_request_is_thrown() {
+    fun malformedJSONResultsInParsingException() {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
         mockServerScenarioSetup.setScenario(ContentScenario.MalformedJsonAsSuccessResponse(false))
 

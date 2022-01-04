@@ -6,6 +6,7 @@ import org.fnives.test.showcase.core.login.LogoutUseCase
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -36,13 +37,15 @@ internal class LogoutUseCaseTest {
         testCoreComponent.inject(this)
     }
 
+    @DisplayName("WHEN no call THEN storage is not interacted")
     @Test
-    fun WHEN_no_call_THEN_storage_is_not_interacted() {
+    fun initializedDoesntAffectStorage() {
         verifyZeroInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("WHEN logout invoked THEN storage is cleared")
     @Test
-    fun WHEN_logout_invoked_THEN_storage_is_cleared() = runBlockingTest {
+    fun logoutResultsInStorageCleaning() = runBlockingTest {
         val repositoryBefore = contentRepository
 
         sut.invoke()

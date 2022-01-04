@@ -6,6 +6,14 @@ import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
+/**
+ * Junit5 Version of InstantTaskExecutorRule from Junit4
+ *
+ * reference: https://developer.android.com/reference/androidx/arch/core/executor/testing/InstantTaskExecutorRule
+ *
+ * A JUnit5 Extensions that swaps the background executor used by the Architecture Components with a different one which executes each task synchronously.
+ * You can use this extension for your host side tests that use Architecture Components.
+ */
 class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
 
     override fun beforeEach(context: ExtensionContext?) {

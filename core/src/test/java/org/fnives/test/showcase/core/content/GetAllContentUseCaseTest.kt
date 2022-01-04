@@ -15,6 +15,7 @@ import org.fnives.test.showcase.model.content.ImageUrl
 import org.fnives.test.showcase.model.shared.Resource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -45,8 +46,9 @@ internal class GetAllContentUseCaseTest {
         sut = GetAllContentUseCase(mockContentRepository, mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("GIVEN loading AND empty favourite WHEN observed THEN loading is shown")
     @Test
-    fun GIVEN_loading_AND_empty_favourite_WHEN_observed_THEN_loading_is_shown() =
+    fun loadingResourceWithNoFavouritesResultsInLoadingResource() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = emptyList()
             contentFlow.value = Resource.Loading()
@@ -57,8 +59,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN loading AND listOfFavourite WHEN observed THEN loading is shown")
     @Test
-    fun GIVEN_loading_AND_listOfFavourite_WHEN_observed_THEN_loading_is_shown() =
+    fun loadingResourceWithFavouritesResultsInLoadingResource() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = listOf(ContentId("a"))
             contentFlow.value = Resource.Loading()
@@ -69,8 +72,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN error AND empty favourite WHEN observed THEN error is shown")
     @Test
-    fun GIVEN_error_AND_empty_favourite_WHEN_observed_THEN_error_is_shown() =
+    fun errorResourceWithNoFavouritesResultsInErrorResource() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = emptyList()
             val exception = Throwable()
@@ -82,8 +86,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN error AND listOfFavourite WHEN observed THEN error is shown")
     @Test
-    fun GIVEN_error_AND_listOfFavourite_WHEN_observed_THEN_error_is_shown() =
+    fun errorResourceWithFavouritesResultsInErrorResource() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = listOf(ContentId("b"))
             val exception = Throwable()
@@ -95,8 +100,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN listOfContent AND empty favourite WHEN observed THEN favourites are returned")
     @Test
-    fun GIVEN_listOfContent_AND_empty_favourite_WHEN_observed_THEN_favourites_are_returned() =
+    fun successResourceWithNoFavouritesResultsInNoFavouritedItems() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = emptyList()
             val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
@@ -111,8 +117,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN listOfContent AND other favourite id WHEN observed THEN favourites are returned")
     @Test
-    fun GIVEN_listOfContent_AND_other_favourite_id_WHEN_observed_THEN_favourites_are_returned() =
+    fun successResourceWithDifferentFavouritesResultsInNoFavouritedItems() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = listOf(ContentId("x"))
             val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
@@ -127,8 +134,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN listOfContent AND same favourite id WHEN observed THEN favourites are returned")
     @Test
-    fun GIVEN_listOfContent_AND_same_favourite_id_WHEN_observed_THEN_favourites_are_returned() =
+    fun successResourceWithSameFavouritesResultsInFavouritedItems() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = listOf(ContentId("a"))
             val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
@@ -143,8 +151,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(listOf(expected), actual)
         }
 
+    @DisplayName("GIVEN loading then data then added favourite WHEN observed THEN loading then correct favourites are returned")
     @Test
-    fun GIVEN_loading_then_data_then_added_favourite_WHEN_observed_THEN_loading_then_correct_favourites_are_returned() =
+    fun whileLoadingAndAddingItemsReactsProperly() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = emptyList()
             val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
@@ -169,8 +178,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(expected, actual.await())
         }
 
+    @DisplayName("GIVEN loading then data then removed favourite WHEN observed THEN loading then correct favourites are returned")
     @Test
-    fun GIVEN_loading_then_data_then_removed_favourite_WHEN_observed_THEN_loading_then_correct_favourites_are_returned() =
+    fun whileLoadingAndRemovingItemsReactsProperly() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = listOf(ContentId("a"))
             val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
@@ -195,8 +205,9 @@ internal class GetAllContentUseCaseTest {
             Assertions.assertEquals(expected, actual.await())
         }
 
+    @DisplayName("GIVEN loading then data then loading WHEN observed THEN loading then correct favourites then loading are returned")
     @Test
-    fun GIVEN_loading_then_data_then_loading_WHEN_observed_THEN_loading_then_correct_favourites_then_loadingare_returned() =
+    fun loadingThenDataThenLoadingReactsProperly() =
         runBlockingTest(testDispatcher) {
             favouriteContentIdFlow.value = listOf(ContentId("a"))
             val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))

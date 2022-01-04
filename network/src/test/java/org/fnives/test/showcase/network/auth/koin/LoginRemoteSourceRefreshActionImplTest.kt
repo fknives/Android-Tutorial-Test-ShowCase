@@ -13,6 +13,7 @@ import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.core.context.startKoin
@@ -53,8 +54,9 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         stopKoin()
     }
 
+    @DisplayName("GIVEN successful response WHEN refresh request is fired THEN session is returned")
     @Test
-    fun GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_session() = runBlocking {
+    fun successResponseResultsInSession() = runBlocking {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success)
         val expected = ContentData.refreshSuccessResponse
 
@@ -63,8 +65,9 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN successful response WHEN refresh request is fired THEN the request is setup properly")
     @Test
-    fun GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_the_request_is_setup_properly() = runBlocking {
+    fun refreshRequestIsSetupProperly() = runBlocking {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
 
         sut.refresh(ContentData.refreshSuccessResponse.refreshToken)
@@ -77,8 +80,9 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         Assertions.assertEquals("", request.body.readUtf8())
     }
 
+    @DisplayName("GIVEN internal error response WHEN refresh request is fired THEN network exception is thrown")
     @Test
-    fun GIVEN_internal_error_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
+    fun generalErrorResponseResultsInNetworkException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error)
 
         Assertions.assertThrows(NetworkException::class.java) {
@@ -86,8 +90,9 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         }
     }
 
+    @DisplayName("GIVEN invalid json response WHEN refresh request is fired THEN network exception is thrown")
     @Test
-    fun GIVEN_invalid_json_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
+    fun jsonErrorResponseResultsInParsingException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.UnexpectedJsonAsSuccessResponse)
 
         Assertions.assertThrows(ParsingException::class.java) {
@@ -95,8 +100,9 @@ class LoginRemoteSourceRefreshActionImplTest : KoinTest {
         }
     }
 
+    @DisplayName("GIVEN malformed json response WHEN refresh request is fired THEN parsing exception is thrown")
     @Test
-    fun GIVEN_malformed_json_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
+    fun malformedJsonErrorResponseResultsInParsingException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.MalformedJson)
 
         Assertions.assertThrows(ParsingException::class.java) {

@@ -16,6 +16,7 @@ import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.testutils.InstantExecutorExtension
 import org.fnives.test.showcase.testutils.TestMainDispatcher
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.doReturn
@@ -55,16 +56,18 @@ internal class MainViewModelTest {
         )
     }
 
+    @DisplayName("WHEN initialization THEN error false other states empty")
     @Test
-    fun WHEN_initialization_THEN_error_false_other_states_empty() {
+    fun initialStateIsCorrect() {
         sut.errorMessage.test().assertValue(false)
         sut.content.test().assertNoValue()
         sut.loading.test().assertNoValue()
         sut.navigateToAuth.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN initialized viewModel WHEN loading is returned THEN loading is shown")
     @Test
-    fun GIVEN_initialized_viewModel_WHEN_loading_is_returned_THEN_loading_is_shown() {
+    fun loadingDataShowsInLoadingUIState() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading()))
         testDispatcher.resumeDispatcher()
         testDispatcher.advanceUntilIdle()
@@ -75,8 +78,9 @@ internal class MainViewModelTest {
         sut.navigateToAuth.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN loading then data WHEN observing content THEN proper states are shown")
     @Test
-    fun GIVEN_loading_then_data_WHEN_observing_content_THEN_proper_states_are_shown() {
+    fun loadingThenLoadedDataResultsInProperUIStates() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading(), Resource.Success(emptyList())))
         val errorMessageTestObserver = sut.errorMessage.test()
         val contentTestObserver = sut.content.test()
@@ -84,14 +88,15 @@ internal class MainViewModelTest {
         testDispatcher.resumeDispatcher()
         testDispatcher.advanceUntilIdle()
 
-        errorMessageTestObserver.assertValueHistory(false, false, false)
+        errorMessageTestObserver.assertValueHistory(false)
         contentTestObserver.assertValueHistory(listOf())
         loadingTestObserver.assertValueHistory(true, false)
         sut.navigateToAuth.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN loading then error WHEN observing content THEN proper states are shown")
     @Test
-    fun GIVEN_loading_then_error_WHEN_observing_content_THEN_proper_states_are_shown() {
+    fun loadingThenErrorResultsInProperUIStates() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading(), Resource.Error(Throwable())))
         val errorMessageTestObserver = sut.errorMessage.test()
         val contentTestObserver = sut.content.test()
@@ -99,14 +104,15 @@ internal class MainViewModelTest {
         testDispatcher.resumeDispatcher()
         testDispatcher.advanceUntilIdle()
 
-        errorMessageTestObserver.assertValueHistory(false, false, true)
+        errorMessageTestObserver.assertValueHistory(false, true)
         contentTestObserver.assertValueHistory(emptyList())
         loadingTestObserver.assertValueHistory(true, false)
         sut.navigateToAuth.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN loading then error then loading then data WHEN observing content THEN proper states are shown")
     @Test
-    fun GIVEN_loading_then_error_then_loading_then_data_WHEN_observing_content_THEN_proper_states_are_shown() {
+    fun loadingThenErrorThenLoadingThenDataResultsInProperUIStates() {
         val content = listOf(
             FavouriteContent(Content(ContentId(""), "", "", ImageUrl("")), false)
         )
@@ -124,14 +130,15 @@ internal class MainViewModelTest {
         testDispatcher.resumeDispatcher()
         testDispatcher.advanceUntilIdle()
 
-        errorMessageTestObserver.assertValueHistory(false, false, true, false, false)
+        errorMessageTestObserver.assertValueHistory(false, true, false)
         contentTestObserver.assertValueHistory(emptyList(), content)
         loadingTestObserver.assertValueHistory(true, false, true, false)
         sut.navigateToAuth.test().assertNoValue()
     }
 
+    @DisplayName("GIVEN loading viewModel WHEN refreshing THEN usecase is not called")
     @Test
-    fun GIVEN_loading_viewModel_WHEN_refreshing_THEN_usecase_is_not_called() {
+    fun fetchIsIgnoredIfViewModelIsStillLoading() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading()))
         sut.content.test()
         testDispatcher.resumeDispatcher()
@@ -143,8 +150,9 @@ internal class MainViewModelTest {
         verifyZeroInteractions(mockFetchContentUseCase)
     }
 
+    @DisplayName("GIVEN non loading viewModel WHEN refreshing THEN usecase is called")
     @Test
-    fun GIVEN_non_loading_viewModel_WHEN_refreshing_THEN_usecase_is_called() {
+    fun fetchIsCalledIfViewModelIsLoaded() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf())
         sut.content.test()
         testDispatcher.resumeDispatcher()
@@ -157,8 +165,9 @@ internal class MainViewModelTest {
         verifyNoMoreInteractions(mockFetchContentUseCase)
     }
 
+    @DisplayName("GIVEN loading viewModel WHEN loging out THEN usecase is called")
     @Test
-    fun GIVEN_loading_viewModel_WHEN_loging_out_THEN_usecase_is_called() {
+    fun loadingViewModelStillCalsLogout() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading()))
         sut.content.test()
         testDispatcher.resumeDispatcher()
@@ -171,8 +180,9 @@ internal class MainViewModelTest {
         verifyNoMoreInteractions(mockLogoutUseCase)
     }
 
+    @DisplayName("GIVEN non loading viewModel WHEN loging out THEN usecase is called")
     @Test
-    fun GIVEN_non_loading_viewModel_WHEN_loging_out_THEN_usecase_is_called() {
+    fun nonLoadingViewModelStillCalsLogout() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf())
         sut.content.test()
         testDispatcher.resumeDispatcher()
@@ -185,8 +195,9 @@ internal class MainViewModelTest {
         verifyNoMoreInteractions(mockLogoutUseCase)
     }
 
+    @DisplayName("GIVEN success content list viewModel WHEN toggling a nonexistent contentId THEN nothing happens")
     @Test
-    fun GIVEN_success_content_list_viewModel_WHEN_toggling_a_nonexistent_contentId_THEN_nothing_happens() {
+    fun interactionWithNonExistentContentIdIsIgnored() {
         val contents = listOf(
             FavouriteContent(Content(ContentId("a"), "", "", ImageUrl("")), false),
             FavouriteContent(Content(ContentId("b"), "", "", ImageUrl("")), true)
@@ -203,8 +214,9 @@ internal class MainViewModelTest {
         verifyZeroInteractions(mockAddContentToFavouriteUseCase)
     }
 
+    @DisplayName("GIVEN success content list viewModel WHEN toggling a favourite contentId THEN remove favourite usecase is called")
     @Test
-    fun GIVEN_success_content_list_viewModel_WHEN_toggling_a_favourite_contentId_THEN_remove_favourite_usecase_is_called() {
+    fun togglingFavouriteContentCallsRemoveFromFavourite() {
         val contents = listOf(
             FavouriteContent(Content(ContentId("a"), "", "", ImageUrl("")), false),
             FavouriteContent(Content(ContentId("b"), "", "", ImageUrl("")), true)
@@ -222,8 +234,9 @@ internal class MainViewModelTest {
         verifyZeroInteractions(mockAddContentToFavouriteUseCase)
     }
 
+    @DisplayName("GIVEN success content list viewModel WHEN toggling a not favourite contentId THEN add favourite usecase is called")
     @Test
-    fun GIVEN_success_content_list_viewModel_WHEN_toggling_a_not_favourite_contentId_THEN_add_favourite_usecase_is_called() {
+    fun togglingNonFavouriteContentCallsAddToFavourite() {
         val contents = listOf(
             FavouriteContent(Content(ContentId("a"), "", "", ImageUrl("")), false),
             FavouriteContent(Content(ContentId("b"), "", "", ImageUrl("")), true)

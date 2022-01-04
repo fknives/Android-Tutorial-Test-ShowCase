@@ -6,6 +6,7 @@ import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorag
 import org.fnives.test.showcase.model.content.ContentId
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
@@ -27,21 +28,24 @@ internal class RemoveContentFromFavouritesUseCaseTest {
         sut = RemoveContentFromFavouritesUseCase(mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("WHEN nothing happens THEN the storage is not touched")
     @Test
-    fun WHEN_nothing_happens_THEN_the_storage_is_not_touched() {
+    fun initializationDoesntAffectStorage() {
         verifyZeroInteractions(mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("GIVEN contentId WHEN called THEN storage is called")
     @Test
-    fun GIVEN_contentId_WHEN_called_THEN_storage_is_called() = runBlockingTest {
+    fun givenContentIdCallsStorage() = runBlockingTest {
         sut.invoke(ContentId("a"))
 
         verify(mockFavouriteContentLocalStorage, times(1)).deleteAsFavourite(ContentId("a"))
         verifyNoMoreInteractions(mockFavouriteContentLocalStorage)
     }
 
+    @DisplayName("GIVEN throwing local storage WHEN thrown THEN its propogated")
     @Test
-    fun GIVEN_throwing_local_storage_WHEN_thrown_THEN_its_thrown() = runBlockingTest {
+    fun storageExceptionThrowingIsPropogated() = runBlockingTest {
         whenever(mockFavouriteContentLocalStorage.deleteAsFavourite(ContentId("a"))).doThrow(RuntimeException())
 
         Assertions.assertThrows(RuntimeException::class.java) {

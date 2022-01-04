@@ -39,7 +39,7 @@ internal class AuthViewModelTest {
         sut = AuthViewModel(mockLoginUseCase)
     }
 
-    @DisplayName("GIVEN_initialized_viewModel_WHEN_observed_THEN_loading_false_other_fields_are_empty")
+    @DisplayName("GIVEN initialized viewModel WHEN observed THEN loading false other fields are empty")
     @Test
     fun initialSetup() {
         testDispatcher.resumeDispatcher()
@@ -51,7 +51,7 @@ internal class AuthViewModelTest {
         sut.navigateToHome.test().assertNoValue()
     }
 
-    @DisplayName("GIVEN_password_text_WHEN_onPasswordChanged_is_called_THEN_password_livedata_is_updated")
+    @DisplayName("GIVEN password text WHEN onPasswordChanged is called THEN password livedata is updated")
     @Test
     fun whenPasswordChangedLiveDataIsUpdated() {
         testDispatcher.resumeDispatcher()
@@ -67,7 +67,7 @@ internal class AuthViewModelTest {
         sut.navigateToHome.test().assertNoValue()
     }
 
-    @DisplayName("GIVEN_username_text_WHEN_onUsernameChanged_is_called_THEN_username_livedata_is_updated")
+    @DisplayName("GIVEN username text WHEN onUsernameChanged is called THEN username livedata is updated")
     @Test
     fun whenUsernameChangedLiveDataIsUpdated() {
         testDispatcher.resumeDispatcher()
@@ -83,7 +83,7 @@ internal class AuthViewModelTest {
         sut.navigateToHome.test().assertNoValue()
     }
 
-    @DisplayName("GIVEN_no_password_or_username_WHEN_login_is_Called_THEN_empty_credentials_are_used_in_usecase")
+    @DisplayName("GIVEN no password or username WHEN login is Called THEN empty credentials are used in usecase")
     @Test
     fun noPasswordUsesEmptyStringInLoginUseCase() {
         val loadingTestObserver = sut.loading.test()
@@ -99,8 +99,9 @@ internal class AuthViewModelTest {
         verifyNoMoreInteractions(mockLoginUseCase)
     }
 
+    @DisplayName("WHEN login is called twice before finishing THEN use case is only called once")
     @Test
-    fun WHEN_login_is_Called_twice_THEN_use_case_is_only_called_once() {
+    fun onlyOneLoginIsSentOutWhenClickingRepeatedly() {
         runBlocking { whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable())) }
 
         sut.onLogin()
@@ -111,8 +112,9 @@ internal class AuthViewModelTest {
         verifyNoMoreInteractions(mockLoginUseCase)
     }
 
+    @DisplayName("GIVEN password and username WHEN login is called THEN proper credentials are used in usecase")
     @Test
-    fun GIVEN_password_and_username_WHEN_login_is_Called_THEN_not_empty_credentials_are_used_in_usecase() {
+    fun argumentsArePassedProperlyToLoginUseCase() {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
         }
@@ -128,8 +130,9 @@ internal class AuthViewModelTest {
         verifyNoMoreInteractions(mockLoginUseCase)
     }
 
+    @DisplayName("GIVEN AnswerError WHEN login called THEN error is shown")
     @Test
-    fun GIVEN_answer_error_WHEN_login_called_THEN_error_is_shown() {
+    fun loginErrorResultsInErrorState() {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
         }
@@ -146,8 +149,8 @@ internal class AuthViewModelTest {
     }
 
     @MethodSource("loginErrorStatusesArguments")
-    @ParameterizedTest(name = "GIVEN_answer_success_loginStatus_{0}_WHEN_login_called_THEN_error_{1}_is_shown")
-    fun GIVEN_answer_success_invalid_loginStatus_WHEN_login_called_THEN_error_is_shown(
+    @ParameterizedTest(name = "GIVEN answer success loginStatus {0} WHEN login called THEN error {1} is shown")
+    fun invalidStatusResultsInErrorState(
         loginStatus: LoginStatus,
         errorType: AuthViewModel.ErrorType
     ) {
@@ -166,8 +169,9 @@ internal class AuthViewModelTest {
         navigateToHomeObserver.assertNoValue()
     }
 
+    @DisplayName("GIVEN answer success and login status success WHEN login called THEN navigation event is sent")
     @Test
-    fun GIVEN_answer_success_login_status_success_WHEN_login_called_THEN_navigation_event_is_sent() {
+    fun successLoginResultsInNavigation() {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Success(LoginStatus.SUCCESS))
         }

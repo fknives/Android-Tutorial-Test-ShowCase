@@ -3,6 +3,7 @@ package org.fnives.test.showcase.core.storage
 import org.fnives.test.showcase.model.session.Session
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -23,16 +24,18 @@ internal class NetworkSessionLocalStorageAdapterTest {
         sut = NetworkSessionLocalStorageAdapter(mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN null as session WHEN saved THEN its delegated")
     @Test
-    fun GIVEN_null_as_session_WHEN_saved_THEN_its_delegated() {
+    fun settingNullSessionIsDelegated() {
         sut.session = null
 
         verify(mockUserDataLocalStorage, times(1)).session = null
         verifyNoMoreInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("GIVEN session WHEN saved THEN its delegated")
     @Test
-    fun GIVEN_session_WHEN_saved_THEN_its_delegated() {
+    fun settingDataAsSessionIsDelegated() {
         val expected = Session("a", "b")
 
         sut.session = Session("a", "b")
@@ -41,8 +44,9 @@ internal class NetworkSessionLocalStorageAdapterTest {
         verifyNoMoreInteractions(mockUserDataLocalStorage)
     }
 
+    @DisplayName("WHEN session requested THEN its returned from delegated")
     @Test
-    fun WHEN_session_requested_THEN_its_returned_from_delegated() {
+    fun gettingSessionReturnsFromDelegate() {
         val expected = Session("a", "b")
         whenever(mockUserDataLocalStorage.session).doReturn(expected)
 

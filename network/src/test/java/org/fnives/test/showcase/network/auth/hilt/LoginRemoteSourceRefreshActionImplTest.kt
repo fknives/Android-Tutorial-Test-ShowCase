@@ -11,6 +11,7 @@ import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
@@ -41,8 +42,9 @@ class LoginRemoteSourceRefreshActionImplTest {
             .inject(this)
     }
 
+    @DisplayName("GIVEN successful response WHEN refresh request is fired THEN session is returned")
     @Test
-    fun GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_session() = runBlocking {
+    fun successResponseResultsInSession() = runBlocking {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success)
         val expected = ContentData.refreshSuccessResponse
 
@@ -51,26 +53,27 @@ class LoginRemoteSourceRefreshActionImplTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN successful response WHEN refresh request is fired THEN the request is setup properly")
     @Test
-    fun GIVEN_successful_response_WHEN_refresh_request_is_fired_THEN_the_request_is_setup_properly() =
-        runBlocking {
-            mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
+    fun refreshRequestIsSetupProperly() = runBlocking {
+        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
 
-            sut.refresh(ContentData.refreshSuccessResponse.refreshToken)
-            val request = mockServerScenarioSetup.takeRequest()
+        sut.refresh(ContentData.refreshSuccessResponse.refreshToken)
+        val request = mockServerScenarioSetup.takeRequest()
 
-            Assertions.assertEquals("PUT", request.method)
-            Assertions.assertEquals("Android", request.getHeader("Platform"))
-            Assertions.assertEquals(null, request.getHeader("Authorization"))
-            Assertions.assertEquals(
-                "/login/${ContentData.refreshSuccessResponse.refreshToken}",
-                request.path
-            )
-            Assertions.assertEquals("", request.body.readUtf8())
-        }
+        Assertions.assertEquals("PUT", request.method)
+        Assertions.assertEquals("Android", request.getHeader("Platform"))
+        Assertions.assertEquals(null, request.getHeader("Authorization"))
+        Assertions.assertEquals(
+            "/login/${ContentData.refreshSuccessResponse.refreshToken}",
+            request.path
+        )
+        Assertions.assertEquals("", request.body.readUtf8())
+    }
 
+    @DisplayName("GIVEN internal error response WHEN refresh request is fired THEN network exception is thrown")
     @Test
-    fun GIVEN_internal_error_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
+    fun generalErrorResponseResultsInNetworkException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error)
 
         Assertions.assertThrows(NetworkException::class.java) {
@@ -78,8 +81,9 @@ class LoginRemoteSourceRefreshActionImplTest {
         }
     }
 
+    @DisplayName("GIVEN invalid json response WHEN refresh request is fired THEN network exception is thrown")
     @Test
-    fun GIVEN_invalid_json_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
+    fun jsonErrorResponseResultsInParsingException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.UnexpectedJsonAsSuccessResponse)
 
         Assertions.assertThrows(ParsingException::class.java) {
@@ -87,8 +91,9 @@ class LoginRemoteSourceRefreshActionImplTest {
         }
     }
 
+    @DisplayName("GIVEN malformed json response WHEN refresh request is fired THEN parsing exception is thrown")
     @Test
-    fun GIVEN_malformed_json_response_WHEN_refresh_request_is_fired_THEN_network_exception_is_thrown() {
+    fun malformedJsonErrorResponseResultsInParsingException() {
         mockServerScenarioSetup.setScenario(RefreshTokenScenario.MalformedJson)
 
         Assertions.assertThrows(ParsingException::class.java) {

@@ -7,13 +7,15 @@ import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @Suppress("TestFunctionName")
 internal class AnswerUtilsKtTest {
 
+    @DisplayName("GIVEN network exception thrown WHEN wrapped into answer THEN answer error is returned")
     @Test
-    fun GIVEN_network_exception_thrown_WHEN_wrapped_into_answer_THEN_answer_error_is_returned() = runBlocking {
+    fun networkExceptionThrownResultsInError() = runBlocking {
         val exception = NetworkException(Throwable())
         val expected = Answer.Error<Unit>(exception)
 
@@ -22,8 +24,9 @@ internal class AnswerUtilsKtTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN parsing exception thrown WHEN wrapped into answer THEN answer error is returned")
     @Test
-    fun GIVEN_parsing_exception_thrown_WHEN_wrapped_into_answer_THEN_answer_error_is_returned() = runBlocking {
+    fun parsingExceptionThrownResultsInError() = runBlocking {
         val exception = ParsingException(Throwable())
         val expected = Answer.Error<Unit>(exception)
 
@@ -32,8 +35,9 @@ internal class AnswerUtilsKtTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN unexpected throwable thrown WHEN wrapped into answer THEN answer error is returned")
     @Test
-    fun GIVEN_parsing_throwable_thrown_WHEN_wrapped_into_answer_THEN_answer_error_is_returned() = runBlocking {
+    fun unexpectedExceptionThrownResultsInError() = runBlocking {
         val exception = Throwable()
         val expected = Answer.Error<Unit>(UnexpectedException(exception))
 
@@ -42,8 +46,9 @@ internal class AnswerUtilsKtTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN string WHEN wrapped into answer THEN string answer is returned")
     @Test
-    fun GIVEN_string_WHEN_wrapped_into_answer_THEN_string_answer_is_returned() = runBlocking {
+    fun stringIsReturnedWrappedIntoSuccess() = runBlocking {
         val expected = Answer.Success("banan")
 
         val actual = wrapIntoAnswer { "banan" }
@@ -51,15 +56,17 @@ internal class AnswerUtilsKtTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN cancellation exception WHEN wrapped into answer THEN cancellation exception is thrown")
     @Test
-    fun GIVEN_cancellation_exception_WHEN_wrapped_into_answer_THEN_cancellation_exception_is_thrown() {
+    fun cancellationExceptionResultsInThrowingIt() {
         Assertions.assertThrows(CancellationException::class.java) {
             runBlocking { wrapIntoAnswer { throw CancellationException() } }
         }
     }
 
+    @DisplayName("GIVEN success answer WHEN converted into resource THEN Resource success is returned")
     @Test
-    fun GIVEN_success_answer_WHEN_converted_into_resource_THEN_Resource_success_is_returned() {
+    fun successAnswerConvertsToSuccessResource() {
         val expected = Resource.Success("alma")
 
         val actual = Answer.Success("alma").mapIntoResource()
@@ -67,8 +74,9 @@ internal class AnswerUtilsKtTest {
         Assertions.assertEquals(expected, actual)
     }
 
+    @DisplayName("GIVEN error answer WHEN converted into resource THEN Resource error is returned")
     @Test
-    fun GIVEN_error_answer_WHEN_converted_into_resource_THEN_Resource_error_is_returned() {
+    fun errorAnswerConvertsToErrorResource() {
         val exception = Throwable()
         val expected = Resource.Error<Unit>(exception)
 

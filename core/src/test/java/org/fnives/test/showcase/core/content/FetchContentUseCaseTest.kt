@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
@@ -25,21 +26,24 @@ internal class FetchContentUseCaseTest {
         sut = FetchContentUseCase(mockContentRepository)
     }
 
+    @DisplayName("WHEN nothing happens THEN the storage is not touched")
     @Test
-    fun WHEN_nothing_happens_THEN_the_storage_is_not_touched() {
+    fun initializationDoesntAffectRepository() {
         verifyZeroInteractions(mockContentRepository)
     }
 
+    @DisplayName("WHEN called THEN repository is called")
     @Test
-    fun WHEN_called_THEN_repository_is_called() = runBlockingTest {
+    fun whenCalledRepositoryIsFetched() = runBlockingTest {
         sut.invoke()
 
         verify(mockContentRepository, times(1)).fetch()
         verifyNoMoreInteractions(mockContentRepository)
     }
 
+    @DisplayName("GIVEN throwing local storage WHEN thrown THEN its thrown")
     @Test
-    fun GIVEN_throwing_local_storage_WHEN_thrown_THEN_its_thrown() = runBlockingTest {
+    fun whenRepositoryThrowsUseCaseAlsoThrows() = runBlockingTest {
         whenever(mockContentRepository.fetch()).doThrow(RuntimeException())
 
         assertThrows(RuntimeException::class.java) {
