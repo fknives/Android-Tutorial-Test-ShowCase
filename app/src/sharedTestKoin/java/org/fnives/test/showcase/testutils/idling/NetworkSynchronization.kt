@@ -2,7 +2,6 @@ package org.fnives.test.showcase.testutils.idling
 
 import androidx.annotation.CheckResult
 import androidx.test.espresso.IdlingResource
-import com.jakewharton.espresso.OkHttp3IdlingResource
 import okhttp3.OkHttpClient
 import org.koin.core.qualifier.StringQualifier
 import org.koin.test.KoinTest

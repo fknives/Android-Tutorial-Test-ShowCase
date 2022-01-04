@@ -26,5 +26,4 @@ project.ext {
     testing_junit4_version = "4.13.2"
     testing_robolectric_version = "4.6.1"
     testing_espresso_version = "3.4.0"
-    testing_okhttp3_idling_resource_version = "1.0.0"
 }
