@@ -82,8 +82,9 @@ class MainActivityTest {
         disposable.dispose()
     }
 
+    /** GIVEN initialized MainActivity WHEN signout is clicked THEN user is signed out */
     @Test
-    fun GIVEN_initialized_MainActivity_WHEN_signout_is_clicked_THEN_user_is_signed_out() {
+    fun signOutClickedResultsInNavigation() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Error(false))
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
@@ -96,8 +97,9 @@ class MainActivityTest {
         Assert.assertEquals(false, setupLoggedInState.isLoggedIn())
     }
 
+    /** GIVEN success response WHEN data is returned THEN it is shown on the ui */
     @Test
-    fun GIVEN_success_response_WHEN_data_is_returned_THEN_it_is_shown_on_the_ui() {
+    fun successfulDataLoadingShowsTheElementsOnTheUI() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Success(false))
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
@@ -109,8 +111,9 @@ class MainActivityTest {
         homeRobot.assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN success response WHEN item is clicked THEN ui is updated */
     @Test
-    fun GIVEN_success_response_WHEN_item_is_clicked_THEN_ui_is_updated() {
+    fun clickingOnListElementUpdatesTheElementsFavouriteState() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Success(false))
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
@@ -124,8 +127,9 @@ class MainActivityTest {
             .assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN success response WHEN item is clicked THEN ui is updated even if activity is recreated */
     @Test
-    fun GIVEN_success_response_WHEN_item_is_clicked_THEN_ui_is_updated_even_if_activity_is_recreated() {
+    fun elementFavouritedIsKeptEvenIfActivityIsRecreated() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Success(false))
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
@@ -144,8 +148,9 @@ class MainActivityTest {
             .assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN success response WHEN item is clicked then clicked again THEN ui is updated */
     @Test
-    fun GIVEN_success_response_WHEN_item_is_clicked_then_clicked_again_THEN_ui_is_updated() {
+    fun clickingAnElementMultipleTimesProperlyUpdatesIt() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Success(false))
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
@@ -161,8 +166,9 @@ class MainActivityTest {
             .assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN error response WHEN loaded THEN error is Shown */
     @Test
-    fun GIVEN_error_response_WHEN_loaded_THEN_error_is_Shown() {
+    fun networkErrorResultsInUIErrorStateShown() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Error(false))
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
@@ -173,8 +179,9 @@ class MainActivityTest {
             .assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN error response then success WHEN retried THEN success is shown */
     @Test
-    fun GIVEN_error_response_then_success_WHEN_retried_THEN_success_is_shown() {
+    fun retryingFromErrorStateAndSucceedingShowsTheData() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(
                 ContentScenario.Error(false)
@@ -193,8 +200,9 @@ class MainActivityTest {
         homeRobot.assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN success then error WHEN retried THEN error is shown */
     @Test
-    fun GIVEN_success_then_error_WHEN_retried_THEN_error_is_shown() {
+    fun errorIsShownIfTheDataIsFetchedAndErrorIsReceived() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(
                 ContentScenario.Success(false)
@@ -215,8 +223,9 @@ class MainActivityTest {
             .assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN unauthenticated then success WHEN loaded THEN success is shown */
     @Test
-    fun GIVEN_unauthenticated_then_success_WHEN_loaded_THEN_success_is_shown() {
+    fun authenticationIsHandledWithASingleLoading() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(
                 ContentScenario.Unauthorized(false)
@@ -233,8 +242,9 @@ class MainActivityTest {
         homeRobot.assertDidNotNavigateToAuth()
     }
 
+    /** GIVEN unauthenticated then error WHEN loaded THEN navigated to auth */
     @Test
-    fun GIVEN_unauthenticated_then_error_WHEN_loaded_THEN_navigated_to_auth() {
+    fun sessionExpirationResultsInNavigation() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup
             .setScenario(ContentScenario.Unauthorized(false))
             .setScenario(RefreshTokenScenario.Error)

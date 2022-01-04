@@ -66,8 +66,9 @@ class AuthActivityTest : KoinTest {
         disposable.dispose()
     }
 
+    /** GIVEN non empty password and username and successful response WHEN signIn THEN no error is shown and navigating to home */
     @Test
-    fun GIVEN_non_empty_password_and_username_and_successful_response_WHEN_signIn_THEN_no_error_is_shown_and_navigating_to_home() {
+    fun properLoginResultsInNavigationToHome() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup.setScenario(
             AuthScenario.Success(
                 password = "alma",
@@ -87,8 +88,9 @@ class AuthActivityTest : KoinTest {
         loginRobot.assertNavigatedToHome()
     }
 
+    /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
-    fun GIVEN_empty_password_and_username_WHEN_signIn_THEN_error_password_is_shown() {
+    fun emptyPasswordShowsProperErrorMessage() {
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         loginRobot
             .setUsername("banan")
@@ -102,8 +104,9 @@ class AuthActivityTest : KoinTest {
             .assertNotLoading()
     }
 
+    /** GIVEN password and empty username WHEN signIn THEN error username is shown */
     @Test
-    fun GIVEN_password_and_empty_username_WHEN_signIn_THEN_error_username_is_shown() {
+    fun emptyUserNameShowsProperErrorMessage() {
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         loginRobot
             .setPassword("banan")
@@ -117,8 +120,9 @@ class AuthActivityTest : KoinTest {
             .assertNotLoading()
     }
 
+    /** GIVEN password and username and invalid credentials response WHEN signIn THEN error invalid credentials is shown */
     @Test
-    fun GIVEN_password_and_username_and_invalid_credentials_response_WHEN_signIn_THEN_error_invalid_credentials_is_shown() {
+    fun invalidCredentialsGivenShowsProperErrorMessage() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup.setScenario(
             AuthScenario.InvalidCredentials(username = "alma", password = "banan")
         )
@@ -137,8 +141,9 @@ class AuthActivityTest : KoinTest {
             .assertNotLoading()
     }
 
+    /** GIVEN password and username and error response WHEN signIn THEN error invalid credentials is shown */
     @Test
-    fun GIVEN_password_and_username_and_error_response_WHEN_signIn_THEN_error_invalid_credentials_is_shown() {
+    fun networkErrorShowsProperErrorMessage() {
         mockServerScenarioSetupTestRule.mockServerScenarioSetup.setScenario(
             AuthScenario.GenericError(username = "alma", password = "banan")
         )

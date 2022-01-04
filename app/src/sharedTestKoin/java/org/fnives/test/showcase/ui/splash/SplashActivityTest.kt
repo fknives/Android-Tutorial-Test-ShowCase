@@ -61,8 +61,9 @@ class SplashActivityTest : KoinTest {
         disposable.dispose()
     }
 
+    /** GIVEN loggedInState WHEN opened THEN MainActivity is started */
     @Test
-    fun GIVEN_loggedInState_WHEN_opened_THEN_MainActivity_is_started() {
+    fun loggedInStateNavigatesToHome() {
         SetupLoggedInState.setupLogin(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
 
         activityScenario = ActivityScenario.launch(SplashActivity::class.java)
@@ -75,8 +76,9 @@ class SplashActivityTest : KoinTest {
         SetupLoggedInState.setupLogout()
     }
 
+    /** GIVEN loggedOffState WHEN opened THEN AuthActivity is started */
     @Test
-    fun GIVEN_loggedOffState_WHEN_opened_THEN_AuthActivity_is_started() {
+    fun loggedOutStatesNavigatesToAuthentication() {
         SetupLoggedInState.setupLogout()
 
         activityScenario = ActivityScenario.launch(SplashActivity::class.java)
