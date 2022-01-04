@@ -40,8 +40,9 @@ internal class FavouriteContentLocalStorageImplTest {
         hiltRule.inject()
     }
 
+    /** GIVEN content_id WHEN added to Favourite THEN it can be read out */
     @Test
-    fun GIVEN_content_id_WHEN_added_to_Favourite_THEN_it_can_be_read_out() = runBlocking {
+    fun addingContentIdToFavouriteCanBeLaterReadOut() = runBlocking {
         val expected = listOf(ContentId("a"))
 
         sut.markAsFavourite(ContentId("a"))
@@ -50,8 +51,9 @@ internal class FavouriteContentLocalStorageImplTest {
         Assert.assertEquals(expected, actual)
     }
 
+    /** GIVEN content_id added WHEN removed to Favourite THEN it no longer can be read out */
     @Test
-    fun GIVEN_content_id_added_WHEN_removed_to_Favourite_THEN_it_no_longer_can_be_read_out() =
+    fun contentIdAddedThenRemovedCanNoLongerBeReadOut() =
         runBlocking {
             val expected = listOf<ContentId>()
             sut.markAsFavourite(ContentId("b"))
@@ -62,8 +64,9 @@ internal class FavouriteContentLocalStorageImplTest {
             Assert.assertEquals(expected, actual)
         }
 
+    /** GIVEN empty database WHILE observing content WHEN favourite added THEN change is emitted */
     @Test
-    fun GIVEN_empty_database_WHILE_observing_content_WHEN_favourite_added_THEN_change_is_emitted() =
+    fun addingFavouriteUpdatesExistingObservers() =
         runBlocking<Unit> {
             val expected = listOf(listOf(), listOf(ContentId("a")))
 
@@ -78,8 +81,9 @@ internal class FavouriteContentLocalStorageImplTest {
             Assert.assertEquals(expected, actual.await())
         }
 
+    /** GIVEN non empty database WHILE observing content WHEN favourite removed THEN change is emitted */
     @Test
-    fun GIVEN_non_empty_database_WHILE_observing_content_WHEN_favourite_removed_THEN_change_is_emitted() =
+    fun removingFavouriteUpdatesExistingObservers() =
         runBlocking<Unit> {
             val expected = listOf(listOf(ContentId("a")), listOf())
             sut.markAsFavourite(ContentId("a"))
