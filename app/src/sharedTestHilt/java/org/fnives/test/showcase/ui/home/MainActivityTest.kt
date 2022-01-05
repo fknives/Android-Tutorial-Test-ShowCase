@@ -105,8 +105,8 @@ class MainActivityTest {
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        ContentData.contentSuccess.forEach {
-            homeRobot.assertContainsItem(FavouriteContent(it, false))
+        ContentData.contentSuccess.forEachIndexed { index, content ->
+            homeRobot.assertContainsItem(index, FavouriteContent(content, false))
         }
         homeRobot.assertDidNotNavigateToAuth()
     }
@@ -119,11 +119,11 @@ class MainActivityTest {
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(ContentData.contentSuccess.first())
+        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
-        homeRobot.assertContainsItem(expectedItem)
+        homeRobot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
     }
 
@@ -135,7 +135,7 @@ class MainActivityTest {
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(ContentData.contentSuccess.first())
+        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
@@ -144,7 +144,7 @@ class MainActivityTest {
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.assertContainsItem(expectedItem)
+        homeRobot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
     }
 
@@ -156,13 +156,13 @@ class MainActivityTest {
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(ContentData.contentSuccess.first())
+        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(ContentData.contentSuccess.first())
+        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), false)
-        homeRobot.assertContainsItem(expectedItem)
+        homeRobot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
     }
 
@@ -194,8 +194,8 @@ class MainActivityTest {
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
         loopMainThreadFor(2000L)
 
-        ContentData.contentSuccess.forEach {
-            homeRobot.assertContainsItem(FavouriteContent(it, false))
+        ContentData.contentSuccess.forEachIndexed { index, content ->
+            homeRobot.assertContainsItem(index, FavouriteContent(content, false))
         }
         homeRobot.assertDidNotNavigateToAuth()
     }
@@ -236,8 +236,8 @@ class MainActivityTest {
         activityScenario = ActivityScenario.launch(HiltMainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        ContentData.contentSuccess.forEach {
-            homeRobot.assertContainsItem(FavouriteContent(it, false))
+        ContentData.contentSuccess.forEachIndexed { index, content ->
+            homeRobot.assertContainsItem(index, FavouriteContent(content, false))
         }
         homeRobot.assertDidNotNavigateToAuth()
     }
