@@ -1,9 +1,11 @@
 package org.fnives.test.showcase.ui.home
 
 import android.app.Instrumentation
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
@@ -48,12 +50,15 @@ class HomeRobot : Robot {
         Espresso.onView(withId(R.id.logout_cta)).perform(click())
     }
 
-    fun assertContainsItem(item: FavouriteContent) = apply {
+    fun assertContainsItem(index: Int, item: FavouriteContent) = apply {
         val isFavouriteResourceId = if (item.isFavourite) {
             R.drawable.favorite_24
         } else {
             R.drawable.favorite_border_24
         }
+        Espresso.onView(withId(R.id.recycler))
+            .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(index))
+
         Espresso.onView(
             allOf(
                 withChild(allOf(withText(item.content.title), withId(R.id.title))),
@@ -64,7 +69,10 @@ class HomeRobot : Robot {
             .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     }
 
-    fun clickOnContentItem(item: Content) = apply {
+    fun clickOnContentItem(index: Int, item: Content) = apply {
+        Espresso.onView(withId(R.id.recycler))
+            .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(index))
+
         Espresso.onView(
             allOf(
                 withId(R.id.favourite_cta),

@@ -17,7 +17,9 @@ object ContentData {
     val contentSuccess: List<Content> = listOf(
         Content(ContentId("1"), "title_1", "says_1", ImageUrl("img_1")),
         Content(ContentId("2"), "title_2", "says_2", ImageUrl("img_2")),
-        Content(ContentId("3"), "title_3", "says_3", ImageUrl("img_3"))
+        Content(ContentId("3"), "title_3", "says_3", ImageUrl("img_3")),
+        Content(ContentId("4"), "title_4", "says_4", ImageUrl("img_4")),
+        Content(ContentId("5"), "title_5", "says_5", ImageUrl("img_5"))
     )
 
     /**
