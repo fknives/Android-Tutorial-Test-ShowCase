@@ -133,12 +133,12 @@ verifyZeroInteractions(mockUserDataLocalStorage) // assert we didn't modify our 
 
 But something is wrong, the invoke method cannot be executed since it's a suspending function.
 
-To test coroutines we will use `runBlockingTest`, this creates a blocking coroutine for us to test suspend functions, together it will look like:
+To test coroutines we will use `runTest`, this creates a blocking coroutine for us to test suspend functions, together it will look like:
 
 ```kotlin
 @DisplayName("GIVEN empty username WHEN trying to login THEN invalid username is returned")
 @Test
-fun emptyUserNameReturnsLoginStatusError() = runBlockingTest {
+fun emptyUserNameReturnsLoginStatusError() = runTest {
     val expected = Answer.Success(LoginStatus.INVALID_USERNAME)
 
     val actual = sut.invoke(LoginCredentials("", "a"))
@@ -160,7 +160,7 @@ This is really similar, so try to write it on your own, but for progress the cod
 ```kotlin
 @DisplayName("GIVEN empty password WHEN trying to login THEN invalid password is returned")
 @Test
-fun emptyPasswordNameReturnsLoginStatusError() = runBlockingTest {
+fun emptyPasswordNameReturnsLoginStatusError() = runTest {
     val expected = Answer.Success(LoginStatus.INVALID_PASSWORD)
 
     val actual = sut.invoke(LoginCredentials("a", ""))
@@ -212,7 +212,7 @@ Together:
 ```kotlin
 @DisplayName("GIVEN invalid credentials response WHEN trying to login THEN invalid credentials is returned")
 @Test
-fun invalidLoginResponseReturnInvalidCredentials() = runBlockingTest {
+fun invalidLoginResponseReturnInvalidCredentials() = runTest {
     val expected = Answer.Success(LoginStatus.INVALID_CREDENTIALS)
     whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
         .doReturn(LoginStatusResponses.InvalidCredentials)
@@ -240,7 +240,7 @@ The full code:
 ```kotlin
 @DisplayName("GIVEN success response WHEN trying to login THEN session is saved and success is returned")
 @Test
-fun validResponseResultsInSavingSessionAndSuccessReturned() = runBlockingTest {
+fun validResponseResultsInSavingSessionAndSuccessReturned() = runTest {
     val expected = Answer.Success(LoginStatus.SUCCESS)
     whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
         .doReturn(LoginStatusResponses.Success(Session("c", "d")))
@@ -297,7 +297,7 @@ together:
 ```kotlin
 @DisplayName("GIVEN error resposne WHEN trying to login THEN session is not touched and error is returned")
 @Test
-fun invalidResponseResultsInErrorReturned() = runBlockingTest {
+fun invalidResponseResultsInErrorReturned() = runTest {
     val exception = RuntimeException()
     val expected = Answer.Error<LoginStatus>(UnexpectedException(exception))
     whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
@@ -500,34 +500,9 @@ suspendedRequest.complete(Unit)
 
 ### 6. `whenFetchingRequestIsCalledAgain`
 
-We still didn't even touch the fetch method so let's test the that behaviour next:
+We still didn't even touch the fetch method so let's test the behaviour next:
 
-However the main issue here is, when to call fetch. If we call after `take()` we will never reach it, but if we call it before then it doesn't test the right behaviour.
-We need to do it async, but async means it's not linear, thus our request could become shaky. For this we will use TestCoroutineDispatcher.
-
-Let's add this to our setup:
-```kotlin
-private lateinit var sut: ContentRepository
-private lateinit var mockContentRemoteSource: ContentRemoteSource
-private lateinit var testDispatcher: TestCoroutineDispatcher
-
-@BeforeEach
-fun setUp() {
-    testDispatcher = TestCoroutineDispatcher()
-    testDispatcher.pauseDispatcher() // we pause the dispatcher so we have full control over it
-    mockContentRemoteSource = mock()
-    sut = ContentRepository(mockContentRemoteSource)
-}
-```
-
-Next we should use the same dispatcher in our test so:
-```kotlin
-fun whenFetchingRequestIsCalledAgain() = runBlockingTest(testDispatcher) {
-
-}
-```
-
-Okay with this we should write our setup:
+We want to get the first result triggered by the subscription to the flow, and the again another loading and result after a call to `fetch`, so the setup would be:
 ```kotlin
 val exception = RuntimeException()
 val expected = listOf(
@@ -542,17 +517,40 @@ whenever(mockContentRemoteSource.get()).doAnswer {
 }
 ```
 
-Our action will need to use async and advance to coroutines so we can are testing the correct behaviour:
+However the main issue here is, when to call fetch. If we call after `take()` we will never reach it, but if we call it before then it doesn't test the right behaviour.
+We need to do it async:
+
 ```kotlin
-val actual = async(testDispatcher) { sut.contents.take(4).toList() }
-testDispatcher.advanceUntilIdle() // we ensure the async is progressing as much as it can (thus receiving the first to values)
+val actual = async { sut.contents.take(4).toList() }
 sut.fetch()
-testDispatcher.advanceUntilIdle() // ensure the async progresses further now, since we give it additional action to take.
 ```
 
-Our verification as usual is really simple
+And the verification as usual is really simple
 ```kotlin
 Assertions.assertEquals(expected, actual.await())
+```
+
+However this test will hang. This is because `runTest` uses by default `StandardTestDispatcher` which doesn't enter child coroutines immediately and the async block will only be executed after the call to fetch.
+This is a good thing because it gives us more control over the order of execution and as a result our test are not shaky.
+To make sure that `fetch` is called only when `take` suspends, we can call `advanceUntilIdle` which will give the opportunity of the async block to execute.
+So our test becomes:
+```kotlin
+val actual = async { sut.contents.take(4).toList() }
+advanceUntilIdle()
+sut.fetch()
+```
+
+Alternatively we can make `runTest` use `UnconfinedTestDispatcher` which will enter child coroutines eagerly, so our async will be executed until it suspends and only after the main execution path will continue with the call to `fetch` and we don't need `advanceUntilIdle` anymore.
+```kotlin
+@Test
+fun whenFetchingRequestIsCalledAgain() = runTest(UnconfinedTestDispatcher()) {
+    ... // setup here
+
+    val actual = async { sut.contents.take(4).toList() }
+    sut.fetch()
+
+    Assertions.assertEquals(expected, actual.await())
+}
 ```
 
 Now we can test even complicated interactions between methods and classes with TestCoroutineDispatcher.
@@ -564,6 +562,7 @@ So we also need to test that this assumption is correct.
 
 I think the best place to start from is our most complicated test `whenFetchingRequestIsCalledAgain` since this is the one most likely add additional unexpected values.
 
+# TODO this doesn't apply to `runTest`
 Luckily `runBlockingTest` is helpful here: if a coroutine didn't finish properly it will throw an IllegalStateException.
 
 So all we need to do is to request more than elements it should send out and expect an IllegalStateException from runBlocking.
@@ -591,6 +590,40 @@ Assertions.assertThrows(IllegalStateException::class.java) {
 
         Assertions.assertEquals(expected, actual.await())
     }
+}
+```
+
+### 8. `noAdditionalItemsEmittedWithTurbine`
+
+Turbine is library that provides some testing utilities for Flow.
+The entrypoint is the `test` extension which collects the flow and gives you the opportunity to
+assert the collected events.
+
+To receive a new item from the flow we call `awaitItem()`, and to verify that no more items are
+emitted we expect the result of `cancelAndConsumeRemainingEvents()` to be an empty list.
+
+Keeping the same setup as before we can use turbine to test `contents` as follows:
+```kotlin
+sut.contents.test {
+    Assertions.assertEquals(expected[0], awaitItem())
+    Assertions.assertEquals(expected[1], awaitItem())
+    sut.fetch()
+    Assertions.assertEquals(expected[2], awaitItem())
+    Assertions.assertEquals(expected[3], awaitItem())
+    Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+}
+```
+
+We can reorganize a bit the code. We can move the `fetch` before the first `awaitItem`,
+because `test` will immediately collect and buffer the first Loading and Success, so we can
+assert the items in a for loop like this:
+```kotlin
+sut.contents.test {
+    sut.fetch()
+    expected.forEach { expectedItem ->
+        Assertions.assertEquals(expectedItem, awaitItem())
+    }
+    Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
 }
 ```
 

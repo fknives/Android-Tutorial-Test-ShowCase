@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.core.login.koin
 
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.content.ContentRepository
 import org.fnives.test.showcase.core.di.koin.createCoreModule
 import org.fnives.test.showcase.core.login.LogoutUseCase
@@ -56,7 +57,7 @@ internal class LogoutUseCaseTest : KoinTest {
 
     @DisplayName("WHEN logout invoked THEN storage is cleared")
     @Test
-    fun logoutResultsInStorageCleaning() = runBlockingTest {
+    fun logoutResultsInStorageCleaning() = runTest {
         val repositoryBefore = getKoin().get<ContentRepository>()
 
         sut.invoke()

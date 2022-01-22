@@ -1,12 +1,12 @@
 package org.fnives.test.showcase.core.content
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import app.cash.turbine.test
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.ContentId
@@ -22,7 +22,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class GetAllContentUseCaseTest {
 
     private lateinit var sut: GetAllContentUseCase
@@ -30,11 +29,9 @@ internal class GetAllContentUseCaseTest {
     private lateinit var mockFavouriteContentLocalStorage: FavouriteContentLocalStorage
     private lateinit var contentFlow: MutableStateFlow<Resource<List<Content>>>
     private lateinit var favouriteContentIdFlow: MutableStateFlow<List<ContentId>>
-    private lateinit var testDispatcher: TestCoroutineDispatcher
 
     @BeforeEach
     fun setUp() {
-        testDispatcher = TestCoroutineDispatcher()
         mockFavouriteContentLocalStorage = mock()
         mockContentRepository = mock()
         favouriteContentIdFlow = MutableStateFlow(emptyList())
@@ -48,187 +45,168 @@ internal class GetAllContentUseCaseTest {
 
     @DisplayName("GIVEN loading AND empty favourite WHEN observed THEN loading is shown")
     @Test
-    fun loadingResourceWithNoFavouritesResultsInLoadingResource() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = emptyList()
-            contentFlow.value = Resource.Loading()
-            val expected = Resource.Loading<List<FavouriteContent>>()
+    fun loadingResourceWithNoFavouritesResultsInLoadingResource() = runTest {
+        favouriteContentIdFlow.value = emptyList()
+        contentFlow.value = Resource.Loading()
+        val expected = Resource.Loading<List<FavouriteContent>>()
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN loading AND listOfFavourite WHEN observed THEN loading is shown")
     @Test
-    fun loadingResourceWithFavouritesResultsInLoadingResource() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = listOf(ContentId("a"))
-            contentFlow.value = Resource.Loading()
-            val expected = Resource.Loading<List<FavouriteContent>>()
+    fun loadingResourceWithFavouritesResultsInLoadingResource() = runTest {
+        favouriteContentIdFlow.value = listOf(ContentId("a"))
+        contentFlow.value = Resource.Loading()
+        val expected = Resource.Loading<List<FavouriteContent>>()
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN error AND empty favourite WHEN observed THEN error is shown")
     @Test
-    fun errorResourceWithNoFavouritesResultsInErrorResource() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = emptyList()
-            val exception = Throwable()
-            contentFlow.value = Resource.Error(exception)
-            val expected = Resource.Error<List<FavouriteContent>>(exception)
+    fun errorResourceWithNoFavouritesResultsInErrorResource() = runTest {
+        favouriteContentIdFlow.value = emptyList()
+        val exception = Throwable()
+        contentFlow.value = Resource.Error(exception)
+        val expected = Resource.Error<List<FavouriteContent>>(exception)
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN error AND listOfFavourite WHEN observed THEN error is shown")
     @Test
-    fun errorResourceWithFavouritesResultsInErrorResource() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = listOf(ContentId("b"))
-            val exception = Throwable()
-            contentFlow.value = Resource.Error(exception)
-            val expected = Resource.Error<List<FavouriteContent>>(exception)
+    fun errorResourceWithFavouritesResultsInErrorResource() = runTest {
+        favouriteContentIdFlow.value = listOf(ContentId("b"))
+        val exception = Throwable()
+        contentFlow.value = Resource.Error(exception)
+        val expected = Resource.Error<List<FavouriteContent>>(exception)
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN listOfContent AND empty favourite WHEN observed THEN favourites are returned")
     @Test
-    fun successResourceWithNoFavouritesResultsInNoFavouritedItems() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = emptyList()
-            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-            contentFlow.value = Resource.Success(listOf(content))
-            val items = listOf(
-                FavouriteContent(content, false)
-            )
-            val expected = Resource.Success(items)
+    fun successResourceWithNoFavouritesResultsInNoFavouritedItems() = runTest {
+        favouriteContentIdFlow.value = emptyList()
+        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+        contentFlow.value = Resource.Success(listOf(content))
+        val items = listOf(
+            FavouriteContent(content, false)
+        )
+        val expected = Resource.Success(items)
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN listOfContent AND other favourite id WHEN observed THEN favourites are returned")
     @Test
-    fun successResourceWithDifferentFavouritesResultsInNoFavouritedItems() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = listOf(ContentId("x"))
-            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-            contentFlow.value = Resource.Success(listOf(content))
-            val items = listOf(
-                FavouriteContent(content, false)
-            )
-            val expected = Resource.Success(items)
+    fun successResourceWithDifferentFavouritesResultsInNoFavouritedItems() = runTest {
+        favouriteContentIdFlow.value = listOf(ContentId("x"))
+        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+        contentFlow.value = Resource.Success(listOf(content))
+        val items = listOf(
+            FavouriteContent(content, false)
+        )
+        val expected = Resource.Success(items)
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN listOfContent AND same favourite id WHEN observed THEN favourites are returned")
     @Test
-    fun successResourceWithSameFavouritesResultsInFavouritedItems() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = listOf(ContentId("a"))
-            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-            contentFlow.value = Resource.Success(listOf(content))
-            val items = listOf(
-                FavouriteContent(content, true)
-            )
-            val expected = Resource.Success(items)
+    fun successResourceWithSameFavouritesResultsInFavouritedItems() = runTest {
+        favouriteContentIdFlow.value = listOf(ContentId("a"))
+        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+        contentFlow.value = Resource.Success(listOf(content))
+        val items = listOf(
+            FavouriteContent(content, true)
+        )
+        val expected = Resource.Success(items)
 
-            val actual = sut.get().take(1).toList()
+        val actual = sut.get().take(1).toList()
 
-            Assertions.assertEquals(listOf(expected), actual)
-        }
+        Assertions.assertEquals(listOf(expected), actual)
+    }
 
     @DisplayName("GIVEN loading then data then added favourite WHEN observed THEN loading then correct favourites are returned")
     @Test
-    fun whileLoadingAndAddingItemsReactsProperly() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = emptyList()
-            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-            contentFlow.value = Resource.Loading()
-            val expected = listOf(
-                Resource.Loading(),
-                Resource.Success(listOf(FavouriteContent(content, false))),
-                Resource.Success(listOf(FavouriteContent(content, true)))
-            )
+    fun whileLoadingAndAddingItemsReactsProperly() = runTest {
+        favouriteContentIdFlow.value = emptyList()
+        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+        contentFlow.value = Resource.Loading()
+        val expected = listOf(
+            Resource.Loading(),
+            Resource.Success(listOf(FavouriteContent(content, false))),
+            Resource.Success(listOf(FavouriteContent(content, true)))
+        )
 
-            val actual = async(testDispatcher) {
-                sut.get().take(3).toList()
-            }
-            testDispatcher.advanceUntilIdle()
-
+        sut.get().test {
             contentFlow.value = Resource.Success(listOf(content))
-            testDispatcher.advanceUntilIdle()
-
             favouriteContentIdFlow.value = listOf(ContentId("a"))
-            testDispatcher.advanceUntilIdle()
 
-            Assertions.assertEquals(expected, actual.await())
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
+    }
 
     @DisplayName("GIVEN loading then data then removed favourite WHEN observed THEN loading then correct favourites are returned")
     @Test
-    fun whileLoadingAndRemovingItemsReactsProperly() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = listOf(ContentId("a"))
-            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-            contentFlow.value = Resource.Loading()
-            val expected = listOf(
-                Resource.Loading(),
-                Resource.Success(listOf(FavouriteContent(content, true))),
-                Resource.Success(listOf(FavouriteContent(content, false)))
-            )
+    fun whileLoadingAndRemovingItemsReactsProperly() = runTest {
+        favouriteContentIdFlow.value = listOf(ContentId("a"))
+        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+        contentFlow.value = Resource.Loading()
+        val expected = listOf(
+            Resource.Loading(),
+            Resource.Success(listOf(FavouriteContent(content, true))),
+            Resource.Success(listOf(FavouriteContent(content, false)))
+        )
 
-            val actual = async(testDispatcher) {
-                sut.get().take(3).toList()
-            }
-            testDispatcher.advanceUntilIdle()
-
+        sut.get().test {
             contentFlow.value = Resource.Success(listOf(content))
-            testDispatcher.advanceUntilIdle()
-
             favouriteContentIdFlow.value = emptyList()
-            testDispatcher.advanceUntilIdle()
 
-            Assertions.assertEquals(expected, actual.await())
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
+    }
 
     @DisplayName("GIVEN loading then data then loading WHEN observed THEN loading then correct favourites then loading are returned")
     @Test
-    fun loadingThenDataThenLoadingReactsProperly() =
-        runBlockingTest(testDispatcher) {
-            favouriteContentIdFlow.value = listOf(ContentId("a"))
-            val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
-            contentFlow.value = Resource.Loading()
-            val expected = listOf(
-                Resource.Loading(),
-                Resource.Success(listOf(FavouriteContent(content, true))),
-                Resource.Loading()
-            )
+    fun loadingThenDataThenLoadingReactsProperly() = runTest {
+        favouriteContentIdFlow.value = listOf(ContentId("a"))
+        val content = Content(ContentId("a"), "b", "c", ImageUrl("d"))
+        contentFlow.value = Resource.Loading()
+        val expected = listOf(
+            Resource.Loading(),
+            Resource.Success(listOf(FavouriteContent(content, true))),
+            Resource.Loading()
+        )
 
-            val actual = async(testDispatcher) {
-                sut.get().take(3).toList()
-            }
-            testDispatcher.advanceUntilIdle()
-
+        sut.get().test {
             contentFlow.value = Resource.Success(listOf(content))
-            testDispatcher.advanceUntilIdle()
-
             contentFlow.value = Resource.Loading()
-            testDispatcher.advanceUntilIdle()
 
-            Assertions.assertEquals(expected, actual.await())
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
+    }
 }

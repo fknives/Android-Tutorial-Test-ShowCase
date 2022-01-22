@@ -1,11 +1,12 @@
 package org.fnives.test.showcase.core.content
 
+import app.cash.turbine.test
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.shared.UnexpectedException
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.ContentId
@@ -31,12 +32,9 @@ internal class ContentRepositoryTest {
 
     private lateinit var sut: ContentRepository
     private lateinit var mockContentRemoteSource: ContentRemoteSource
-    private lateinit var testDispatcher: TestCoroutineDispatcher
 
     @BeforeEach
     fun setUp() {
-        testDispatcher = TestCoroutineDispatcher()
-        testDispatcher.pauseDispatcher()
         mockContentRemoteSource = mock()
         sut = ContentRepository(mockContentRemoteSource)
     }
@@ -49,20 +47,13 @@ internal class ContentRepositoryTest {
 
     @DisplayName("GIVEN content response WHEN content observed THEN loading AND data is returned")
     @Test
-    fun happyFlow() = runBlockingTest {
+    fun happyFlow() = runTest {
         val expected = listOf(
             Resource.Loading(),
             Resource.Success(listOf(Content(ContentId("a"), "", "", ImageUrl(""))))
         )
         whenever(mockContentRemoteSource.get()).doReturn(
-            listOf(
-                Content(
-                    ContentId("a"),
-                    "",
-                    "",
-                    ImageUrl("")
-                )
-            )
+            listOf(Content(ContentId("a"), "", "", ImageUrl("")))
         )
 
         val actual = sut.contents.take(2).toList()
@@ -72,7 +63,7 @@ internal class ContentRepositoryTest {
 
     @DisplayName("GIVEN content error WHEN content observed THEN loading AND data is returned")
     @Test
-    fun errorFlow() = runBlockingTest {
+    fun errorFlow() = runTest {
         val exception = RuntimeException()
         val expected = listOf(
             Resource.Loading(),
@@ -87,7 +78,7 @@ internal class ContentRepositoryTest {
 
     @DisplayName("GIVEN saved cache WHEN collected THEN cache is returned")
     @Test
-    fun verifyCaching() = runBlockingTest {
+    fun verifyCaching() = runTest {
         val content = Content(ContentId("1"), "", "", ImageUrl(""))
         val expected = listOf(Resource.Success(listOf(content)))
         whenever(mockContentRemoteSource.get()).doReturn(listOf(content))
@@ -101,7 +92,7 @@ internal class ContentRepositoryTest {
 
     @DisplayName("GIVEN no response from remote source WHEN content observed THEN loading is returned")
     @Test
-    fun loadingIsShownBeforeTheRequestIsReturned() = runBlockingTest {
+    fun loadingIsShownBeforeTheRequestIsReturned() = runTest {
         val expected = Resource.Loading<List<Content>>()
         val suspendedRequest = CompletableDeferred<Unit>()
         whenever(mockContentRemoteSource.get()).doSuspendableAnswer {
@@ -117,33 +108,32 @@ internal class ContentRepositoryTest {
 
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN returned states are loading data loading error")
     @Test
-    fun whenFetchingRequestIsCalledAgain() =
-        runBlockingTest(testDispatcher) {
-            val exception = RuntimeException()
-            val expected = listOf(
-                Resource.Loading(),
-                Resource.Success(emptyList()),
-                Resource.Loading(),
-                Resource.Error<List<Content>>(UnexpectedException(exception))
-            )
-            var first = true
-            whenever(mockContentRemoteSource.get()).doAnswer {
-                if (first) emptyList<Content>().also { first = false } else throw exception
-            }
-
-            val actual = async(testDispatcher) { sut.contents.take(4).toList() }
-            testDispatcher.advanceUntilIdle()
-            sut.fetch()
-            testDispatcher.advanceUntilIdle()
-
-            Assertions.assertEquals(expected, actual.await())
+    fun whenFetchingRequestIsCalledAgain() = runTest(UnconfinedTestDispatcher()) {
+        val exception = RuntimeException()
+        val expected = listOf(
+            Resource.Loading(),
+            Resource.Success(emptyList()),
+            Resource.Loading(),
+            Resource.Error<List<Content>>(UnexpectedException(exception))
+        )
+        var first = true
+        whenever(mockContentRemoteSource.get()).doAnswer {
+            if (first) emptyList<Content>().also { first = false } else throw exception
         }
+
+        val actual = async {
+            sut.contents.take(4).toList()
+        }
+        sut.fetch()
+
+        Assertions.assertEquals(expected, actual.await())
+    }
 
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
     @Test
     fun noAdditionalItemsEmitted() {
         Assertions.assertThrows(IllegalStateException::class.java) {
-            runBlockingTest(testDispatcher) {
+            runTest(UnconfinedTestDispatcher()) {
                 val exception = RuntimeException()
                 val expected = listOf(
                     Resource.Loading(),
@@ -156,13 +146,37 @@ internal class ContentRepositoryTest {
                     if (first) emptyList<Content>().also { first = false } else throw exception
                 }
 
-                val actual = async(testDispatcher) { sut.contents.take(5).toList() }
-                testDispatcher.advanceUntilIdle()
+                val actual = async {
+                    sut.contents.take(5).toList()
+                }
                 sut.fetch()
-                testDispatcher.advanceUntilIdle()
 
                 Assertions.assertEquals(expected, actual.await())
             }
+        }
+    }
+
+    @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
+    @Test
+    fun noAdditionalItemsEmittedWithTurbine() = runTest {
+        val exception = RuntimeException()
+        val expected = listOf(
+            Resource.Loading(),
+            Resource.Success(emptyList()),
+            Resource.Loading(),
+            Resource.Error<List<Content>>(UnexpectedException(exception))
+        )
+        var first = true
+        whenever(mockContentRemoteSource.get()).doAnswer {
+            if (first) emptyList<Content>().also { first = false } else throw exception
+        }
+
+        sut.contents.test {
+            sut.fetch()
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
     }
 }

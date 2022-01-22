@@ -1,7 +1,7 @@
 package org.fnives.test.showcase.core.content
 
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -34,7 +34,7 @@ internal class FetchContentUseCaseTest {
 
     @DisplayName("WHEN called THEN repository is called")
     @Test
-    fun whenCalledRepositoryIsFetched() = runBlockingTest {
+    fun whenCalledRepositoryIsFetched() = runTest {
         sut.invoke()
 
         verify(mockContentRepository, times(1)).fetch()
@@ -43,7 +43,7 @@ internal class FetchContentUseCaseTest {
 
     @DisplayName("GIVEN throwing local storage WHEN thrown THEN its thrown")
     @Test
-    fun whenRepositoryThrowsUseCaseAlsoThrows() = runBlockingTest {
+    fun whenRepositoryThrowsUseCaseAlsoThrows() = runTest {
         whenever(mockContentRepository.fetch()).doThrow(RuntimeException())
 
         assertThrows(RuntimeException::class.java) {

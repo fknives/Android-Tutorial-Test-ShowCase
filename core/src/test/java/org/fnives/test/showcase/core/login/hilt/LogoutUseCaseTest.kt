@@ -1,6 +1,6 @@
 package org.fnives.test.showcase.core.login.hilt
 
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.content.ContentRepository
 import org.fnives.test.showcase.core.login.LogoutUseCase
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
@@ -22,6 +22,7 @@ internal class LogoutUseCaseTest {
     lateinit var sut: LogoutUseCase
     private lateinit var mockUserDataLocalStorage: UserDataLocalStorage
     private lateinit var testCoreComponent: TestCoreComponent
+
     @Inject
     lateinit var contentRepository: ContentRepository
 
@@ -45,7 +46,7 @@ internal class LogoutUseCaseTest {
 
     @DisplayName("WHEN logout invoked THEN storage is cleared")
     @Test
-    fun logoutResultsInStorageCleaning() = runBlockingTest {
+    fun logoutResultsInStorageCleaning() = runTest {
         val repositoryBefore = contentRepository
 
         sut.invoke()
