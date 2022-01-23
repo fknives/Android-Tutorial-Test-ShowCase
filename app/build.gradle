@@ -17,6 +17,12 @@ android {
         versionName "1.0"
         buildConfigField "String", "BASE_URL", '"https://606844a10add49001733fe6b.mockapi.io/"'
 
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
