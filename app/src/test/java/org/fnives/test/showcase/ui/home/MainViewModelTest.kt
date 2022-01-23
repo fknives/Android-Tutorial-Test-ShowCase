@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.ui.home
 
 import com.jraska.livedata.test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
@@ -29,6 +30,7 @@ import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
 @ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class MainViewModelTest {
 
     private lateinit var sut: MainViewModel
@@ -37,7 +39,7 @@ internal class MainViewModelTest {
     private lateinit var mockFetchContentUseCase: FetchContentUseCase
     private lateinit var mockAddContentToFavouriteUseCase: AddContentToFavouriteUseCase
     private lateinit var mockRemoveContentFromFavouritesUseCase: RemoveContentFromFavouritesUseCase
-    private val testDispatcher get() = TestMainDispatcher.testDispatcher
+    private val testScheduler get() = TestMainDispatcher.testDispatcher.scheduler
 
     @BeforeEach
     fun setUp() {
@@ -46,7 +48,6 @@ internal class MainViewModelTest {
         mockFetchContentUseCase = mock()
         mockAddContentToFavouriteUseCase = mock()
         mockRemoveContentFromFavouritesUseCase = mock()
-        testDispatcher.pauseDispatcher()
         sut = MainViewModel(
             getAllContentUseCase = mockGetAllContentUseCase,
             logoutUseCase = mockLogoutUseCase,
@@ -69,13 +70,16 @@ internal class MainViewModelTest {
     @Test
     fun loadingDataShowsInLoadingUIState() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading()))
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        val errorMessageTestObserver = sut.errorMessage.test()
+        val contentTestObserver = sut.content.test()
+        val loadingTestObserver = sut.loading.test()
+        val navigateToAuthTestObserver = sut.navigateToAuth.test()
+        testScheduler.advanceUntilIdle()
 
-        sut.errorMessage.test().assertValue(false)
-        sut.content.test().assertNoValue()
-        sut.loading.test().assertValue(true)
-        sut.navigateToAuth.test().assertNoValue()
+        errorMessageTestObserver.assertValue(false)
+        contentTestObserver.assertNoValue()
+        loadingTestObserver.assertValue(true)
+        navigateToAuthTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN loading then data WHEN observing content THEN proper states are shown")
@@ -85,13 +89,13 @@ internal class MainViewModelTest {
         val errorMessageTestObserver = sut.errorMessage.test()
         val contentTestObserver = sut.content.test()
         val loadingTestObserver = sut.loading.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        val navigateToAuthTestObserver = sut.navigateToAuth.test()
+        testScheduler.advanceUntilIdle()
 
         errorMessageTestObserver.assertValueHistory(false)
         contentTestObserver.assertValueHistory(listOf())
         loadingTestObserver.assertValueHistory(true, false)
-        sut.navigateToAuth.test().assertNoValue()
+        navigateToAuthTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN loading then error WHEN observing content THEN proper states are shown")
@@ -101,13 +105,13 @@ internal class MainViewModelTest {
         val errorMessageTestObserver = sut.errorMessage.test()
         val contentTestObserver = sut.content.test()
         val loadingTestObserver = sut.loading.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        val navigateToAuthTestObserver = sut.navigateToAuth.test()
+        testScheduler.advanceUntilIdle()
 
         errorMessageTestObserver.assertValueHistory(false, true)
         contentTestObserver.assertValueHistory(emptyList())
         loadingTestObserver.assertValueHistory(true, false)
-        sut.navigateToAuth.test().assertNoValue()
+        navigateToAuthTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN loading then error then loading then data WHEN observing content THEN proper states are shown")
@@ -127,13 +131,13 @@ internal class MainViewModelTest {
         val errorMessageTestObserver = sut.errorMessage.test()
         val contentTestObserver = sut.content.test()
         val loadingTestObserver = sut.loading.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        val navigateToAuthTestObserver = sut.navigateToAuth.test()
+        testScheduler.advanceUntilIdle()
 
         errorMessageTestObserver.assertValueHistory(false, true, false)
         contentTestObserver.assertValueHistory(emptyList(), content)
         loadingTestObserver.assertValueHistory(true, false, true, false)
-        sut.navigateToAuth.test().assertNoValue()
+        navigateToAuthTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN loading viewModel WHEN refreshing THEN usecase is not called")
@@ -141,11 +145,10 @@ internal class MainViewModelTest {
     fun fetchIsIgnoredIfViewModelIsStillLoading() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading()))
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onRefresh()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         verifyZeroInteractions(mockFetchContentUseCase)
     }
@@ -155,11 +158,10 @@ internal class MainViewModelTest {
     fun fetchIsCalledIfViewModelIsLoaded() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf())
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onRefresh()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         verify(mockFetchContentUseCase, times(1)).invoke()
         verifyNoMoreInteractions(mockFetchContentUseCase)
@@ -170,11 +172,10 @@ internal class MainViewModelTest {
     fun loadingViewModelStillCalsLogout() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Loading()))
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onLogout()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         runBlocking { verify(mockLogoutUseCase, times(1)).invoke() }
         verifyNoMoreInteractions(mockLogoutUseCase)
@@ -185,11 +186,10 @@ internal class MainViewModelTest {
     fun nonLoadingViewModelStillCalsLogout() {
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf())
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onLogout()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         runBlocking { verify(mockLogoutUseCase, times(1)).invoke() }
         verifyNoMoreInteractions(mockLogoutUseCase)
@@ -204,11 +204,10 @@ internal class MainViewModelTest {
         )
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Success(contents)))
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onFavouriteToggleClicked(ContentId("c"))
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         verifyZeroInteractions(mockRemoveContentFromFavouritesUseCase)
         verifyZeroInteractions(mockAddContentToFavouriteUseCase)
@@ -223,11 +222,10 @@ internal class MainViewModelTest {
         )
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Success(contents)))
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onFavouriteToggleClicked(ContentId("b"))
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         runBlocking { verify(mockRemoveContentFromFavouritesUseCase, times(1)).invoke(ContentId("b")) }
         verifyNoMoreInteractions(mockRemoveContentFromFavouritesUseCase)
@@ -243,11 +241,10 @@ internal class MainViewModelTest {
         )
         whenever(mockGetAllContentUseCase.get()).doReturn(flowOf(Resource.Success(contents)))
         sut.content.test()
-        testDispatcher.resumeDispatcher()
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         sut.onFavouriteToggleClicked(ContentId("a"))
-        testDispatcher.advanceUntilIdle()
+        testScheduler.advanceUntilIdle()
 
         verifyZeroInteractions(mockRemoveContentFromFavouritesUseCase)
         runBlocking { verify(mockAddContentToFavouriteUseCase, times(1)).invoke(ContentId("a")) }

@@ -1,7 +1,10 @@
 package org.fnives.test.showcase.testutils
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
@@ -15,12 +18,12 @@ import org.junit.jupiter.api.extension.ExtensionContext
  *
  * One can access the test dispatcher via [testDispatcher] static getter.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class TestMainDispatcher : BeforeEachCallback, AfterEachCallback {
 
     override fun beforeEach(context: ExtensionContext?) {
-        val testDispatcher = TestCoroutineDispatcher()
+        val testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
         privateTestDispatcher = testDispatcher
-        testDispatcher.pauseDispatcher()
         DatabaseInitialization.dispatcher = testDispatcher
         Dispatchers.setMain(testDispatcher)
     }
@@ -31,8 +34,9 @@ class TestMainDispatcher : BeforeEachCallback, AfterEachCallback {
     }
 
     companion object {
-        private var privateTestDispatcher: TestCoroutineDispatcher? = null
-        val testDispatcher: TestCoroutineDispatcher
-            get() = privateTestDispatcher ?: throw IllegalStateException("TestMainDispatcher is in afterEach State")
+        private var privateTestDispatcher: TestDispatcher? = null
+        val testDispatcher: TestDispatcher
+            get() = privateTestDispatcher
+                ?: throw IllegalStateException("TestMainDispatcher is in afterEach State")
     }
 }
