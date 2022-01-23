@@ -6,6 +6,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.shared.UnexpectedException
 import org.fnives.test.showcase.model.content.Content
@@ -126,34 +127,25 @@ internal class ContentRepositoryTest {
         }
         sut.fetch()
 
-        Assertions.assertEquals(expected, actual.await())
+        Assertions.assertEquals(expected, actual.getCompleted())
     }
 
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
     @Test
-    fun noAdditionalItemsEmitted() {
-        Assertions.assertThrows(IllegalStateException::class.java) {
-            runTest(UnconfinedTestDispatcher()) {
-                val exception = RuntimeException()
-                val expected = listOf(
-                    Resource.Loading(),
-                    Resource.Success(emptyList()),
-                    Resource.Loading(),
-                    Resource.Error<List<Content>>(UnexpectedException(exception))
-                )
-                var first = true
-                whenever(mockContentRemoteSource.get()).doAnswer {
-                    if (first) emptyList<Content>().also { first = false } else throw exception
-                }
-
-                val actual = async {
-                    sut.contents.take(5).toList()
-                }
-                sut.fetch()
-
-                Assertions.assertEquals(expected, actual.await())
-            }
+    fun noAdditionalItemsEmitted() = runTest {
+        val exception = RuntimeException()
+        var first = true
+        whenever(mockContentRemoteSource.get()).doAnswer {
+            if (first) emptyList<Content>().also { first = false } else throw exception
         }
+
+        val actual = async(coroutineContext) { sut.contents.take(5).toList() }
+        advanceUntilIdle()
+        sut.fetch()
+        advanceUntilIdle()
+
+        Assertions.assertFalse(actual.isCompleted)
+        actual.cancel()
     }
 
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")

@@ -78,7 +78,7 @@ internal class FavouriteContentLocalStorageImplTest {
 
             sut.markAsFavourite(ContentId("a"))
 
-            Assert.assertEquals(expected, actual.await())
+            Assert.assertEquals(expected, actual.getCompleted())
         }
 
     /** GIVEN non empty database WHILE observing content WHEN favourite removed THEN change is emitted */
@@ -96,6 +96,6 @@ internal class FavouriteContentLocalStorageImplTest {
 
             sut.deleteAsFavourite(ContentId("a"))
 
-            Assert.assertEquals(expected, actual.await())
+            Assert.assertEquals(expected, actual.getCompleted())
         }
 }
