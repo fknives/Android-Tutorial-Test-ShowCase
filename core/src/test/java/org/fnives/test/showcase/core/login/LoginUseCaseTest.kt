@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.login
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.shared.UnexpectedException
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
@@ -23,6 +24,7 @@ import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class LoginUseCaseTest {
 
     private lateinit var sut: LoginUseCase

@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.content
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.take
@@ -21,6 +22,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class GetAllContentUseCaseTest {
 
     private lateinit var sut: GetAllContentUseCase

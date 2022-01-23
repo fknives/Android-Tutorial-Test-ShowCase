@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.login.koin
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.content.ContentRepository
 import org.fnives.test.showcase.core.di.koin.createCoreModule
@@ -21,6 +22,7 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.verifyZeroInteractions
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class LogoutUseCaseTest : KoinTest {
 
     private lateinit var sut: LogoutUseCase

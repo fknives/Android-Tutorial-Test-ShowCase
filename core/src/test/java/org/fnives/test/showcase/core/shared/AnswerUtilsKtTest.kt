@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.core.shared
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.model.shared.Answer
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AnswerUtilsKtTest {
 
     @DisplayName("GIVEN network exception thrown WHEN wrapped into answer THEN answer error is returned")

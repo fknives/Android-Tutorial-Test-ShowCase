@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.content
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @Disabled("CodeKata")
+@OptIn(ExperimentalCoroutinesApi::class)
 class CodeKataContentRepositoryTest {
 
     @BeforeEach

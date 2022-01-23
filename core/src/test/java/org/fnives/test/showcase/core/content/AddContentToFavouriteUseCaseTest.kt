@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.content
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
@@ -17,6 +18,7 @@ import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AddContentToFavouriteUseCaseTest {
 
     private lateinit var sut: AddContentToFavouriteUseCase

@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.core.login.hilt
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.content.ContentRepository
 import org.fnives.test.showcase.core.login.LogoutUseCase
@@ -16,6 +17,7 @@ import org.mockito.kotlin.verifyZeroInteractions
 import javax.inject.Inject
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class LogoutUseCaseTest {
 
     @Inject
