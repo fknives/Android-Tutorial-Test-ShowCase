@@ -1,10 +1,7 @@
 package org.fnives.test.showcase.core.content
 
-import kotlinx.coroutines.async
+import app.cash.turbine.test
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.Content
@@ -20,8 +17,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@Suppress("TestFunctionName")
-internal class GetAllContentUseCaseTest {
+class TurbineGetAllContentUseCaseTest {
 
     private lateinit var sut: GetAllContentUseCase
     private lateinit var mockContentRepository: ContentRepository
@@ -47,11 +43,14 @@ internal class GetAllContentUseCaseTest {
     fun loadingResourceWithNoFavouritesResultsInLoadingResource() = runTest {
         favouriteContentIdFlow.value = emptyList()
         contentFlow.value = Resource.Loading()
-        val expected = Resource.Loading<List<FavouriteContent>>()
+        val expected = listOf(Resource.Loading<List<FavouriteContent>>())
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN loading AND listOfFavourite WHEN observed THEN loading is shown")
@@ -59,11 +58,14 @@ internal class GetAllContentUseCaseTest {
     fun loadingResourceWithFavouritesResultsInLoadingResource() = runTest {
         favouriteContentIdFlow.value = listOf(ContentId("a"))
         contentFlow.value = Resource.Loading()
-        val expected = Resource.Loading<List<FavouriteContent>>()
+        val expected = listOf(Resource.Loading<List<FavouriteContent>>())
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN error AND empty favourite WHEN observed THEN error is shown")
@@ -72,11 +74,14 @@ internal class GetAllContentUseCaseTest {
         favouriteContentIdFlow.value = emptyList()
         val exception = Throwable()
         contentFlow.value = Resource.Error(exception)
-        val expected = Resource.Error<List<FavouriteContent>>(exception)
+        val expected = listOf(Resource.Error<List<FavouriteContent>>(exception))
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN error AND listOfFavourite WHEN observed THEN error is shown")
@@ -85,11 +90,14 @@ internal class GetAllContentUseCaseTest {
         favouriteContentIdFlow.value = listOf(ContentId("b"))
         val exception = Throwable()
         contentFlow.value = Resource.Error(exception)
-        val expected = Resource.Error<List<FavouriteContent>>(exception)
+        val expected = listOf(Resource.Error<List<FavouriteContent>>(exception))
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN listOfContent AND empty favourite WHEN observed THEN favourites are returned")
@@ -101,11 +109,14 @@ internal class GetAllContentUseCaseTest {
         val items = listOf(
             FavouriteContent(content, false)
         )
-        val expected = Resource.Success(items)
+        val expected = listOf(Resource.Success(items))
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN listOfContent AND other favourite id WHEN observed THEN favourites are returned")
@@ -117,11 +128,14 @@ internal class GetAllContentUseCaseTest {
         val items = listOf(
             FavouriteContent(content, false)
         )
-        val expected = Resource.Success(items)
+        val expected = listOf(Resource.Success(items))
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN listOfContent AND same favourite id WHEN observed THEN favourites are returned")
@@ -133,11 +147,14 @@ internal class GetAllContentUseCaseTest {
         val items = listOf(
             FavouriteContent(content, true)
         )
-        val expected = Resource.Success(items)
+        val expected = listOf(Resource.Success(items))
 
-        val actual = sut.get().take(1).toList()
-
-        Assertions.assertEquals(listOf(expected), actual)
+        sut.get().test {
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
+        }
     }
 
     @DisplayName("GIVEN loading then data then added favourite WHEN observed THEN loading then correct favourites are returned")
@@ -152,18 +169,15 @@ internal class GetAllContentUseCaseTest {
             Resource.Success(listOf(FavouriteContent(content, true)))
         )
 
-        val actual = async(coroutineContext) {
-            sut.get().take(3).toList()
+        sut.get().test {
+            contentFlow.value = Resource.Success(listOf(content))
+            favouriteContentIdFlow.value = listOf(ContentId("a"))
+
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
-        advanceUntilIdle()
-
-        contentFlow.value = Resource.Success(listOf(content))
-        advanceUntilIdle()
-
-        favouriteContentIdFlow.value = listOf(ContentId("a"))
-        advanceUntilIdle()
-
-        Assertions.assertEquals(expected, actual.getCompleted())
     }
 
     @DisplayName("GIVEN loading then data then removed favourite WHEN observed THEN loading then correct favourites are returned")
@@ -178,18 +192,15 @@ internal class GetAllContentUseCaseTest {
             Resource.Success(listOf(FavouriteContent(content, false)))
         )
 
-        val actual = async(coroutineContext) {
-            sut.get().take(3).toList()
+        sut.get().test {
+            contentFlow.value = Resource.Success(listOf(content))
+            favouriteContentIdFlow.value = emptyList()
+
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
-        advanceUntilIdle()
-
-        contentFlow.value = Resource.Success(listOf(content))
-        advanceUntilIdle()
-
-        favouriteContentIdFlow.value = emptyList()
-        advanceUntilIdle()
-
-        Assertions.assertEquals(expected, actual.getCompleted())
     }
 
     @DisplayName("GIVEN loading then data then loading WHEN observed THEN loading then correct favourites then loading are returned")
@@ -204,17 +215,14 @@ internal class GetAllContentUseCaseTest {
             Resource.Loading()
         )
 
-        val actual = async(coroutineContext) {
-            sut.get().take(3).toList()
+        sut.get().test {
+            contentFlow.value = Resource.Success(listOf(content))
+            contentFlow.value = Resource.Loading()
+
+            expected.forEach { expectedItem ->
+                Assertions.assertEquals(expectedItem, awaitItem())
+            }
+            Assertions.assertTrue(cancelAndConsumeRemainingEvents().isEmpty())
         }
-        advanceUntilIdle()
-
-        contentFlow.value = Resource.Success(listOf(content))
-        advanceUntilIdle()
-
-        contentFlow.value = Resource.Loading()
-        advanceUntilIdle()
-
-        Assertions.assertEquals(expected, actual.getCompleted())
     }
 }
