@@ -5,7 +5,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.shared.UnexpectedException
@@ -110,7 +109,7 @@ internal class ContentRepositoryTest {
 
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN returned states are loading data loading error")
     @Test
-    fun whenFetchingRequestIsCalledAgain() = runTest(UnconfinedTestDispatcher()) {
+    fun whenFetchingRequestIsCalledAgain() = runTest() {
         val exception = RuntimeException()
         val expected = listOf(
             Resource.Loading(),
@@ -126,7 +125,9 @@ internal class ContentRepositoryTest {
         val actual = async {
             sut.contents.take(4).toList()
         }
+        advanceUntilIdle()
         sut.fetch()
+        advanceUntilIdle()
 
         Assertions.assertEquals(expected, actual.getCompleted())
     }

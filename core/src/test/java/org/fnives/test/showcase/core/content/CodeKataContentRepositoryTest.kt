@@ -47,6 +47,11 @@ class CodeKataContentRepositoryTest {
 
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
     @Test
-    fun noAdditionalItemsEmitted() {
+    fun noAdditionalItemsEmitted() = runTest {
+    }
+
+    @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
+    @Test
+    fun noAdditionalItemsEmittedWithTurbine() = runTest {
     }
 }

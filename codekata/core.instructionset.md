@@ -48,9 +48,9 @@ that mock object to return what we want and verify its method calls.
 
 ### 2. First simple test
 
-So now you need to write your first test. When testing, first you should start with the simplest test, so let's just do that.
+So now you need to write your first test. When testing, first you should start with the simplest case, so let's just do that.
 
-When the class is created, the delegate should not yet be touched, so create a test for that:
+When the class is created, the delegate should not yet be touched, so we start there:
 
 ```kotlin
 @DisplayName("WHEN nothing is changed THEN delegate is not touched") // this will show up when running our tests and is a great way to document what we are testing
@@ -61,6 +61,7 @@ fun verifyNoInteractionsIfNoInvocations() {
 ```
 
 Now let's run out Test, to do this:
+ - Remove the `@Disabled` annotation if any
  - on project overview right click on FirstSessionExpirationAdapterTest
  - click run
  - => At this point we should see Tests passed: 1 of 1 test.
@@ -81,10 +82,11 @@ fun verifyOnSessionExpirationIsDelegated() {
 }
 ```
 
-Now let's run our tests with coverage: to do this:
-- right click on the file
-- click "Run with coverage".
-- => We can see the SessionExpirationAdapter is fully covered.
+Now let's run our tests with coverage, to do this:
+ - right click on the file
+ - click "Run with coverage".
+ - navigate in the result to it's package
+ - => We can see the SessionExpirationAdapter is fully covered.
 
 If we did everything right, our test should be identical to SessionExpirationAdapterTest.
 
@@ -94,16 +96,18 @@ Our System Under Test will be `org.fnives.test.showcase.core.login.LoginUseCase`
 
 What it does is:
 - verifies parameters,
-- if they are invalid it returns an Error Answer with the error
-- if valid then calls the remote source
-- if that's successful it saves the received data and returns Success Answer
-- if the request fails Error Answer is returned
+- if they are invalid then it returns an Error Answer with the error
+- if valid then it calls the remote source
+  - if that's successful it saves the received data and returns Success Answer
+  - if the request fails Error Answer is returned
 
 Now this is a bit more complicated, let's open our test file:
 
 ```kotlin
 org.fnives.test.showcase.core.login.CodeKataSecondLoginUseCaseTest
 ```
+
+### 0. Setup
 
 - declare the `sut` variable and its dependencies, you should be familiar how to do this by now.
 
@@ -133,7 +137,7 @@ verifyZeroInteractions(mockUserDataLocalStorage) // assert we didn't modify our 
 
 But something is wrong, the invoke method cannot be executed since it's a suspending function.
 
-To test coroutines we will use `runTest`, this creates a blocking coroutine for us to test suspend functions, together it will look like:
+To test coroutines we will use `runTest`, this creates a test coroutine scope for us to test suspend functions, together it will look like:
 
 ```kotlin
 @DisplayName("GIVEN empty username WHEN trying to login THEN invalid username is returned")
@@ -151,11 +155,13 @@ fun emptyUserNameReturnsLoginStatusError() = runTest {
 
 `Assertions.assertEquals` throws an exception if the `expected` is not equal to the `actual` value. The first parameter is the expected in all assertion methods.
 
+Before running the test don't forget to remove the `@Disabled` annotation.
+
 ### 2. `emptyPasswordNameReturnsLoginStatusError`
 
 Next do the same thing for `emptyPasswordNameReturnsLoginStatusError`
 
-This is really similar, so try to write it on your own, but for progress the code is here:
+This is really similar, so try to write it on your own, but if you get stuck, the code is here:
 
 ```kotlin
 @DisplayName("GIVEN empty password WHEN trying to login THEN invalid password is returned")
@@ -172,7 +178,7 @@ fun emptyPasswordNameReturnsLoginStatusError() = runTest {
 ```
 
 You may think that's bad to duplicate code in such a way, but you need to remember in testing it's not as important to not duplicate code.
-Also we have the possibility to reduce this duplication, we will touch this in the app module test.
+Also we have the possibility to reduce this duplication, we will touch on this later in the app module tests.
 
 ### 3. `invalidLoginResponseReturnInvalidCredentials`
 
@@ -224,17 +230,17 @@ fun invalidLoginResponseReturnInvalidCredentials() = runTest {
 }
 ```
 
-Now we see how we can mock responses.
+With that we saw how we can mock responses.
 
 ### 4. `validResponseResultsInSavingSessionAndSuccessReturned`,
 
 Now continue with `validResponseResultsInSavingSessionAndSuccessReturned`. You should have almost every tool to do this test:
 - declare the expected value
-- do the mock response
-- call the system under test
+- define the mock response
+- call the System Under Test
 - verify the actual result to the expected
 - verify the localStorage's session was saved once, and only once: `verify(mockUserDataLocalStorage, times(1)).session = Session("c", "d")`
-- verify the localStorage was not touched anymore.
+- verify the localStorage was not touched anymore: `verifyNoMoreInteractions(mockUserDataLocalStorage)`
 
 The full code:
 ```kotlin
@@ -286,10 +292,6 @@ Verification:
 ```kotlin
 Assertions.assertEquals(expected, actual)
 verifyZeroInteractions(mockUserDataLocalStorage)
-
-- Now we saw how to mock invocations on our mock objects
-- How to test suspend functions
-- and the pattern of GIVEN-WHEN-THEN description.
 ```
 
 Together:
@@ -307,12 +309,20 @@ fun invalidResponseResultsInErrorReturned() = runTest {
 
     Assertions.assertEquals(expected, actual)
     verifyZeroInteractions(mockUserDataLocalStorage)
-    }
+}
 ```
+#### Lessons learned
+- Now we saw how to mock invocations on our mock objects
+- How to run our tests
+- How to test suspend functions
+- and the pattern of GIVEN-WHEN-THEN description.
 
 ## Our third Class Test with flows
 
-Our system under test will be org.fnives.test.showcase.core.content.ContentRepository
+Our system under test will be
+```kotlin
+org.fnives.test.showcase.core.content.ContentRepository
+```
 
 It has two methods:
 - getContents: that returns a Flow, which emits loading, error and content data
@@ -321,9 +331,14 @@ It has two methods:
 The content data come from a RemoteSource class.
 Additionally the Content is cached. So observing again should not yield loading.
 
-The inner workings of the class shouldn't matter, just the public apis, since that's what we want to test.
+The inner workings of the class shouldn't matter, just the public apis, since that's what we want to test, always.
 
-For setup we declare the system under test and its mock argument.
+Our Test class will be
+```kotlin
+org.fnives.test.showcase.core.content.CodeKataContentRepositoryTest
+```
+
+For setup we declare the system under test and its mock argument as usual.
 
 ```kotlin
 private lateinit var sut: ContentRepository
@@ -374,7 +389,7 @@ Now just the verifications:
 Assertions.assertEquals(expected, actual)
 ````
 
-Note we don't verify the request has been called, since it's implied. It returns the same data we returned from the request, so it must have been called.
+Notice we don't verify the request has been called, since it's implied. It returns the same data we returned from the request, so it must have been called.
 
 ### 3. ```errorFlow```
 
@@ -421,15 +436,14 @@ Assertions.assertEquals(expected, actual)
 
 ### 5. `loadingIsShownBeforeTheRequestIsReturned`
 
-So far we just expected the first element is "loading", but it could easily happen that the flow is set up in such a way that the loading is not emitted
-before the request already finished.
+So far we just expected the first element is "loading", but it could easily happen that the flow is set up in such a way that the loading is not emitted before the request already finished.
 
 This can be an easy mistake with such flows, but would be really bad UX, so let's see how we can verify something like that:
 
-We need to suspend the request calling and verify that before that is finished the Loading is already emitted.
+We need to suspend the request calling. Verify that before the request call is finished the Loading is already emitted.
 So the issue becomes how can we suspend the mock until a signal is given.
 
-Generally we could still use mockito mocks OR we could create our own Mock.
+Generally we could still use mockito mocks OR we could create our own Mock (Fake).
 
 #### Creating our own mock.
 
@@ -453,9 +467,9 @@ class SuspendingContentRemoteSource {
 }
 ```
 
-In this case we should recreate our sut in the test and feed it our own remote source.
+In this case we should recreate our sut in the test and feed it our own remote source for this test.
 
-#### Still using mockito
+#### Still using mockito.
 
 To mock such behaviour with mockito with our current tool set is not as straight forward as creating our own.
 That's because how we used mockito so far it is not aware of the nature of suspend functions, like our code is in the custom mock.
@@ -470,7 +484,7 @@ Luckily this has already been done in "org.mockito.kotlin" and it's called `doSu
 
 The point here is that we can get arguments while mocking with mockito, and we are able to extend it in a way that helps us in common patterns.
 
-This `doSuspendableAnswer` wasn't available for a while, but we could still create it, if needed.
+This `doSuspendableAnswer` wasn't available for a while, but we could still create it on our own before, if it was needed.
 
 #### Back to the actual test
 
@@ -500,7 +514,7 @@ suspendedRequest.complete(Unit)
 
 ### 6. `whenFetchingRequestIsCalledAgain`
 
-We still didn't even touch the fetch method so let's test the behaviour next:
+We still didn't even touch the fetch method so let's test that behaviour next:
 
 We want to get the first result triggered by the subscription to the flow, and then again another loading and result after a call to `fetch`, so the setup would be:
 ```kotlin
@@ -517,7 +531,7 @@ whenever(mockContentRemoteSource.get()).doAnswer {
 }
 ```
 
-However the main issue here is, when to call fetch. If we call after `take()` we will never reach it, but if we call it before then it doesn't test the right behaviour.
+However the main issue here is, when to call fetch? If we call after `take()` we will never reach it since we are suspended by take. But if we call it before then it doesn't test the right behaviour.
 We need to do it async:
 
 ```kotlin
@@ -540,7 +554,17 @@ advanceUntilIdle()
 sut.fetch()
 ```
 
-Alternatively we can make `runTest` use `UnconfinedTestDispatcher` which will enter child coroutines eagerly, so our async will be executed until it suspends and only after the main execution path will continue with the call to `fetch` and we don't need `advanceUntilIdle` anymore.
+If we run this test, now it will pass. Let's break down exactly what happens now:
+ - The test creates the exception, expected, mocking and create the async but doesn't start it
+ - advanceUntilIdle will run the async until it's suspended, aka it receives two elements
+ - Now we get back to advanceUntilIdle and call sut.fetch()
+ - Note: at this point the async is still suspended
+ - Then actual.await() will suspend so the async continues until it finishes
+ - async received all the elements, by continuing the flow
+ - async finishes so we compare values
+ - => This shows us that we have full control over the execution order which makes `runTest` a great utility for us.
+
+Alternatively we can make `runTest` use `UnconfinedTestDispatcher` which will enter child coroutines eagerly, so our `async` will be executed until it suspends and only after the main execution path will continue with the call to `fetch` and we don't need `advanceUntilIdle` anymore.
 ```kotlin
 @Test
 fun whenFetchingRequestIsCalledAgain() = runTest(UnconfinedTestDispatcher()) {
@@ -552,8 +576,17 @@ fun whenFetchingRequestIsCalledAgain() = runTest(UnconfinedTestDispatcher()) {
     Assertions.assertEquals(expected, actual.await())
 }
 ```
+Let's break down what changed with `UnconfinedTestDispatcher`
+ - The test still creates the exception, expected, mocking and create the async but doesn't start it
+ - The test creates the async and starts to execute it
+ - async suspends after the 2nd element received
+ - at this point the next execution is `sut.fetch()` since async got suspended
+ - Then actual.await() will suspend so the async continues until it finishes
+ - async received all the elements, by continuing the flow
+ - async finishes so we compare values
+ - => This shows us `UnconfinedTestDispatcher` basically gave us the same execution order except the manual declaration of `advanceUntilIdle`
 
-Now we can test even complicated interactions between methods and classes with test dispatchers.
+##### Now we can test even complicated interactions between methods and classes with test dispatchers.
 
 ### 7. `noAdditionalItemsEmitted`
 
@@ -562,47 +595,56 @@ So we also need to test that this assumption is correct.
 
 I think the best place to start from is our most complicated test `whenFetchingRequestIsCalledAgain` since this is the one most likely add additional unexpected values.
 
-# TODO this doesn't apply to `runTest`
-Luckily `runBlockingTest` is helpful here: if a coroutine didn't finish properly it will throw an IllegalStateException.
+Luckily `async.isCompleted` is helpful here: We can check if the async actually finished, aka if it still suspended or complete.
+Alternatively when checking with values, we may use `async.getCompleted()` as well, since if a coroutine didn't finish properly it will throw an `IllegalStateException("This job has not completed yet")`.
 
-So all we need to do is to request more than elements it should send out and expect an IllegalStateException from runBlocking.
+So all we need to do is verify that the actual deferred is completed at the end.
+With this we no longer need the expected values.
 
-So our method looks just like `whenFetchingRequestIsCalledAgain` except wrapped into an IllegalStateException expectation, and requesting 5 elements instead of 4.
+So our method looks similar to `whenFetchingRequestIsCalledAgain` except:
+- We no longer have expected values
+- We check if the async is completed
+- We need an additional `advanceUntilIdle` after fetch so the async has a possibility to actually complete
+- And requesting 5 elements instead of 4.
+- And cancel the async since we no longer need it
+
+Note: if it confuses you why we need the additional `advanceUntilIdle` refer to the execution order descried above. The async got their 3rd and 4th values because we were using await.
 ```kotlin
-Assertions.assertThrows(IllegalStateException::class.java) {
-    runBlockingTest(testDispatcher) {
-        val exception = RuntimeException()
-        val expected = listOf(
-            Resource.Loading(),
-            Resource.Success(emptyList()),
-            Resource.Loading(),
-            Resource.Error<List<Content>>(UnexpectedException(exception))
-        )
-        var first = true
-        whenever(mockContentRemoteSource.get()).doAnswer {
-            if (first) emptyList<Content>().also { first = false } else throw exception
-        }
-
-        val actual = async(testDispatcher) { sut.contents.take(5).toList() }
-        testDispatcher.advanceUntilIdle()
-        sut.fetch()
-        testDispatcher.advanceUntilIdle()
-
-        Assertions.assertEquals(expected, actual.await())
+@DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
+@Test
+fun noAdditionalItemsEmitted() = runTest {
+    val exception = RuntimeException()
+    var first = true
+    whenever(mockContentRemoteSource.get()).doAnswer {
+        if (first) emptyList<Content>().also { first = false } else throw exception // notice first time we return success next we return error
     }
+
+    val actual = async {
+        sut.contents.take(5).toList()
+    }
+    advanceUntilIdle()
+    sut.fetch()
+    advanceUntilIdle()
+
+    Assertions.assertFalse(actual.isCompleted)
+    actual.cancel()
 }
 ```
 
-### 8. `noAdditionalItemsEmittedWithTurbine`
+###### Now just to verify our test tests what we want, switch the 5 to a 4 and run the test again. If our test setup is correct, now it should fail, since we expect that the async doesn't complete.
 
-Turbine is library that provides some testing utilities for Flow.
+### 8. Turbine `noAdditionalItemsEmittedWithTurbine`
+
+Until now we were testing with async and taking values, this can be tidious for some, so here is an alternative:
+
+[Turbine](https://github.com/cashapp/turbine) is library that provides some testing utilities for Flow.
 The entrypoint is the `test` extension which collects the flow and gives you the opportunity to
 assert the collected events.
 
 To receive a new item from the flow we call `awaitItem()`, and to verify that no more items are
 emitted we expect the result of `cancelAndConsumeRemainingEvents()` to be an empty list.
 
-Keeping the same setup as before we can use turbine to test `contents` as follows:
+Keeping the same setup as in `whenFetchingRequestIsCalledAgain` we can use turbine to test `contents` as follows:
 ```kotlin
 sut.contents.test {
     Assertions.assertEquals(expected[0], awaitItem())
@@ -614,9 +656,8 @@ sut.contents.test {
 }
 ```
 
-We can reorganize a bit the code. We can move the `fetch` before the first `awaitItem`,
-because `test` will immediately collect and buffer the first Loading and Success, so we can
-assert the items in a for loop like this:
+The code seems pretty recognizable, the execution order follows what we have been doing before.
+We can move the `fetch` before the first `awaitItem`, because `test` will immediately collect and buffer the first Loading and Success, so we can assert the items in a for loop like this:
 ```kotlin
 sut.contents.test {
     sut.fetch()
@@ -634,8 +675,8 @@ Here we went over most common cases when you need to test simple java / kotlin f
 - how to setup and structure your test
 - how to run your tests
 - a convention to naming your tests
-- how to use mockito to mock dependencies of your system under test
+- how to use mockito to mock dependencies of your System Under Test objects
 - how to test suspend functions
 - how to test flows
 - how to verify your mock usage
-- how to verify success and error states
+- how to assert responses
