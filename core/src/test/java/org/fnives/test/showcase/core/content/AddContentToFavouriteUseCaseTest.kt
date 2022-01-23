@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

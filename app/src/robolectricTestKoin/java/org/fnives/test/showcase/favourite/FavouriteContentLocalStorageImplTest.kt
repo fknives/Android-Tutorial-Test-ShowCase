@@ -56,23 +56,21 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
     /** GIVEN content_id added WHEN removed to Favourite THEN it no longer can be read out */
     @Test
     fun contentIdAddedThenRemovedCanNoLongerBeReadOut() = runTest(testDispatcher) {
-            val expected = listOf<ContentId>()
-            sut.markAsFavourite(ContentId("b"))
+        val expected = listOf<ContentId>()
+        sut.markAsFavourite(ContentId("b"))
 
-            sut.deleteAsFavourite(ContentId("b"))
-            val actual = sut.observeFavourites().first()
+        sut.deleteAsFavourite(ContentId("b"))
+        val actual = sut.observeFavourites().first()
 
-            Assert.assertEquals(expected, actual)
-        }
+        Assert.assertEquals(expected, actual)
+    }
 
     /** GIVEN empty database WHILE observing content WHEN favourite added THEN change is emitted */
     @Test
     fun addingFavouriteUpdatesExistingObservers() = runTest(testDispatcher) {
         val expected = listOf(listOf(), listOf(ContentId("a")))
 
-        val actual = async(coroutineContext) {
-            sut.observeFavourites().take(2).toList()
-        }
+        val actual = async(coroutineContext) { sut.observeFavourites().take(2).toList() }
         advanceUntilIdle()
 
         sut.markAsFavourite(ContentId("a"))
@@ -84,17 +82,17 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
     /** GIVEN non empty database WHILE observing content WHEN favourite removed THEN change is emitted */
     @Test
     fun removingFavouriteUpdatesExistingObservers() = runTest(testDispatcher) {
-            val expected = listOf(listOf(ContentId("a")), listOf())
-            sut.markAsFavourite(ContentId("a"))
+        val expected = listOf(listOf(ContentId("a")), listOf())
+        sut.markAsFavourite(ContentId("a"))
 
-            val actual = async(coroutineContext) {
-                sut.observeFavourites().take(2).toList()
-            }
-            advanceUntilIdle()
-
-            sut.deleteAsFavourite(ContentId("a"))
+        val actual = async(coroutineContext) {
+            sut.observeFavourites().take(2).toList()
+        }
         advanceUntilIdle()
 
-            Assert.assertEquals(expected, actual.getCompleted())
-        }
+        sut.deleteAsFavourite(ContentId("a"))
+        advanceUntilIdle()
+
+        Assert.assertEquals(expected, actual.getCompleted())
+    }
 }

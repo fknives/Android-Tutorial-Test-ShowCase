@@ -1,11 +1,9 @@
 package org.fnives.test.showcase.core.content
 
 import app.cash.turbine.test
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.Content
