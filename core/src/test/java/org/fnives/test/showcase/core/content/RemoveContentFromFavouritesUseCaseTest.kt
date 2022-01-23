@@ -1,7 +1,8 @@
 package org.fnives.test.showcase.core.content
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
 import org.junit.jupiter.api.Assertions
@@ -17,6 +18,7 @@ import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class RemoveContentFromFavouritesUseCaseTest {
 
     private lateinit var sut: RemoveContentFromFavouritesUseCase
@@ -36,7 +38,7 @@ internal class RemoveContentFromFavouritesUseCaseTest {
 
     @DisplayName("GIVEN contentId WHEN called THEN storage is called")
     @Test
-    fun givenContentIdCallsStorage() = runBlockingTest {
+    fun givenContentIdCallsStorage() = runTest {
         sut.invoke(ContentId("a"))
 
         verify(mockFavouriteContentLocalStorage, times(1)).deleteAsFavourite(ContentId("a"))
@@ -45,7 +47,7 @@ internal class RemoveContentFromFavouritesUseCaseTest {
 
     @DisplayName("GIVEN throwing local storage WHEN thrown THEN its propogated")
     @Test
-    fun storageExceptionThrowingIsPropogated() = runBlockingTest {
+    fun storageExceptionThrowingIsPropogated() = runTest {
         whenever(mockFavouriteContentLocalStorage.deleteAsFavourite(ContentId("a"))).doThrow(RuntimeException())
 
         Assertions.assertThrows(RuntimeException::class.java) {

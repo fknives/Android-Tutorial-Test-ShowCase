@@ -4,15 +4,11 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.matcher.ViewMatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestDispatcher
 import org.fnives.test.showcase.testutils.viewactions.LoopMainThreadFor
 import org.fnives.test.showcase.testutils.viewactions.LoopMainThreadUntilIdle
-
-private val idleScope = CoroutineScope(Dispatchers.IO)
+import java.util.concurrent.Executors
 
 // workaround, issue with idlingResources is tracked here https://github.com/robolectric/robolectric/issues/4807
 fun anyResourceIdling(): Boolean = !IdlingRegistry.getInstance().resources.all(IdlingResource::isIdleNow)
@@ -21,13 +17,14 @@ fun awaitIdlingResources() {
     val idlingRegistry = IdlingRegistry.getInstance()
     if (idlingRegistry.resources.all(IdlingResource::isIdleNow)) return
 
+    val executor = Executors.newSingleThreadExecutor()
     var isIdle = false
-    idleScope.launch {
+    executor.submit {
         do {
             idlingRegistry.resources
                 .filterNot(IdlingResource::isIdleNow)
-                .forEach { idlingRegistry ->
-                    idlingRegistry.awaitUntilIdle()
+                .forEach { idlingResource ->
+                    idlingResource.awaitUntilIdle()
                 }
         } while (!idlingRegistry.resources.all(IdlingResource::isIdleNow))
         isIdle = true
@@ -35,23 +32,25 @@ fun awaitIdlingResources() {
     while (!isIdle) {
         loopMainThreadFor(200L)
     }
+    executor.shutdown()
 }
 
-private suspend fun IdlingResource.awaitUntilIdle() {
+private fun IdlingResource.awaitUntilIdle() {
     // using loop because some times, registerIdleTransitionCallback wasn't called
     while (true) {
         if (isIdleNow) return
-        delay(100)
+        Thread.sleep(100L)
     }
 }
 
-fun TestCoroutineDispatcher.advanceUntilIdleWithIdlingResources() {
-    advanceUntilIdle() // advance until a request is sent
+@OptIn(ExperimentalCoroutinesApi::class)
+fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
+    scheduler.advanceUntilIdle() // advance until a request is sent
     while (anyResourceIdling()) { // check if any request is in progress
         awaitIdlingResources() // complete all requests and other idling resources
-        advanceUntilIdle() // run coroutines after request is finished
+        scheduler.advanceUntilIdle() // run coroutines after request is finished
     }
-    advanceUntilIdle()
+    scheduler.advanceUntilIdle()
 }
 
 fun loopMainThreadUntilIdleWithIdlingResources() {

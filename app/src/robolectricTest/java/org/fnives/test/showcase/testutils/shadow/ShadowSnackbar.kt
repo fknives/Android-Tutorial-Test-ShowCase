@@ -29,7 +29,7 @@ class ShadowSnackbar {
         @Implementation
         @JvmStatic
         fun make(view: View, text: CharSequence, duration: Int): Snackbar? {
-            var snackbar: Snackbar? = null
+            val snackbar: Snackbar?
             try {
                 val constructor = Snackbar::class.java.getDeclaredConstructor(
                     Context::class.java,

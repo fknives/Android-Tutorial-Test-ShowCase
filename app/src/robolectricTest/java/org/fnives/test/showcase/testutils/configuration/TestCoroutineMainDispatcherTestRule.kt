@@ -1,7 +1,10 @@
 package org.fnives.test.showcase.testutils.configuration
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
@@ -9,16 +12,16 @@ import org.fnives.test.showcase.testutils.idling.advanceUntilIdleWithIdlingResou
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class TestCoroutineMainDispatcherTestRule : MainDispatcherTestRule {
 
-    private lateinit var testDispatcher: TestCoroutineDispatcher
+    private lateinit var testDispatcher: TestDispatcher
 
     override fun apply(base: Statement, description: Description): Statement =
         object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
-                val dispatcher = TestCoroutineDispatcher()
-                dispatcher.pauseDispatcher()
+                val dispatcher = StandardTestDispatcher(TestCoroutineScheduler())
                 Dispatchers.setMain(dispatcher)
                 testDispatcher = dispatcher
                 DatabaseInitialization.dispatcher = dispatcher
@@ -39,10 +42,10 @@ class TestCoroutineMainDispatcherTestRule : MainDispatcherTestRule {
     }
 
     override fun advanceUntilIdle() {
-        testDispatcher.advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
     }
 
     override fun advanceTimeBy(delayInMillis: Long) {
-        testDispatcher.advanceTimeBy(delayInMillis)
+        testDispatcher.scheduler.advanceTimeBy(delayInMillis)
     }
 }

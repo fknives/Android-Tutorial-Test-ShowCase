@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.core.login
 
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.shared.UnexpectedException
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.fnives.test.showcase.model.auth.LoginCredentials
@@ -23,6 +24,7 @@ import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class LoginUseCaseTest {
 
     private lateinit var sut: LoginUseCase
@@ -38,7 +40,7 @@ internal class LoginUseCaseTest {
 
     @DisplayName("GIVEN empty username WHEN trying to login THEN invalid username is returned")
     @Test
-    fun emptyUserNameReturnsLoginStatusError() = runBlockingTest {
+    fun emptyUserNameReturnsLoginStatusError() = runTest {
         val expected = Answer.Success(LoginStatus.INVALID_USERNAME)
 
         val actual = sut.invoke(LoginCredentials("", "a"))
@@ -50,7 +52,7 @@ internal class LoginUseCaseTest {
 
     @DisplayName("GIVEN empty password WHEN trying to login THEN invalid password is returned")
     @Test
-    fun emptyPasswordNameReturnsLoginStatusError() = runBlockingTest {
+    fun emptyPasswordNameReturnsLoginStatusError() = runTest {
         val expected = Answer.Success(LoginStatus.INVALID_PASSWORD)
 
         val actual = sut.invoke(LoginCredentials("a", ""))
@@ -62,7 +64,7 @@ internal class LoginUseCaseTest {
 
     @DisplayName("GIVEN invalid credentials response WHEN trying to login THEN invalid credentials is returned ")
     @Test
-    fun invalidLoginResponseReturnInvalidCredentials() = runBlockingTest {
+    fun invalidLoginResponseReturnInvalidCredentials() = runTest {
         val expected = Answer.Success(LoginStatus.INVALID_CREDENTIALS)
         whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
             .doReturn(LoginStatusResponses.InvalidCredentials)
@@ -75,7 +77,7 @@ internal class LoginUseCaseTest {
 
     @DisplayName("GIVEN success response WHEN trying to login THEN session is saved and success is returned")
     @Test
-    fun validResponseResultsInSavingSessionAndSuccessReturned() = runBlockingTest {
+    fun validResponseResultsInSavingSessionAndSuccessReturned() = runTest {
         val expected = Answer.Success(LoginStatus.SUCCESS)
         whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))
             .doReturn(LoginStatusResponses.Success(Session("c", "d")))
@@ -89,7 +91,7 @@ internal class LoginUseCaseTest {
 
     @DisplayName("GIVEN error resposne WHEN trying to login THEN session is not touched and error is returned")
     @Test
-    fun invalidResponseResultsInErrorReturned() = runBlockingTest {
+    fun invalidResponseResultsInErrorReturned() = runTest {
         val exception = RuntimeException()
         val expected = Answer.Error<LoginStatus>(UnexpectedException(exception))
         whenever(mockLoginRemoteSource.login(LoginCredentials("a", "b")))

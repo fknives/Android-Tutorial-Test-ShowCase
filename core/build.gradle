@@ -11,7 +11,7 @@ java {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += ['-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi']
     }
 }
 
@@ -38,4 +38,5 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
     kaptTest "com.google.dagger:dagger-compiler:$hilt_version"
     testImplementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    testImplementation "app.cash.turbine:turbine:$turbine_version"
 }

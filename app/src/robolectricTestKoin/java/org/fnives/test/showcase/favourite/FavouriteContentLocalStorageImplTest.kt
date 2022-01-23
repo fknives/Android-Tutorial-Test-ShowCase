@@ -6,8 +6,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
@@ -26,11 +29,11 @@ import org.koin.test.inject
 internal class FavouriteContentLocalStorageImplTest : KoinTest {
 
     private val sut by inject<FavouriteContentLocalStorage>()
-    private lateinit var testDispatcher: TestCoroutineDispatcher
+    private lateinit var testDispatcher: TestDispatcher
 
     @Before
     fun setUp() {
-        testDispatcher = TestCoroutineDispatcher()
+        testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
         DatabaseInitialization.dispatcher = testDispatcher
     }
 
@@ -41,7 +44,7 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
 
     /** GIVEN content_id WHEN added to Favourite THEN it can be read out */
     @Test
-    fun addingContentIdToFavouriteCanBeLaterReadOut() = runBlocking {
+    fun addingContentIdToFavouriteCanBeLaterReadOut() = runTest(testDispatcher) {
         val expected = listOf(ContentId("a"))
 
         sut.markAsFavourite(ContentId("a"))
@@ -52,49 +55,44 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
 
     /** GIVEN content_id added WHEN removed to Favourite THEN it no longer can be read out */
     @Test
-    fun contentIdAddedThenRemovedCanNoLongerBeReadOut() =
-        runBlocking {
-            val expected = listOf<ContentId>()
-            sut.markAsFavourite(ContentId("b"))
+    fun contentIdAddedThenRemovedCanNoLongerBeReadOut() = runTest(testDispatcher) {
+        val expected = listOf<ContentId>()
+        sut.markAsFavourite(ContentId("b"))
 
-            sut.deleteAsFavourite(ContentId("b"))
-            val actual = sut.observeFavourites().first()
+        sut.deleteAsFavourite(ContentId("b"))
+        val actual = sut.observeFavourites().first()
 
-            Assert.assertEquals(expected, actual)
-        }
+        Assert.assertEquals(expected, actual)
+    }
 
     /** GIVEN empty database WHILE observing content WHEN favourite added THEN change is emitted */
     @Test
-    fun addingFavouriteUpdatesExistingObservers() =
-        runBlocking<Unit> {
-            val expected = listOf(listOf(), listOf(ContentId("a")))
+    fun addingFavouriteUpdatesExistingObservers() = runTest(testDispatcher) {
+        val expected = listOf(listOf(), listOf(ContentId("a")))
 
-            val testDispatcher = TestCoroutineDispatcher()
-            val actual = async(testDispatcher) {
-                sut.observeFavourites().take(2).toList()
-            }
-            testDispatcher.advanceUntilIdle()
+        val actual = async(coroutineContext) { sut.observeFavourites().take(2).toList() }
+        advanceUntilIdle()
 
-            sut.markAsFavourite(ContentId("a"))
+        sut.markAsFavourite(ContentId("a"))
+        advanceUntilIdle()
 
-            Assert.assertEquals(expected, actual.await())
-        }
+        Assert.assertEquals(expected, actual.getCompleted())
+    }
 
     /** GIVEN non empty database WHILE observing content WHEN favourite removed THEN change is emitted */
     @Test
-    fun removingFavouriteUpdatesExistingObservers() =
-        runBlocking<Unit> {
-            val expected = listOf(listOf(ContentId("a")), listOf())
-            sut.markAsFavourite(ContentId("a"))
+    fun removingFavouriteUpdatesExistingObservers() = runTest(testDispatcher) {
+        val expected = listOf(listOf(ContentId("a")), listOf())
+        sut.markAsFavourite(ContentId("a"))
 
-            val testDispatcher = TestCoroutineDispatcher()
-            val actual = async(testDispatcher) {
-                sut.observeFavourites().take(2).toList()
-            }
-            testDispatcher.advanceUntilIdle()
-
-            sut.deleteAsFavourite(ContentId("a"))
-
-            Assert.assertEquals(expected, actual.await())
+        val actual = async(coroutineContext) {
+            sut.observeFavourites().take(2).toList()
         }
+        advanceUntilIdle()
+
+        sut.deleteAsFavourite(ContentId("a"))
+        advanceUntilIdle()
+
+        Assert.assertEquals(expected, actual.getCompleted())
+    }
 }

@@ -78,7 +78,7 @@ class SplashActivityTest : KoinTest {
 
         activityScenario = ActivityScenario.launch(HiltSplashActivity::class.java)
 
-        mainDispatcherTestRule.advanceTimeBy(500)
+        mainDispatcherTestRule.advanceTimeBy(501)
 
         splashRobot.assertHomeIsStarted()
             .assertAuthIsNotStarted()
@@ -93,9 +93,36 @@ class SplashActivityTest : KoinTest {
 
         activityScenario = ActivityScenario.launch(HiltSplashActivity::class.java)
 
-        mainDispatcherTestRule.advanceTimeBy(500)
+        mainDispatcherTestRule.advanceTimeBy(501)
 
         splashRobot.assertAuthIsStarted()
             .assertHomeIsNotStarted()
+    }
+
+    @Test
+    fun loggedOutStatesNotEnoughTime() {
+        setupLoggedInState.setupLogout()
+
+        activityScenario = ActivityScenario.launch(HiltSplashActivity::class.java)
+
+        mainDispatcherTestRule.advanceTimeBy(10)
+
+        splashRobot.assertAuthIsNotStarted()
+            .assertHomeIsNotStarted()
+    }
+
+    /** GIVEN loggedInState and not enough time WHEN opened THEN no activity is started */
+    @Test
+    fun loggedInStatesNotEnoughTime() {
+        setupLoggedInState.setupLogin(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+
+        activityScenario = ActivityScenario.launch(HiltSplashActivity::class.java)
+
+        mainDispatcherTestRule.advanceTimeBy(10)
+
+        splashRobot.assertHomeIsNotStarted()
+            .assertAuthIsNotStarted()
+
+        setupLoggedInState.setupLogout()
     }
 }

@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.ui.splash
 
 import com.jraska.livedata.test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.testutils.InstantExecutorExtension
 import org.fnives.test.showcase.testutils.TestMainDispatcher
@@ -14,11 +15,12 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class SplashViewModelTest {
 
     private lateinit var mockIsUserLoggedInUseCase: IsUserLoggedInUseCase
     private lateinit var sut: SplashViewModel
-    private val testCoroutineDispatcher get() = TestMainDispatcher.testDispatcher
+    private val testScheduler get() = TestMainDispatcher.testDispatcher.scheduler
 
     @BeforeEach
     fun setUp() {
@@ -30,29 +32,32 @@ internal class SplashViewModelTest {
     @Test
     fun loggedOutUserGoesToAuthentication() {
         whenever(mockIsUserLoggedInUseCase.invoke()).doReturn(false)
+        val navigateToTestObserver = sut.navigateTo.test()
 
-        testCoroutineDispatcher.advanceTimeBy(500)
+        testScheduler.advanceTimeBy(501)
 
-        sut.navigateTo.test().assertValue(Event(SplashViewModel.NavigateTo.AUTHENTICATION))
+        navigateToTestObserver.assertValueHistory(Event(SplashViewModel.NavigateTo.AUTHENTICATION))
     }
 
     @DisplayName("GIVEN logged in user WHEN splash started THEN after half a second navigated to home")
     @Test
-    fun loggedInUserGoestoHome() {
+    fun loggedInUserGoesToHome() {
         whenever(mockIsUserLoggedInUseCase.invoke()).doReturn(true)
+        val navigateToTestObserver = sut.navigateTo.test()
 
-        testCoroutineDispatcher.advanceTimeBy(500)
+        testScheduler.advanceTimeBy(501)
 
-        sut.navigateTo.test().assertValue(Event(SplashViewModel.NavigateTo.HOME))
+        navigateToTestObserver.assertValueHistory(Event(SplashViewModel.NavigateTo.HOME))
     }
 
     @DisplayName("GIVEN not logged in user WHEN splash started THEN before half a second no event is sent")
     @Test
     fun withoutEnoughTimeNoNavigationHappens() {
         whenever(mockIsUserLoggedInUseCase.invoke()).doReturn(false)
+        val navigateToTestObserver = sut.navigateTo.test()
 
-        testCoroutineDispatcher.advanceTimeBy(100)
+        testScheduler.advanceTimeBy(500)
 
-        sut.navigateTo.test().assertNoValue()
+        navigateToTestObserver.assertNoValue()
     }
 }

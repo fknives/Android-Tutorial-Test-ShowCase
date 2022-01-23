@@ -1,7 +1,9 @@
 package org.fnives.test.showcase.core.shared
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.model.shared.Answer
 import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
@@ -11,11 +13,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AnswerUtilsKtTest {
 
     @DisplayName("GIVEN network exception thrown WHEN wrapped into answer THEN answer error is returned")
     @Test
-    fun networkExceptionThrownResultsInError() = runBlocking {
+    fun networkExceptionThrownResultsInError() = runTest {
         val exception = NetworkException(Throwable())
         val expected = Answer.Error<Unit>(exception)
 
@@ -26,7 +29,7 @@ internal class AnswerUtilsKtTest {
 
     @DisplayName("GIVEN parsing exception thrown WHEN wrapped into answer THEN answer error is returned")
     @Test
-    fun parsingExceptionThrownResultsInError() = runBlocking {
+    fun parsingExceptionThrownResultsInError() = runTest {
         val exception = ParsingException(Throwable())
         val expected = Answer.Error<Unit>(exception)
 
@@ -37,7 +40,7 @@ internal class AnswerUtilsKtTest {
 
     @DisplayName("GIVEN unexpected throwable thrown WHEN wrapped into answer THEN answer error is returned")
     @Test
-    fun unexpectedExceptionThrownResultsInError() = runBlocking {
+    fun unexpectedExceptionThrownResultsInError() = runTest {
         val exception = Throwable()
         val expected = Answer.Error<Unit>(UnexpectedException(exception))
 
@@ -48,7 +51,7 @@ internal class AnswerUtilsKtTest {
 
     @DisplayName("GIVEN string WHEN wrapped into answer THEN string answer is returned")
     @Test
-    fun stringIsReturnedWrappedIntoSuccess() = runBlocking {
+    fun stringIsReturnedWrappedIntoSuccess() = runTest {
         val expected = Answer.Success("banan")
 
         val actual = wrapIntoAnswer { "banan" }

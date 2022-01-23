@@ -131,7 +131,7 @@ The Code Kata is structured into 5 different section, each section in different 
 Since our layering is "app", "core" and "networking", of course we will jump right into the middle and start with core.
 
 #### Core
-Open the [core instruction set](./codekata/core.instructionset).
+Open the [core instruction set](./codekata/core.instructionset.md).
 
 The core tests are the simplest, we will look into how to use mockito to mock class dependencies and write our first simple tests.
 

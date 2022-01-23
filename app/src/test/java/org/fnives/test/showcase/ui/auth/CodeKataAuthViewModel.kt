@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.ui.auth
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.testutils.InstantExecutorExtension
 import org.fnives.test.showcase.testutils.TestMainDispatcher
@@ -12,6 +13,7 @@ import org.mockito.kotlin.mock
 
 @Disabled("CodeKata")
 @ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class CodeKataAuthViewModel {
 
     private lateinit var sut: AuthViewModel

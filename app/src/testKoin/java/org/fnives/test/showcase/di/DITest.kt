@@ -7,7 +7,6 @@ import org.fnives.test.showcase.ui.auth.AuthViewModel
 import org.fnives.test.showcase.ui.home.MainViewModel
 import org.fnives.test.showcase.ui.splash.SplashViewModel
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.android.ext.koin.androidContext
@@ -27,11 +26,6 @@ class DITest : KoinTest {
     private val authViewModel by inject<AuthViewModel>()
     private val mainViewModel by inject<MainViewModel>()
     private val splashViewModel by inject<SplashViewModel>()
-
-    @BeforeEach
-    fun setUp() {
-        TestMainDispatcher.testDispatcher.pauseDispatcher()
-    }
 
     @AfterEach
     fun tearDown() {
