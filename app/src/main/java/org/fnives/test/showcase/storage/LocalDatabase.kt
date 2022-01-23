@@ -7,7 +7,7 @@ import org.fnives.test.showcase.storage.favourite.FavouriteEntity
 
 @Database(
     entities = [FavouriteEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class LocalDatabase : RoomDatabase() {

@@ -54,17 +54,21 @@ android {
     sourceSets {
         androidTest {
             java.srcDirs += "src/sharedTest/java"
+            assets.srcDirs += files("$projectDir/schemas".toString())
         }
         androidTestHilt {
             java.srcDirs += "src/sharedTestHilt/java"
+            assets.srcDirs += files("$projectDir/schemas".toString())
         }
         androidTestKoin {
             java.srcDirs += "src/sharedTestKoin/java"
+            assets.srcDirs += files("$projectDir/schemas".toString())
         }
 
         test {
             java.srcDirs += "src/sharedTest/java"
             java.srcDirs += "src/robolectricTest/java"
+            resources.srcDirs += files("$projectDir/schemas".toString())
         }
         testHilt {
             java.srcDirs += "src/sharedTestHilt/java"
@@ -149,6 +153,7 @@ dependencies {
     testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
+    androidTestImplementation "androidx.room:room-testing:$androidx_room_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     androidTestImplementation "io.insert-koin:koin-test-junit4:$koin_version"
     androidTestImplementation "junit:junit:$testing_junit4_version"
