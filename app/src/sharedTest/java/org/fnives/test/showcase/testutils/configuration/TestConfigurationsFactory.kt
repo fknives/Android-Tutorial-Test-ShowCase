@@ -15,4 +15,6 @@ interface TestConfigurationsFactory {
     fun createLoginRobotConfiguration(): LoginRobotConfiguration
 
     fun createSnackbarVerification(): SnackbarVerificationTestRule
+
+    fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory
 }

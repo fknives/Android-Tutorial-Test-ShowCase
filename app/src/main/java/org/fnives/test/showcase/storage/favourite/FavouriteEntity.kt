@@ -1,7 +1,11 @@
 package org.fnives.test.showcase.storage.favourite
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class FavouriteEntity(@PrimaryKey val contentId: String)
+data class FavouriteEntity(
+    @ColumnInfo(name = "content_id")
+    @PrimaryKey val contentId: String
+)

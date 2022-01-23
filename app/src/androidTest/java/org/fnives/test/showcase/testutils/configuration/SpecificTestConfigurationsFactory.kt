@@ -12,4 +12,7 @@ object SpecificTestConfigurationsFactory : TestConfigurationsFactory {
 
     override fun createSnackbarVerification(): SnackbarVerificationTestRule =
         AndroidTestSnackbarVerificationTestRule
+
+    override fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory =
+        AndroidMigrationTestRuleFactory
 }

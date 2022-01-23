@@ -12,4 +12,7 @@ object SpecificTestConfigurationsFactory : TestConfigurationsFactory {
 
     override fun createSnackbarVerification(): SnackbarVerificationTestRule =
         RobolectricSnackbarVerificationTestRule
+
+    override fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory =
+        RobolectricMigrationTestHelperFactory
 }
