@@ -7,9 +7,8 @@ import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.model.shared.Resource
-import javax.inject.Inject
 
-class GetAllContentUseCase @Inject internal constructor(
+class GetAllContentUseCase internal constructor(
     private val contentRepository: ContentRepository,
     private val favouriteContentLocalStorage: FavouriteContentLocalStorage
 ) {

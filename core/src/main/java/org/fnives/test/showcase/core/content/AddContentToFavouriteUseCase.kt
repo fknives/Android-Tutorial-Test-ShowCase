@@ -2,9 +2,8 @@ package org.fnives.test.showcase.core.content
 
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
-import javax.inject.Inject
 
-class AddContentToFavouriteUseCase @Inject internal constructor(
+class AddContentToFavouriteUseCase internal constructor(
     private val favouriteContentLocalStorage: FavouriteContentLocalStorage
 ) {
 

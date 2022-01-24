@@ -7,9 +7,8 @@ import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.shared.Answer
 import org.fnives.test.showcase.network.auth.LoginRemoteSource
 import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
-import javax.inject.Inject
 
-class LoginUseCase @Inject internal constructor(
+class LoginUseCase internal constructor(
     private val loginRemoteSource: LoginRemoteSource,
     private val userDataLocalStorage: UserDataLocalStorage
 ) {

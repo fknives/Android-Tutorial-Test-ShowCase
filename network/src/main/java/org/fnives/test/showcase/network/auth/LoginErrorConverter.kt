@@ -7,9 +7,8 @@ import org.fnives.test.showcase.network.shared.ExceptionWrapper
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import retrofit2.HttpException
 import retrofit2.Response
-import javax.inject.Inject
 
-internal class LoginErrorConverter @Inject constructor() {
+internal class LoginErrorConverter {
 
     @Throws(ParsingException::class)
     suspend fun invoke(request: suspend () -> Response<LoginResponse>): LoginStatusResponses =

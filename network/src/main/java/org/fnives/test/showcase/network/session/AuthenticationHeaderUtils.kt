@@ -1,9 +1,8 @@
 package org.fnives.test.showcase.network.session
 
 import okhttp3.Request
-import javax.inject.Inject
 
-internal class AuthenticationHeaderUtils @Inject constructor(
+internal class AuthenticationHeaderUtils(
     private val networkSessionLocalStorage: NetworkSessionLocalStorage
 ) {
 

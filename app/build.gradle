@@ -2,8 +2,6 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    // hilt specific
-    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -33,19 +31,6 @@ android {
         }
     }
     flavorDimensions 'di'
-    productFlavors {
-        hilt {
-            dimension 'di'
-            resValue "string", "app_name", "Hilt Test-ShowCase"
-            applicationId "org.fnives.test.showcase.hilt"
-            testInstrumentationRunner "org.fnives.test.showcase.testutils.configuration.HiltTestRunner"
-        }
-        koin {
-            dimension 'di'
-            resValue "string", "app_name", "Koin Test-ShowCase"
-            applicationId "org.fnives.test.showcase.koin"
-        }
-    }
 
     buildFeatures {
         viewBinding true
@@ -56,28 +41,10 @@ android {
             java.srcDirs += "src/sharedTest/java"
             assets.srcDirs += files("$projectDir/schemas".toString())
         }
-        androidTestHilt {
-            java.srcDirs += "src/sharedTestHilt/java"
-            assets.srcDirs += files("$projectDir/schemas".toString())
-        }
-        androidTestKoin {
-            java.srcDirs += "src/sharedTestKoin/java"
-            assets.srcDirs += files("$projectDir/schemas".toString())
-        }
-
         test {
             java.srcDirs += "src/sharedTest/java"
             java.srcDirs += "src/robolectricTest/java"
             resources.srcDirs += files("$projectDir/schemas".toString())
-        }
-        testHilt {
-            java.srcDirs += "src/sharedTestHilt/java"
-            java.srcDirs += "src/robolectricTestHilt/java"
-            resources.srcDirs += "src/robolectricTestHilt/resources"
-        }
-        testKoin {
-            java.srcDirs += "src/sharedTestKoin/java"
-            java.srcDirs += "src/robolectricTestKoin/java"
         }
     }
 
@@ -90,17 +57,10 @@ android {
     }
 }
 
-hilt {
-    enableAggregatingTask = true
-    enableExperimentalClasspathAggregation = true
-}
-
 afterEvaluate {
     // making sure the :mockserver is assembled after :clean when running tests
-    testKoinDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
-    testKoinReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
-    testHiltDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
-    testHiltReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
 }
 
 dependencies {
@@ -113,13 +73,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_livedata_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefreshlayout_version"
 
-    // Koin
-    koinImplementation "io.insert-koin:koin-android:$koin_version"
-
-    // Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kaptHilt "com.google.dagger:hilt-compiler:$hilt_version"
-    hiltImplementation "androidx.activity:activity-ktx:$activity_ktx_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
 
     implementation "androidx.room:room-runtime:$androidx_room_version"
     kapt "androidx.room:room-compiler:$androidx_room_version"
@@ -151,8 +105,6 @@ dependencies {
     testImplementation project(':mockserver')
     testImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
-    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     androidTestImplementation "androidx.room:room-testing:$androidx_room_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
@@ -167,9 +119,6 @@ dependencies {
     androidTestImplementation project(':mockserver')
     androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
-    androidTestImplementation project(":network") // hilt needs it
 
     implementation "io.reactivex.rxjava3:rxjava:3.1.3"
 }

@@ -1,9 +1,8 @@
-package org.fnives.test.showcase.network.auth.koin
+package org.fnives.test.showcase.network.auth
 
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.network.auth.LoginRemoteSourceImpl
-import org.fnives.test.showcase.network.di.koin.createNetworkModules
+import org.fnives.test.showcase.network.di.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage

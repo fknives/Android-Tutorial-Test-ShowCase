@@ -7,9 +7,8 @@ import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
 import org.fnives.test.showcase.network.shared.ExceptionWrapper
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
-import javax.inject.Inject
 
-internal class LoginRemoteSourceImpl @Inject constructor(
+internal class LoginRemoteSourceImpl(
     private val loginService: LoginService,
     private val loginErrorConverter: LoginErrorConverter
 ) : LoginRemoteSource {

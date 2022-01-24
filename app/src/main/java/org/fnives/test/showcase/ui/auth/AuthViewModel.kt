@@ -4,17 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.shared.Answer
 import org.fnives.test.showcase.ui.shared.Event
-import javax.inject.Inject
 
-@HiltViewModel
-class AuthViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : ViewModel() {
+class AuthViewModel(private val loginUseCase: LoginUseCase) : ViewModel() {
 
     private val _username = MutableLiveData<String>()
     val username: LiveData<String> = _username

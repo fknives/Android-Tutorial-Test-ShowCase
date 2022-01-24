@@ -2,14 +2,12 @@
 buildscript {
     ext.kotlin_version = "1.6.10"
     ext.detekt_version = "1.19.0"
-    ext.hilt_version = "2.40.5"
     repositories {
         mavenCentral()
         google()
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath 'com.android.tools.build:gradle:7.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.1"
@@ -24,15 +22,6 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        maven {
-            url "https://maven.pkg.github.com/fknives/ReloadableHiltModule"
-            credentials {
-                username = project.findProperty("GITHUB_USERNAME") ?: System.getenv("GITHUB_USERNAME")
-                password = project.findProperty("GITHUB_TOKEN") ?: System.getenv("GITHUB_TOKEN")
-            }
-            // how to get token
-            // https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
-        }
     }
 }
 
@@ -40,17 +29,17 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task unitTests(dependsOn: ["app:testKoinDebugUnitTest", "app:testHiltDebugUnitTest", "core:test", "network:test"]){
+task unitTests(dependsOn: ["app:testDebugUnitTest", "core:test", "network:test"]){
     group = 'Tests'
     description = 'Run all unit tests'
 }
 
-task robolectricTests(dependsOn: ["app:testKoinDebugUnitTest", "app:testHiltDebugUnitTest"]){
+task robolectricTests(dependsOn: ["app:testDebugUnitTest"]){
     group = 'Tests'
     description = 'Run all robolectric tests'
 }
 
-task androidTests(dependsOn: ["app:connectedKoinDebugAndroidTest", "app:connectedHiltDebugAndroidTest"]){
+task androidTests(dependsOn: ["app:connectedDebugAndroidTest"]){
     group = 'Tests'
     description = 'Run all Android tests'
 }

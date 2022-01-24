@@ -3,7 +3,7 @@ package org.fnives.test.showcase.network.content
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockWebServer
 import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.network.di.koin.createNetworkModules
+import org.fnives.test.showcase.network.di.createNetworkModules
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.junit.jupiter.api.AfterEach

@@ -26,14 +26,14 @@ import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.fnives.test.showcase.testutils.viewactions.PullToRefresh
 import org.fnives.test.showcase.testutils.viewactions.WithDrawable
 import org.fnives.test.showcase.testutils.viewactions.notIntended
-import org.fnives.test.showcase.ui.ActivityClassHolder
+import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.hamcrest.Matchers.allOf
 
 class HomeRobot : Robot {
 
     override fun init() {
         Intents.init()
-        Intents.intending(IntentMatchers.hasComponent(ActivityClassHolder.authActivity().java.canonicalName))
+        Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
             .respondWith(Instrumentation.ActivityResult(0, null))
     }
 
@@ -42,11 +42,11 @@ class HomeRobot : Robot {
     }
 
     fun assertNavigatedToAuth() = apply {
-        Intents.intended(IntentMatchers.hasComponent(ActivityClassHolder.authActivity().java.canonicalName))
+        Intents.intended(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
     }
 
     fun assertDidNotNavigateToAuth() = apply {
-        notIntended(IntentMatchers.hasComponent(ActivityClassHolder.authActivity().java.canonicalName))
+        notIntended(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
     }
 
     fun clickSignOut() = apply {

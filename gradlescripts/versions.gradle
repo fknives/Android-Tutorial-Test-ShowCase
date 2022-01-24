@@ -15,7 +15,6 @@ project.ext {
     retrofit_version = "2.9.0"
     okhttp_version = "4.9.1"
     moshi_version = "1.13.0"
-    reloadable_module_version = "0.1.0"
 
     testing_androidx_code_version = "1.4.0"
     testing_androidx_junit_version = "1.1.3"
