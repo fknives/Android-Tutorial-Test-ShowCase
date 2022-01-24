@@ -86,6 +86,8 @@ class PlainSessionExpirationTest : KoinTest {
         Assertions.assertEquals("", refreshRequest.body.readUtf8())
 
         Assertions.assertEquals("login-access", contentRequestAfterRefreshed.getHeader("Authorization"))
+        val expectedSavedSession = Session(accessToken = "login-access", refreshToken = "login-refresh")
+        verify(mockNetworkSessionLocalStorage, times(1)).session = expectedSavedSession
         verifyZeroInteractions(mockNetworkSessionExpirationListener)
     }
 

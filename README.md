@@ -138,7 +138,7 @@ The core tests are the simplest, we will look into how to use mockito to mock cl
 Next we will look how to test flows.
 
 #### Networking
-Open the [networking instruction set](./codekata/networking.instructionset).
+Open the [networking instruction set](./codekata/networking.instructionset.md).
 
 The networking instruction set will show you how to test network request with mockwebserver.
 
