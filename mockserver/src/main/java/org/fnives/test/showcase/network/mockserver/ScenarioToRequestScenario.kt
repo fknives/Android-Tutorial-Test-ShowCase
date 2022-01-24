@@ -38,6 +38,7 @@ internal class ScenarioToRequestScenario {
             is AuthScenario.Success -> CreateAuthSuccessResponse()
             is AuthScenario.MalformedJsonAsSuccessResponse -> CreateMalformedJsonSuccessResponse()
             is AuthScenario.UnexpectedJsonAsSuccessResponse -> CreateGenericSuccessResponseByJson("[]")
+            is AuthScenario.MissingFieldJson -> CreateGenericSuccessResponseByJson("{}")
         }
         val requestMatchingChecker = AuthRequestMatchingChecker(authScenario, validateArguments)
         return SpecificRequestScenario(requestMatchingChecker, createResponse)

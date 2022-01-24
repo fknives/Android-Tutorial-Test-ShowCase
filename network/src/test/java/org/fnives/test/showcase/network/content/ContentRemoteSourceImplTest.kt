@@ -32,8 +32,7 @@ class ContentRemoteSourceImplTest : KoinTest {
     @JvmField
     val mockServerScenarioSetupExtensions = MockServerScenarioSetupExtensions()
     private lateinit var mockNetworkSessionLocalStorage: NetworkSessionLocalStorage
-    private val mockServerScenarioSetup
-        get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
+    private val mockServerScenarioSetup get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
 
     @BeforeEach
     fun setUp() {
@@ -59,7 +58,7 @@ class ContentRemoteSourceImplTest : KoinTest {
     @Test
     fun successResponseParsing() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.Success(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false), validateArguments = false)
         val expected = ContentData.contentSuccess
 
         val actual = sut.get()
@@ -71,7 +70,7 @@ class ContentRemoteSourceImplTest : KoinTest {
     @Test
     fun successResponseRequestIsCorrect() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.Success(false), false)
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false), validateArguments = false)
 
         sut.get()
         val request = mockServerScenarioSetup.takeRequest()
@@ -87,7 +86,8 @@ class ContentRemoteSourceImplTest : KoinTest {
     @Test
     fun dataMissingFieldIsIgnored() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.SuccessWithMissingFields(false))
+        val response = ContentScenario.SuccessWithMissingFields(usingRefreshedToken = false)
+        mockServerScenarioSetup.setScenario(response, validateArguments = false)
 
         val expected = ContentData.contentSuccessWithMissingFields
 
@@ -100,7 +100,7 @@ class ContentRemoteSourceImplTest : KoinTest {
     @Test
     fun errorResponseResultsInNetworkException() {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.Error(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false), validateArguments = false)
 
         Assertions.assertThrows(NetworkException::class.java) {
             runBlocking { sut.get() }
@@ -111,7 +111,8 @@ class ContentRemoteSourceImplTest : KoinTest {
     @Test
     fun unexpectedJSONResultsInParsingException() {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.UnexpectedJsonAsSuccessResponse(false))
+        val response = ContentScenario.UnexpectedJsonAsSuccessResponse(usingRefreshedToken = false)
+        mockServerScenarioSetup.setScenario(response, validateArguments = false)
 
         Assertions.assertThrows(ParsingException::class.java) {
             runBlocking { sut.get() }
@@ -122,7 +123,8 @@ class ContentRemoteSourceImplTest : KoinTest {
     @Test
     fun malformedJSONResultsInParsingException() {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.MalformedJsonAsSuccessResponse(false))
+        val response = ContentScenario.MalformedJsonAsSuccessResponse(usingRefreshedToken = false)
+        mockServerScenarioSetup.setScenario(response, validateArguments = false)
 
         Assertions.assertThrows(ParsingException::class.java) {
             runBlocking { sut.get() }

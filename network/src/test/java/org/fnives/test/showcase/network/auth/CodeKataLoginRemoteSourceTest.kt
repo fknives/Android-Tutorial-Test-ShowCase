@@ -45,6 +45,11 @@ class CodeKataLoginRemoteSourceTest {
     fun invalidJsonMeansParsingException() {
     }
 
+    @DisplayName("GIVEN json response with missing field WHEN request is fired THEN network exception is thrown")
+    @Test
+    fun missingFieldJsonMeansParsingException() {
+    }
+
     @DisplayName("GIVEN malformed json response WHEN request is fired THEN network exception is thrown")
     @Test
     fun malformedJsonMeansParsingException() {
@@ -66,5 +71,13 @@ class CodeKataLoginRemoteSourceTest {
                 } while (true)
             }
         }
+
+        internal fun getLoginBodyJson(username: String, password: String): String =
+            """
+        {
+            "username": "$username",
+            "password": "$password"
+        }
+            """.trimIndent()
     }
 }
