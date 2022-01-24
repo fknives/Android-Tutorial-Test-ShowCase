@@ -39,8 +39,7 @@ class SessionExpirationTest : KoinTest {
     @RegisterExtension
     @JvmField
     val mockServerScenarioSetupExtensions = MockServerScenarioSetupExtensions()
-    private val mockServerScenarioSetup
-        get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
+    private val mockServerScenarioSetup get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
     private lateinit var mockNetworkSessionLocalStorage: NetworkSessionLocalStorage
     private lateinit var mockNetworkSessionExpirationListener: NetworkSessionExpirationListener
 
@@ -70,11 +69,11 @@ class SessionExpirationTest : KoinTest {
     fun successRefreshResultsInRequestRetry() = runBlocking {
         var sessionToReturnByMock: Session? = ContentData.loginSuccessResponse
         mockServerScenarioSetup.setScenario(
-            ContentScenario.Unauthorized(false)
-                .then(ContentScenario.Success(true)),
-            false
+            ContentScenario.Unauthorized(usingRefreshedToken = false)
+                .then(ContentScenario.Success(usingRefreshedToken = true)),
+            validateArguments = false
         )
-        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, false)
+        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Success, validateArguments = false)
         whenever(mockNetworkSessionLocalStorage.session).doAnswer { sessionToReturnByMock }
         doAnswer { sessionToReturnByMock = it.arguments[0] as Session? }
             .whenever(mockNetworkSessionLocalStorage).session = anyOrNull()
@@ -106,8 +105,8 @@ class SessionExpirationTest : KoinTest {
     @Test
     fun failingRefreshResultsInSessionExpiration() = runBlocking {
         whenever(mockNetworkSessionLocalStorage.session).doReturn(ContentData.loginSuccessResponse)
-        mockServerScenarioSetup.setScenario(ContentScenario.Unauthorized(false))
-        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error)
+        mockServerScenarioSetup.setScenario(ContentScenario.Unauthorized(usingRefreshedToken = false), validateArguments = false)
+        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error, validateArguments = false)
 
         Assertions.assertThrows(NetworkException::class.java) {
             runBlocking { sut.get() }

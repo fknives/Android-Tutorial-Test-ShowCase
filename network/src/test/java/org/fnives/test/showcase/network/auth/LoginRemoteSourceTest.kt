@@ -34,8 +34,7 @@ class LoginRemoteSourceTest : KoinTest {
     @RegisterExtension
     @JvmField
     val mockServerScenarioSetupExtensions = MockServerScenarioSetupExtensions()
-    private val mockServerScenarioSetup
-        get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
+    private val mockServerScenarioSetup get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
 
     @BeforeEach
     fun setUp() {
@@ -60,10 +59,10 @@ class LoginRemoteSourceTest : KoinTest {
     @DisplayName("GIVEN successful response WHEN request is fired THEN login status success is returned")
     @Test
     fun successResponseIsParsedProperly() = runBlocking {
-        mockServerScenarioSetup.setScenario(AuthScenario.Success("a", "b"))
+        mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"), validateArguments = false)
         val expected = LoginStatusResponses.Success(ContentData.loginSuccessResponse)
 
-        val actual = sut.login(LoginCredentials("a", "b"))
+        val actual = sut.login(LoginCredentials(username = "a", password = "b"))
 
         Assertions.assertEquals(expected, actual)
     }
@@ -71,16 +70,16 @@ class LoginRemoteSourceTest : KoinTest {
     @DisplayName("GIVEN successful response WHEN request is fired THEN the request is setup properly")
     @Test
     fun requestProperlySetup() = runBlocking {
-        mockServerScenarioSetup.setScenario(AuthScenario.Success("a", "b"), false)
+        mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"), validateArguments = false)
 
-        sut.login(LoginCredentials("a", "b"))
+        sut.login(LoginCredentials(username = "a", password = "b"))
         val request = mockServerScenarioSetup.takeRequest()
 
         Assertions.assertEquals("POST", request.method)
         Assertions.assertEquals("Android", request.getHeader("Platform"))
         Assertions.assertEquals(null, request.getHeader("Authorization"))
         Assertions.assertEquals("/login", request.path)
-        val loginRequest = createExpectedLoginRequestJson("a", "b")
+        val loginRequest = createExpectedLoginRequestJson(username = "a", password = "b")
         JSONAssert.assertEquals(
             loginRequest,
             request.body.readUtf8(),
@@ -91,10 +90,10 @@ class LoginRemoteSourceTest : KoinTest {
     @DisplayName("GIVEN bad request response WHEN request is fired THEN login status invalid credentials is returned")
     @Test
     fun badRequestMeansInvalidCredentials() = runBlocking {
-        mockServerScenarioSetup.setScenario(AuthScenario.InvalidCredentials("a", "b"))
+        mockServerScenarioSetup.setScenario(AuthScenario.InvalidCredentials(username = "a", password = "b"), validateArguments = false)
         val expected = LoginStatusResponses.InvalidCredentials
 
-        val actual = sut.login(LoginCredentials("a", "b"))
+        val actual = sut.login(LoginCredentials(username = "a", password = "b"))
 
         Assertions.assertEquals(expected, actual)
     }
@@ -102,30 +101,32 @@ class LoginRemoteSourceTest : KoinTest {
     @DisplayName("GIVEN internal error response WHEN request is fired THEN network exception is thrown")
     @Test
     fun genericErrorMeansNetworkError() {
-        mockServerScenarioSetup.setScenario(AuthScenario.GenericError("a", "b"))
+        mockServerScenarioSetup.setScenario(AuthScenario.GenericError(username = "a", password = "b"), validateArguments = false)
 
         Assertions.assertThrows(NetworkException::class.java) {
-            runBlocking { sut.login(LoginCredentials("a", "b")) }
+            runBlocking { sut.login(LoginCredentials(username = "a", password = "b")) }
         }
     }
 
     @DisplayName("GIVEN invalid json response WHEN request is fired THEN network exception is thrown")
     @Test
     fun invalidJsonMeansParsingException() {
-        mockServerScenarioSetup.setScenario(AuthScenario.UnexpectedJsonAsSuccessResponse("a", "b"))
+        val response = AuthScenario.UnexpectedJsonAsSuccessResponse(username = "a", password = "b")
+        mockServerScenarioSetup.setScenario(response, validateArguments = false)
 
         Assertions.assertThrows(ParsingException::class.java) {
-            runBlocking { sut.login(LoginCredentials("a", "b")) }
+            runBlocking { sut.login(LoginCredentials(username = "a", password = "b")) }
         }
     }
 
     @DisplayName("GIVEN malformed json response WHEN request is fired THEN network exception is thrown")
     @Test
     fun malformedJsonMeansParsingException() {
-        mockServerScenarioSetup.setScenario(AuthScenario.MalformedJsonAsSuccessResponse("a", "b"))
+        val response = AuthScenario.MalformedJsonAsSuccessResponse(username = "a", "b")
+        mockServerScenarioSetup.setScenario(response, validateArguments = false)
 
         Assertions.assertThrows(ParsingException::class.java) {
-            runBlocking { sut.login(LoginCredentials("a", "b")) }
+            runBlocking { sut.login(LoginCredentials(username = "a", "b")) }
         }
     }
 }
