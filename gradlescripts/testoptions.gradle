@@ -31,6 +31,13 @@ subprojects { module ->
                 includeAndroidResources = true
             }
         }
+        module.tasks.configureEach { task ->
+            if (task.taskIdentity.type.toString() == "class org.jetbrains.kotlin.gradle.tasks.KotlinCompile") {
+                task.kotlinOptions {
+                    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+                }
+            }
+        }
     }
 
     plugins.withId("com.android.library") {
@@ -45,6 +52,13 @@ subprojects { module ->
         module.android.testOptions {
             unitTests {
                 includeAndroidResources = true
+            }
+        }
+        module.tasks.configureEach { task ->
+            if (task.taskIdentity.type.toString() == "class org.jetbrains.kotlin.gradle.tasks.KotlinCompile") {
+                task.kotlinOptions {
+                    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+                }
             }
         }
     }
