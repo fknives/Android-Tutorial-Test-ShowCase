@@ -17,7 +17,6 @@ import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
-import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -69,7 +68,7 @@ class MainActivityTest {
 
         hiltRule.inject()
         disposable = networkSynchronization.registerNetworkingSynchronization()
-        SetupAuthenticationState.setupLogin(mainDispatcherTestRule, mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+        homeRobot.setupLogin(mainDispatcherTestRule, mockServerScenarioSetupTestRule.mockServerScenarioSetup)
     }
 
     @After

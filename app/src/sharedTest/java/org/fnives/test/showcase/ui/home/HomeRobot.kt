@@ -19,7 +19,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.FavouriteContent
+import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
+import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.robot.Robot
+import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.fnives.test.showcase.testutils.viewactions.PullToRefresh
 import org.fnives.test.showcase.testutils.viewactions.WithDrawable
 import org.fnives.test.showcase.testutils.viewactions.notIntended
@@ -99,5 +102,12 @@ class HomeRobot : Robot {
     fun assertContainsError() = apply {
         Espresso.onView(withId(R.id.error_message))
             .check(matches(allOf(isDisplayed(), withText(R.string.something_went_wrong))))
+    }
+
+    fun setupLogin(
+        mainDispatcherTestRule: MainDispatcherTestRule,
+        mockServerScenarioSetup: MockServerScenarioSetup
+    ) {
+        SetupAuthenticationState.setupLogin(mainDispatcherTestRule, mockServerScenarioSetup)
     }
 }

@@ -16,7 +16,6 @@ import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
-import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -64,7 +63,7 @@ class MainActivityTest : KoinTest {
             .invoke(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
 
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
-        SetupAuthenticationState.setupLogin(
+        homeRobot.setupLogin(
             mainDispatcherTestRule,
             mockServerScenarioSetupTestRule.mockServerScenarioSetup
         )
