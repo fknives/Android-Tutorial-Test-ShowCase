@@ -66,7 +66,8 @@ class MainActivityTest : KoinTest {
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
         SetupAuthenticationState.setupLogin(
             mainDispatcherTestRule,
-            mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+            mockServerScenarioSetupTestRule.mockServerScenarioSetup
+        )
     }
 
     @After
