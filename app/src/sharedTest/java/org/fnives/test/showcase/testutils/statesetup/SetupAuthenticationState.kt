@@ -17,12 +17,7 @@ object SetupAuthenticationState : KoinTest {
         mainDispatcherTestRule: MainDispatcherTestRule,
         mockServerScenarioSetup: MockServerScenarioSetup
     ) {
-        mockServerScenarioSetup.setScenario(
-            AuthScenario.Success(
-                username = "a",
-                password = "b"
-            )
-        )
+        mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"))
         val activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
         val loginRobot = LoginRobot()

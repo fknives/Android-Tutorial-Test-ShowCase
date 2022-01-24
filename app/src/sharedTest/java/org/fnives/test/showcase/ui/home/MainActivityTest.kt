@@ -47,6 +47,8 @@ class MainActivityTest : KoinTest {
     @JvmField
     val mockServerScenarioSetupTestRule = MockServerScenarioSetupTestRule()
 
+    val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
+
     @Rule
     @JvmField
     val mainDispatcherTestRule = SpecificTestConfigurationsFactory.createMainDispatcherTestRule()
@@ -60,12 +62,12 @@ class MainActivityTest : KoinTest {
     @Before
     fun setUp() {
         SpecificTestConfigurationsFactory.createServerTypeConfiguration()
-            .invoke(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+            .invoke(mockServerScenarioSetup)
 
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
         homeRobot.setupLogin(
             mainDispatcherTestRule,
-            mockServerScenarioSetupTestRule.mockServerScenarioSetup
+            mockServerScenarioSetup
         )
     }
 
@@ -78,8 +80,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN initialized MainActivity WHEN signout is clicked THEN user is signed out */
     @Test
     fun signOutClickedResultsInNavigation() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Error(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
@@ -92,8 +93,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN success response WHEN data is returned THEN it is shown on the ui */
     @Test
     fun successfulDataLoadingShowsTheElementsOnTheUI() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Success(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
@@ -106,8 +106,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN success response WHEN item is clicked THEN ui is updated */
     @Test
     fun clickingOnListElementUpdatesTheElementsFavouriteState() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Success(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
@@ -122,8 +121,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN success response WHEN item is clicked THEN ui is updated even if activity is recreated */
     @Test
     fun elementFavouritedIsKeptEvenIfActivityIsRecreated() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Success(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
@@ -143,8 +141,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN success response WHEN item is clicked then clicked again THEN ui is updated */
     @Test
     fun clickingAnElementMultipleTimesProperlyUpdatesIt() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Success(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
@@ -161,8 +158,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN error response WHEN loaded THEN error is Shown */
     @Test
     fun networkErrorResultsInUIErrorStateShown() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Error(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
@@ -174,11 +170,10 @@ class MainActivityTest : KoinTest {
     /** GIVEN error response then success WHEN retried THEN success is shown */
     @Test
     fun retryingFromErrorStateAndSucceedingShowsTheData() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(
-                ContentScenario.Error(false)
-                    .then(ContentScenario.Success(false))
-            )
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Error(usingRefreshedToken = false)
+                .then(ContentScenario.Success(usingRefreshedToken = false))
+        )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
@@ -195,11 +190,10 @@ class MainActivityTest : KoinTest {
     /** GIVEN success then error WHEN retried THEN error is shown */
     @Test
     fun errorIsShownIfTheDataIsFetchedAndErrorIsReceived() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(
-                ContentScenario.Success(false)
-                    .then(ContentScenario.Error(false))
-            )
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Success(usingRefreshedToken = false)
+                .then(ContentScenario.Error(usingRefreshedToken = false))
+        )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
@@ -218,11 +212,10 @@ class MainActivityTest : KoinTest {
     /** GIVEN unauthenticated then success WHEN loaded THEN success is shown */
     @Test
     fun authenticationIsHandledWithASingleLoading() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(
-                ContentScenario.Unauthorized(false)
-                    .then(ContentScenario.Success(true))
-            )
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Unauthorized(usingRefreshedToken = false)
+                .then(ContentScenario.Success(usingRefreshedToken = true))
+        )
             .setScenario(RefreshTokenScenario.Success)
 
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
@@ -237,8 +230,7 @@ class MainActivityTest : KoinTest {
     /** GIVEN unauthenticated then error WHEN loaded THEN navigated to auth */
     @Test
     fun sessionExpirationResultsInNavigation() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup
-            .setScenario(ContentScenario.Unauthorized(false))
+        mockServerScenarioSetup.setScenario(ContentScenario.Unauthorized(usingRefreshedToken = false))
             .setScenario(RefreshTokenScenario.Error)
 
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
