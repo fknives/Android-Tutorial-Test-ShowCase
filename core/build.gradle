@@ -9,12 +9,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs += ['-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi']
-    }
-}
-
 kapt {
     correctErrorTypes = true
 }

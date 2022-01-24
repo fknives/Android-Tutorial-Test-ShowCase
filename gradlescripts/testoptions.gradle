@@ -8,6 +8,13 @@ subprojects { module ->
                 showStandardStreams true
             }
         }
+        module.tasks.configureEach { task ->
+            if (task.taskIdentity.type.toString() == "class org.jetbrains.kotlin.gradle.tasks.KotlinCompile") {
+                task.kotlinOptions {
+                    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+                }
+            }
+        }
     }
 
     plugins.withId("com.android.application") {

@@ -1,8 +1,9 @@
 package org.fnives.test.showcase.network.auth
 
 import com.squareup.moshi.JsonDataException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import okhttp3.internal.http.RealResponseBody
 import okio.Buffer
 import org.fnives.test.showcase.model.session.Session
@@ -18,6 +19,7 @@ import retrofit2.Response
 import java.io.IOException
 
 @Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 class LoginErrorConverterTest {
 
     private lateinit var sut: LoginErrorConverter
@@ -49,7 +51,7 @@ class LoginErrorConverterTest {
 
     @DisplayName("GIVEN 400 error response WHEN parsing login error THEN invalid credentials is returned")
     @Test
-    fun code400ResponseResultsInInvalidCredentials() = runBlockingTest {
+    fun code400ResponseResultsInInvalidCredentials() = runTest {
         val expected = LoginStatusResponses.InvalidCredentials
 
         val actual = sut.invoke {
@@ -62,7 +64,7 @@ class LoginErrorConverterTest {
 
     @DisplayName("GIVEN successful response WHEN parsing login error THEN successful response is returned")
     @Test
-    fun successResponseResultsInSessionResponse() = runBlockingTest {
+    fun successResponseResultsInSessionResponse() = runTest {
         val loginResponse = LoginResponse("a", "r")
         val expectedSession = Session(accessToken = loginResponse.accessToken, refreshToken = loginResponse.refreshToken)
         val expected = LoginStatusResponses.Success(expectedSession)
