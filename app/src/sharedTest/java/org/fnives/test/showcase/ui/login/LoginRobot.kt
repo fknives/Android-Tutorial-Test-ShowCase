@@ -37,6 +37,10 @@ class LoginRobot(
 
     override fun init() {
         Intents.init()
+        setupIntentResults()
+    }
+
+    fun setupIntentResults() {
         intending(hasComponent(ActivityClassHolder.mainActivity().java.canonicalName))
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()))
     }

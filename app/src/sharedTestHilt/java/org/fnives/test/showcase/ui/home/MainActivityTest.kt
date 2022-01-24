@@ -17,9 +17,8 @@ import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
-import org.fnives.test.showcase.testutils.statesetup.SetupLoggedInState
+import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -59,9 +58,6 @@ class MainActivityTest {
     val hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var setupLoggedInState: SetupLoggedInState
-
-    @Inject
     lateinit var networkSynchronization: NetworkSynchronization
 
     private lateinit var disposable: Disposable
@@ -72,8 +68,8 @@ class MainActivityTest {
             .invoke(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
 
         hiltRule.inject()
-        setupLoggedInState.setupLogin(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
         disposable = networkSynchronization.registerNetworkingSynchronization()
+        SetupAuthenticationState.setupLogin(mainDispatcherTestRule, mockServerScenarioSetupTestRule.mockServerScenarioSetup)
     }
 
     @After
@@ -94,7 +90,6 @@ class MainActivityTest {
         mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
 
         homeRobot.assertNavigatedToAuth()
-        Assert.assertEquals(false, setupLoggedInState.isLoggedIn())
     }
 
     /** GIVEN success response WHEN data is returned THEN it is shown on the ui */
@@ -253,6 +248,5 @@ class MainActivityTest {
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         homeRobot.assertNavigatedToAuth()
-        Assert.assertEquals(false, setupLoggedInState.isLoggedIn())
     }
 }

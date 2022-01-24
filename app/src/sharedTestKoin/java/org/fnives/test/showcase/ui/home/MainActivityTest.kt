@@ -16,9 +16,8 @@ import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
-import org.fnives.test.showcase.testutils.statesetup.SetupLoggedInState
+import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -64,8 +63,10 @@ class MainActivityTest : KoinTest {
         SpecificTestConfigurationsFactory.createServerTypeConfiguration()
             .invoke(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
 
-        SetupLoggedInState.setupLogin(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
+        SetupAuthenticationState.setupLogin(
+            mainDispatcherTestRule,
+            mockServerScenarioSetupTestRule.mockServerScenarioSetup)
     }
 
     @After
@@ -86,7 +87,6 @@ class MainActivityTest : KoinTest {
         mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
 
         homeRobot.assertNavigatedToAuth()
-        Assert.assertEquals(false, SetupLoggedInState.isLoggedIn())
     }
 
     /** GIVEN success response WHEN data is returned THEN it is shown on the ui */
@@ -245,6 +245,5 @@ class MainActivityTest : KoinTest {
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         homeRobot.assertNavigatedToAuth()
-        Assert.assertEquals(false, SetupLoggedInState.isLoggedIn())
     }
 }
