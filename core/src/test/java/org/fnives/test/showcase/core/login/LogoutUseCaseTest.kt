@@ -1,10 +1,9 @@
-package org.fnives.test.showcase.core.login.koin
+package org.fnives.test.showcase.core.login
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.content.ContentRepository
 import org.fnives.test.showcase.core.di.koin.createCoreModule
-import org.fnives.test.showcase.core.login.LogoutUseCase
 import org.fnives.test.showcase.core.storage.UserDataLocalStorage
 import org.fnives.test.showcase.model.network.BaseUrl
 import org.junit.jupiter.api.AfterEach
@@ -31,7 +30,7 @@ internal class LogoutUseCaseTest : KoinTest {
     @BeforeEach
     fun setUp() {
         mockUserDataLocalStorage = mock()
-        sut = LogoutUseCase(mockUserDataLocalStorage, null)
+        sut = LogoutUseCase(mockUserDataLocalStorage)
         startKoin {
             modules(
                 createCoreModule(

@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.FetchContentUseCase
@@ -18,10 +16,8 @@ import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.ui.shared.Event
-import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+class MainViewModel(
     private val getAllContentUseCase: GetAllContentUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val fetchContentUseCase: FetchContentUseCase,

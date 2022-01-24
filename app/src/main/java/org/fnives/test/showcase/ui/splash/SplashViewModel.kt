@@ -4,15 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.ui.shared.Event
-import javax.inject.Inject
 
-@HiltViewModel
-class SplashViewModel @Inject constructor(isUserLoggedInUseCase: IsUserLoggedInUseCase) : ViewModel() {
+class SplashViewModel(isUserLoggedInUseCase: IsUserLoggedInUseCase) : ViewModel() {
 
     private val _navigateTo = MutableLiveData<Event<NavigateTo>>()
     val navigateTo: LiveData<Event<NavigateTo>> = _navigateTo

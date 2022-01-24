@@ -5,8 +5,9 @@ import androidx.test.core.app.ActivityScenario
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
-import org.fnives.test.showcase.ui.ActivityClassHolder
+import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.fnives.test.showcase.ui.home.HomeRobot
+import org.fnives.test.showcase.ui.home.MainActivity
 import org.fnives.test.showcase.ui.login.LoginRobot
 import org.koin.test.KoinTest
 
@@ -22,7 +23,7 @@ object SetupAuthenticationState : KoinTest {
                 password = "b"
             )
         )
-        val activityScenario = ActivityScenario.launch(ActivityClassHolder.authActivity().java)
+        val activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
         val loginRobot = LoginRobot()
         loginRobot.setupIntentResults()
@@ -39,7 +40,7 @@ object SetupAuthenticationState : KoinTest {
     fun setupLogout(
         mainDispatcherTestRule: MainDispatcherTestRule
     ) {
-        val activityScenario = ActivityScenario.launch(ActivityClassHolder.mainActivity().java)
+        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
         val homeRobot = HomeRobot()
         homeRobot

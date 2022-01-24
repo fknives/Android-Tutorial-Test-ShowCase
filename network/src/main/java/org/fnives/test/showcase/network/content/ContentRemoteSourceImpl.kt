@@ -4,9 +4,8 @@ import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.ImageUrl
 import org.fnives.test.showcase.network.shared.ExceptionWrapper
-import javax.inject.Inject
 
-internal class ContentRemoteSourceImpl @Inject constructor(
+internal class ContentRemoteSourceImpl(
     private val contentService: ContentService
 ) : ContentRemoteSource {
 

@@ -21,7 +21,7 @@ import org.fnives.test.showcase.testutils.configuration.SpecificTestConfiguratio
 import org.fnives.test.showcase.testutils.configuration.TestConfigurationsFactory
 import org.fnives.test.showcase.testutils.robot.Robot
 import org.fnives.test.showcase.testutils.viewactions.notIntended
-import org.fnives.test.showcase.ui.ActivityClassHolder
+import org.fnives.test.showcase.ui.home.MainActivity
 import org.hamcrest.core.IsNot.not
 
 class LoginRobot(
@@ -41,7 +41,7 @@ class LoginRobot(
     }
 
     fun setupIntentResults() {
-        intending(hasComponent(ActivityClassHolder.mainActivity().java.canonicalName))
+        intending(hasComponent(MainActivity::class.java.canonicalName))
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()))
     }
 
@@ -95,10 +95,10 @@ class LoginRobot(
     }
 
     fun assertNavigatedToHome() = apply {
-        intended(hasComponent(ActivityClassHolder.mainActivity().java.canonicalName))
+        intended(hasComponent(MainActivity::class.java.canonicalName))
     }
 
     fun assertNotNavigatedToHome() = apply {
-        notIntended(hasComponent(ActivityClassHolder.mainActivity().java.canonicalName))
+        notIntended(hasComponent(MainActivity::class.java.canonicalName))
     }
 }

@@ -1,10 +1,10 @@
-package org.fnives.test.showcase.network.auth.hilt
+package org.fnives.test.showcase.network.auth
 
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.model.auth.LoginCredentials
-import org.fnives.test.showcase.network.DaggerTestNetworkComponent
-import org.fnives.test.showcase.network.auth.LoginRemoteSource
+import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.network.auth.model.LoginStatusResponses
+import org.fnives.test.showcase.network.di.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.ContentData.createExpectedLoginRequestJson
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
@@ -12,21 +12,24 @@ import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
 import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.mockito.kotlin.mock
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
-import javax.inject.Inject
 
 @Suppress("TestFunctionName")
-class LoginRemoteSourceTest {
+class LoginRemoteSourceTest : KoinTest {
 
-    @Inject
-    internal lateinit var sut: LoginRemoteSource
+    private val sut by inject<LoginRemoteSource>()
 
     @RegisterExtension
     @JvmField
@@ -37,13 +40,21 @@ class LoginRemoteSourceTest {
     @BeforeEach
     fun setUp() {
         val mockNetworkSessionLocalStorage = mock<NetworkSessionLocalStorage>()
-        DaggerTestNetworkComponent.builder()
-            .setBaseUrl(mockServerScenarioSetupExtensions.url)
-            .setEnableLogging(true)
-            .setNetworkSessionLocalStorage(mockNetworkSessionLocalStorage)
-            .setNetworkSessionExpirationListener(mock())
-            .build()
-            .inject(this)
+        startKoin {
+            modules(
+                createNetworkModules(
+                    baseUrl = BaseUrl(mockServerScenarioSetupExtensions.url),
+                    enableLogging = true,
+                    networkSessionExpirationListenerProvider = mock(),
+                    networkSessionLocalStorageProvider = { mockNetworkSessionLocalStorage }
+                ).toList()
+            )
+        }
+    }
+
+    @AfterEach
+    fun tearDown() {
+        stopKoin()
     }
 
     @DisplayName("GIVEN successful response WHEN request is fired THEN login status success is returned")

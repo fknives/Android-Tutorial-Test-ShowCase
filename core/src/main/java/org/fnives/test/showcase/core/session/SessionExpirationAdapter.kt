@@ -1,9 +1,8 @@
 package org.fnives.test.showcase.core.session
 
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
-import javax.inject.Inject
 
-internal class SessionExpirationAdapter @Inject constructor(
+internal class SessionExpirationAdapter(
     private val sessionExpirationListener: SessionExpirationListener
 ) : NetworkSessionExpirationListener {
 
