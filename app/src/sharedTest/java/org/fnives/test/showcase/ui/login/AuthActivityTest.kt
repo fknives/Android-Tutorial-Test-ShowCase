@@ -42,6 +42,7 @@ class AuthActivityTest : KoinTest {
     @Rule
     @JvmField
     val mockServerScenarioSetupTestRule = MockServerScenarioSetupTestRule()
+    val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
 
     @Rule
     @JvmField
@@ -56,7 +57,7 @@ class AuthActivityTest : KoinTest {
     @Before
     fun setUp() {
         SpecificTestConfigurationsFactory.createServerTypeConfiguration()
-            .invoke(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+            .invoke(mockServerScenarioSetup)
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
     }
 
@@ -69,11 +70,8 @@ class AuthActivityTest : KoinTest {
     /** GIVEN non empty password and username and successful response WHEN signIn THEN no error is shown and navigating to home */
     @Test
     fun properLoginResultsInNavigationToHome() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup.setScenario(
-            AuthScenario.Success(
-                password = "alma",
-                username = "banan"
-            )
+        mockServerScenarioSetup.setScenario(
+            AuthScenario.Success(password = "alma", username = "banan")
         )
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         loginRobot
@@ -123,7 +121,7 @@ class AuthActivityTest : KoinTest {
     /** GIVEN password and username and invalid credentials response WHEN signIn THEN error invalid credentials is shown */
     @Test
     fun invalidCredentialsGivenShowsProperErrorMessage() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup.setScenario(
+        mockServerScenarioSetup.setScenario(
             AuthScenario.InvalidCredentials(username = "alma", password = "banan")
         )
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
@@ -144,7 +142,7 @@ class AuthActivityTest : KoinTest {
     /** GIVEN password and username and error response WHEN signIn THEN error invalid credentials is shown */
     @Test
     fun networkErrorShowsProperErrorMessage() {
-        mockServerScenarioSetupTestRule.mockServerScenarioSetup.setScenario(
+        mockServerScenarioSetup.setScenario(
             AuthScenario.GenericError(username = "alma", password = "banan")
         )
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)

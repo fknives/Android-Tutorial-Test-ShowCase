@@ -12,4 +12,5 @@ sealed class AuthScenario : GenericScenario<AuthScenario>() {
     class GenericError(override val username: String, override val password: String) : AuthScenario()
     class UnexpectedJsonAsSuccessResponse(override val username: String, override val password: String) : AuthScenario()
     class MalformedJsonAsSuccessResponse(override val username: String, override val password: String) : AuthScenario()
+    class MissingFieldJson(override val username: String, override val password: String) : AuthScenario()
 }
