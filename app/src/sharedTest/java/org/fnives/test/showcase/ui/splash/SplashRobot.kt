@@ -3,7 +3,10 @@ package org.fnives.test.showcase.ui.splash
 import android.app.Instrumentation
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
+import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.robot.Robot
+import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.fnives.test.showcase.testutils.viewactions.notIntended
 import org.fnives.test.showcase.ui.ActivityClassHolder
 
@@ -19,6 +22,23 @@ class SplashRobot : Robot {
 
     override fun release() {
         Intents.release()
+    }
+
+    fun setupLoggedInState(
+        mainDispatcherTestRule: MainDispatcherTestRule,
+        mockServerScenarioSetup: MockServerScenarioSetup
+    ) {
+        SetupAuthenticationState.setupLogin(mainDispatcherTestRule, mockServerScenarioSetup)
+        release()
+        init()
+    }
+
+    fun setupLoggedOutState(
+        mainDispatcherTestRule: MainDispatcherTestRule
+    ) {
+        SetupAuthenticationState.setupLogout(mainDispatcherTestRule)
+        release()
+        init()
     }
 
     fun assertHomeIsStarted() = apply {

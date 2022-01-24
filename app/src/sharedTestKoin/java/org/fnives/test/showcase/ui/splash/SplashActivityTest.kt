@@ -9,7 +9,6 @@ import org.fnives.test.showcase.testutils.configuration.SpecificTestConfiguratio
 import org.fnives.test.showcase.testutils.idling.Disposable
 import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
-import org.fnives.test.showcase.testutils.statesetup.SetupLoggedInState
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -59,7 +58,7 @@ class SplashActivityTest : KoinTest {
     /** GIVEN loggedInState WHEN opened after some time THEN MainActivity is started */
     @Test
     fun loggedInStateNavigatesToHome() {
-        SetupLoggedInState.setupLogin(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+        splashRobot.setupLoggedInState(mainDispatcherTestRule, mockServerScenarioSetupTestRule.mockServerScenarioSetup)
 
         activityScenario = ActivityScenario.launch(SplashActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
@@ -68,15 +67,12 @@ class SplashActivityTest : KoinTest {
 
         splashRobot.assertHomeIsStarted()
             .assertAuthIsNotStarted()
-
-        SetupLoggedInState.setupLogout()
     }
 
     /** GIVEN loggedOffState WHEN opened after some time THEN AuthActivity is started */
     @Test
     fun loggedOutStatesNavigatesToAuthentication() {
-        SetupLoggedInState.setupLogout()
-
+        splashRobot.setupLoggedOutState(mainDispatcherTestRule)
         activityScenario = ActivityScenario.launch(SplashActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
 
@@ -89,8 +85,7 @@ class SplashActivityTest : KoinTest {
     /** GIVEN loggedOffState and not enough time WHEN opened THEN no activity is started */
     @Test
     fun loggedOutStatesNotEnoughTime() {
-        SetupLoggedInState.setupLogout()
-
+        splashRobot.setupLoggedOutState(mainDispatcherTestRule)
         activityScenario = ActivityScenario.launch(SplashActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
 
@@ -103,7 +98,7 @@ class SplashActivityTest : KoinTest {
     /** GIVEN loggedInState and not enough time WHEN opened THEN no activity is started */
     @Test
     fun loggedInStatesNotEnoughTime() {
-        SetupLoggedInState.setupLogin(mockServerScenarioSetupTestRule.mockServerScenarioSetup)
+        splashRobot.setupLoggedInState(mainDispatcherTestRule, mockServerScenarioSetupTestRule.mockServerScenarioSetup)
 
         activityScenario = ActivityScenario.launch(SplashActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
@@ -112,7 +107,5 @@ class SplashActivityTest : KoinTest {
 
         splashRobot.assertHomeIsNotStarted()
             .assertAuthIsNotStarted()
-
-        SetupLoggedInState.setupLogout()
     }
 }
