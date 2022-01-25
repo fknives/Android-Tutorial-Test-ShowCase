@@ -1,7 +1,6 @@
 package org.fnives.test.showcase.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.model.content.FavouriteContent
@@ -73,7 +72,7 @@ class MainActivityTest : KoinTest {
 
     @After
     fun tearDown() {
-        activityScenario.moveToState(Lifecycle.State.DESTROYED)
+        activityScenario.close()
         disposable.dispose()
     }
 
@@ -130,7 +129,7 @@ class MainActivityTest : KoinTest {
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
 
-        activityScenario.moveToState(Lifecycle.State.DESTROYED)
+        activityScenario.close()
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 

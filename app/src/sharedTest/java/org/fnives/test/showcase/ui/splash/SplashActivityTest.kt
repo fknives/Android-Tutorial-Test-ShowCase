@@ -51,7 +51,7 @@ class SplashActivityTest : KoinTest {
 
     @After
     fun tearDown() {
-        activityScenario.moveToState(Lifecycle.State.DESTROYED)
+        activityScenario.close()
         disposable.dispose()
     }
 
