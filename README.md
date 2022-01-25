@@ -145,7 +145,7 @@ The networking instruction set will show you how to test network request with mo
 It will also show you that you can write tests not only for one class mocking all the dependencies, but a component.
 
 #### App ViewModel Unit Tests
-Open the [app viewModel unit tests instruction set](./codekata/viewmodel.instructionset).
+Open the [app viewModel unit tests instruction set](./codekata/viewmodel.instructionset.md).
 
 This section we will see how to replace the dispatcher to testDispatcher to control the ViewModel's coroutines.
 
