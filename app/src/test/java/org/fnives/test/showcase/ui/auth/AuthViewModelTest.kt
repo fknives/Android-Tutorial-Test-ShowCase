@@ -44,45 +44,59 @@ internal class AuthViewModelTest {
     @DisplayName("GIVEN initialized viewModel WHEN observed THEN loading false other fields are empty")
     @Test
     fun initialSetup() {
+        val usernameTestObserver = sut.username.test()
+        val passwordTestObserver = sut.password.test()
+        val loadingTestObserver = sut.loading.test()
+        val errorTestObserver = sut.error.test()
+        val navigateToHomeTestObserver = sut.navigateToHome.test()
+
         testScheduler.advanceUntilIdle()
 
-        sut.username.test().assertNoValue()
-        sut.password.test().assertNoValue()
-        sut.loading.test().assertValue(false)
-        sut.error.test().assertNoValue()
-        sut.navigateToHome.test().assertNoValue()
+        usernameTestObserver.assertNoValue()
+        passwordTestObserver.assertNoValue()
+        loadingTestObserver.assertValue(false)
+        errorTestObserver.assertNoValue()
+        navigateToHomeTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN password text WHEN onPasswordChanged is called THEN password livedata is updated")
     @Test
     fun whenPasswordChangedLiveDataIsUpdated() {
+        val usernameTestObserver = sut.username.test()
         val passwordTestObserver = sut.password.test()
+        val loadingTestObserver = sut.loading.test()
+        val errorTestObserver = sut.error.test()
+        val navigateToHomeTestObserver = sut.navigateToHome.test()
 
         sut.onPasswordChanged("a")
         sut.onPasswordChanged("al")
         testScheduler.advanceUntilIdle()
 
+        usernameTestObserver.assertNoValue()
         passwordTestObserver.assertValueHistory("a", "al")
-        sut.username.test().assertNoValue()
-        sut.loading.test().assertValue(false)
-        sut.error.test().assertNoValue()
-        sut.navigateToHome.test().assertNoValue()
+        loadingTestObserver.assertValue(false)
+        errorTestObserver.assertNoValue()
+        navigateToHomeTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN username text WHEN onUsernameChanged is called THEN username livedata is updated")
     @Test
     fun whenUsernameChangedLiveDataIsUpdated() {
         val usernameTestObserver = sut.username.test()
+        val passwordTestObserver = sut.password.test()
+        val loadingTestObserver = sut.loading.test()
+        val errorTestObserver = sut.error.test()
+        val navigateToHomeTestObserver = sut.navigateToHome.test()
 
-        sut.onUsernameChanged("a")
-        sut.onUsernameChanged("al")
+        sut.onUsernameChanged("bla")
+        sut.onUsernameChanged("blabla")
         testScheduler.advanceUntilIdle()
 
-        usernameTestObserver.assertValueHistory("a", "al")
-        sut.password.test().assertNoValue()
-        sut.loading.test().assertValue(false)
-        sut.error.test().assertNoValue()
-        sut.navigateToHome.test().assertNoValue()
+        usernameTestObserver.assertValueHistory("bla", "blabla")
+        passwordTestObserver.assertNoValue()
+        loadingTestObserver.assertValue(false)
+        errorTestObserver.assertNoValue()
+        navigateToHomeTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN no password or username WHEN login is Called THEN empty credentials are used in usecase")
@@ -122,6 +136,7 @@ internal class AuthViewModelTest {
         }
         sut.onPasswordChanged("pass")
         sut.onUsernameChanged("usr")
+        testScheduler.advanceUntilIdle()
 
         sut.onLogin()
         testScheduler.advanceUntilIdle()
@@ -134,20 +149,20 @@ internal class AuthViewModelTest {
 
     @DisplayName("GIVEN AnswerError WHEN login called THEN error is shown")
     @Test
-    fun loginErrorResultsInErrorState() {
+    fun loginUnexpectedErrorResultsInErrorState() {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
         }
-        val loadingObserver = sut.loading.test()
-        val errorObserver = sut.error.test()
-        val navigateToHomeObserver = sut.navigateToHome.test()
+        val loadingTestObserver = sut.loading.test()
+        val errorTestObserver = sut.error.test()
+        val navigateToHomeTestObserver = sut.navigateToHome.test()
 
         sut.onLogin()
         testScheduler.advanceUntilIdle()
 
-        loadingObserver.assertValueHistory(false, true, false)
-        errorObserver.assertValueHistory(Event(AuthViewModel.ErrorType.GENERAL_NETWORK_ERROR))
-        navigateToHomeObserver.assertNoValue()
+        loadingTestObserver.assertValueHistory(false, true, false)
+        errorTestObserver.assertValueHistory(Event(AuthViewModel.ErrorType.GENERAL_NETWORK_ERROR))
+        navigateToHomeTestObserver.assertNoValue()
     }
 
     @MethodSource("loginErrorStatusesArguments")
@@ -159,16 +174,16 @@ internal class AuthViewModelTest {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Success(loginStatus))
         }
-        val loadingObserver = sut.loading.test()
-        val errorObserver = sut.error.test()
-        val navigateToHomeObserver = sut.navigateToHome.test()
+        val loadingTestObserver = sut.loading.test()
+        val errorTestObserver = sut.error.test()
+        val navigateToHomeTestObserver = sut.navigateToHome.test()
 
         sut.onLogin()
         testScheduler.advanceUntilIdle()
 
-        loadingObserver.assertValueHistory(false, true, false)
-        errorObserver.assertValueHistory(Event(errorType))
-        navigateToHomeObserver.assertNoValue()
+        loadingTestObserver.assertValueHistory(false, true, false)
+        errorTestObserver.assertValueHistory(Event(errorType))
+        navigateToHomeTestObserver.assertNoValue()
     }
 
     @DisplayName("GIVEN answer success and login status success WHEN login called THEN navigation event is sent")
@@ -177,16 +192,16 @@ internal class AuthViewModelTest {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Success(LoginStatus.SUCCESS))
         }
-        val loadingObserver = sut.loading.test()
-        val errorObserver = sut.error.test()
-        val navigateToHomeObserver = sut.navigateToHome.test()
+        val loadingTestObserver = sut.loading.test()
+        val errorTestObserver = sut.error.test()
+        val navigateToHomeTestObserver = sut.navigateToHome.test()
 
         sut.onLogin()
         testScheduler.advanceUntilIdle()
 
-        loadingObserver.assertValueHistory(false, true, false)
-        errorObserver.assertNoValue()
-        navigateToHomeObserver.assertValueHistory(Event(Unit))
+        loadingTestObserver.assertValueHistory(false, true, false)
+        errorTestObserver.assertNoValue()
+        navigateToHomeTestObserver.assertValueHistory(Event(Unit))
     }
 
     companion object {

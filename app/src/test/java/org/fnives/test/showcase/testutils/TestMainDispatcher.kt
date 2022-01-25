@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
 /**
- * Custom Junit5 Extension which replaces the [DatabaseInitialization]'s dispatcher and main dispatcher with a [TestCoroutineDispatcher]
+ * Custom Junit5 Extension which replaces the [DatabaseInitialization]'s dispatcher and main dispatcher with a [TestDispatcher]
  *
  * One can access the test dispatcher via [testDispatcher] static getter.
  */
