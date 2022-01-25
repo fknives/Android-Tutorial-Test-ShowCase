@@ -67,6 +67,8 @@ class SplashActivityTest : KoinTest {
 
         splashRobot.assertHomeIsStarted()
             .assertAuthIsNotStarted()
+
+        workaroundForActivityScenarioCLoseLockingUp()
     }
 
     /** GIVEN loggedOffState WHEN opened after some time THEN AuthActivity is started */
@@ -80,6 +82,8 @@ class SplashActivityTest : KoinTest {
 
         splashRobot.assertAuthIsStarted()
             .assertHomeIsNotStarted()
+
+        workaroundForActivityScenarioCLoseLockingUp()
     }
 
     /** GIVEN loggedOffState and not enough time WHEN opened THEN no activity is started */
@@ -107,5 +111,18 @@ class SplashActivityTest : KoinTest {
 
         splashRobot.assertHomeIsNotStarted()
             .assertAuthIsNotStarted()
+    }
+
+    /**
+     * This should not be needed, we shouldn't use sleep ever.
+     * However, it seems to be and issue described here: https://github.com/android/android-test/issues/676
+     *
+     * If an activity is finished in code, the ActivityScenario.close() can hang 30 to 45 seconds.
+     * This sleeps let's the Activity finish it state change and unlocks the ActivityScenario.
+     *
+     * As soon as that issue is closed, this should be removed as well.
+     */
+    private fun workaroundForActivityScenarioCLoseLockingUp() {
+        Thread.sleep(1000L)
     }
 }
