@@ -29,7 +29,7 @@ object SetupAuthenticationState : KoinTest {
 
         mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
 
-        activityScenario.moveToState(Lifecycle.State.DESTROYED)
+        activityScenario.close()
     }
 
     fun setupLogout(
@@ -43,6 +43,6 @@ object SetupAuthenticationState : KoinTest {
 
         mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
 
-        activityScenario.moveToState(Lifecycle.State.DESTROYED)
+        activityScenario.close()
     }
 }

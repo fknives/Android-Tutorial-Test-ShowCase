@@ -1,7 +1,6 @@
 package org.fnives.test.showcase.ui.login
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
@@ -63,7 +62,7 @@ class AuthActivityTest : KoinTest {
 
     @After
     fun tearDown() {
-        activityScenario.moveToState(Lifecycle.State.DESTROYED)
+        activityScenario.close()
         disposable.dispose()
     }
 
