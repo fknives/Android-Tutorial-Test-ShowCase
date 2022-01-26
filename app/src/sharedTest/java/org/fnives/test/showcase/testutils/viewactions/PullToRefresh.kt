@@ -5,7 +5,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.listener
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import org.fnives.test.showcase.testutils.doBlockinglyOnMainThread
+import org.fnives.test.showcase.testutils.runOnUIAwaitOnCurrent
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.Description
@@ -36,7 +36,7 @@ class PullToRefresh : ViewAction {
 
     override fun perform(uiController: UiController, view: View) {
         val swipeRefreshLayout = view as SwipeRefreshLayout
-        doBlockinglyOnMainThread {
+        runOnUIAwaitOnCurrent {
             swipeRefreshLayout.isRefreshing = true
             swipeRefreshLayout.listener().onRefresh()
         }

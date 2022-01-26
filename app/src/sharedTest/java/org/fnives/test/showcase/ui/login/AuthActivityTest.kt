@@ -5,8 +5,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
-import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
+import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
 import org.junit.Rule
@@ -34,7 +35,7 @@ class AuthActivityTest : KoinTest {
 
     @After
     fun tearDown() {
-        activityScenario.close()
+        activityScenario.safeClose()
     }
 
     /** GIVEN non empty password and username and successful response WHEN signIn THEN no error is shown and navigating to home */
@@ -52,7 +53,7 @@ class AuthActivityTest : KoinTest {
             .clickOnLogin()
             .assertLoadingBeforeRequests()
 
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
         robot.assertNavigatedToHome()
     }
 

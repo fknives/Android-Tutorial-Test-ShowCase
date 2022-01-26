@@ -6,7 +6,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.runner.intent.IntentStubberRegistry
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
-import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.fnives.test.showcase.ui.home.HomeRobot
 import org.fnives.test.showcase.ui.home.MainActivity
@@ -30,9 +31,9 @@ object SetupAuthenticationState : KoinTest {
             .setUsername("a")
             .clickOnLogin()
 
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        activityScenario.close()
+        activityScenario.safeClose()
         resetIntentsIfNeeded(resetIntents)
     }
 
@@ -43,10 +44,9 @@ object SetupAuthenticationState : KoinTest {
         val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
         HomeRobot().clickSignOut()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
-
-        activityScenario.close()
+        activityScenario.safeClose()
         resetIntentsIfNeeded(resetIntents)
     }
 

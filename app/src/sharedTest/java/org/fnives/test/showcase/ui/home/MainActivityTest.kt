@@ -7,10 +7,11 @@ import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
-import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
+import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.junit.After
 import org.junit.Before
@@ -45,7 +46,7 @@ class MainActivityTest : KoinTest {
 
     @After
     fun tearDown() {
-        activityScenario.close()
+        activityScenario.safeClose()
     }
 
     /** GIVEN initialized MainActivity WHEN signout is clicked THEN user is signed out */
@@ -56,7 +57,7 @@ class MainActivityTest : KoinTest {
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         robot.clickSignOut()
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         robot.assertNavigatedToAuth()
     }
@@ -101,7 +102,7 @@ class MainActivityTest : KoinTest {
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
 
-        activityScenario.close()
+        activityScenario.safeClose()
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 

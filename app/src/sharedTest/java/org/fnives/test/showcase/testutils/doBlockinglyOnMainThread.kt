@@ -5,7 +5,7 @@ import android.os.Looper
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 
-fun doBlockinglyOnMainThread(action: () -> Unit) {
+fun runOnUIAwaitOnCurrent(action: () -> Unit) {
     if (Looper.myLooper() === Looper.getMainLooper()) {
         action()
     } else {

@@ -15,26 +15,17 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import org.fnives.test.showcase.R
-import org.fnives.test.showcase.testutils.configuration.LoginRobotConfiguration
 import org.fnives.test.showcase.testutils.configuration.SnackbarVerificationHelper
 import org.fnives.test.showcase.testutils.configuration.SnackbarVerificationTestRule
-import org.fnives.test.showcase.testutils.configuration.SpecificTestConfigurationsFactory
-import org.fnives.test.showcase.testutils.configuration.TestConfigurationsFactory
 import org.fnives.test.showcase.testutils.robot.Robot
+import org.fnives.test.showcase.testutils.viewactions.ReplaceProgressBarDrawableToStatic
 import org.fnives.test.showcase.testutils.viewactions.notIntended
 import org.fnives.test.showcase.ui.home.MainActivity
 import org.hamcrest.core.IsNot.not
 
 class LoginRobot(
-    private val loginRobotConfiguration: LoginRobotConfiguration,
-    private val snackbarVerificationHelper: SnackbarVerificationHelper
+    private val snackbarVerificationHelper: SnackbarVerificationHelper = SnackbarVerificationTestRule()
 ) : Robot {
-
-    constructor(testConfigurationsFactory: TestConfigurationsFactory = SpecificTestConfigurationsFactory) :
-        this(
-            loginRobotConfiguration = testConfigurationsFactory.createLoginRobotConfiguration(),
-            snackbarVerificationHelper = SnackbarVerificationTestRule()
-        )
 
     override fun init() {
         Intents.init()
@@ -50,6 +41,18 @@ class LoginRobot(
         Intents.release()
     }
 
+    /**
+     * Needed because Espresso idling waits until mainThread is idle.
+     *
+     * However, ProgressBar keeps the main thread active since it's animating.
+     *
+     * Another solution is described here: https://proandroiddev.com/progressbar-animations-with-espresso-57f826102187
+     * In short they replace the inflater to remove animations, by using custom test runner.
+     */
+    fun replaceProgressBar() = apply {
+        onView(withId(R.id.loading_indicator)).perform(ReplaceProgressBarDrawableToStatic())
+    }
+
     fun setUsername(username: String): LoginRobot = apply {
         onView(withId(R.id.user_edit_text))
             .perform(ViewActions.replaceText(username), ViewActions.closeSoftKeyboard())
@@ -61,6 +64,7 @@ class LoginRobot(
     }
 
     fun clickOnLogin() = apply {
+        replaceProgressBar()
         onView(withId(R.id.login_cta))
             .perform(ViewActions.click())
     }
@@ -80,10 +84,8 @@ class LoginRobot(
     }
 
     fun assertLoadingBeforeRequests() = apply {
-        if (loginRobotConfiguration.assertLoadingBeforeRequest) {
-            onView(withId(R.id.loading_indicator))
-                .check(ViewAssertions.matches(isDisplayed()))
-        }
+        onView(withId(R.id.loading_indicator))
+            .check(ViewAssertions.matches(isDisplayed()))
     }
 
     fun assertNotLoading() = apply {

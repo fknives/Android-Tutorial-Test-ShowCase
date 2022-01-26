@@ -8,10 +8,6 @@ package org.fnives.test.showcase.testutils.configuration
  */
 interface TestConfigurationsFactory {
 
-    fun createMainDispatcherTestRule(): MainDispatcherTestRule
-
-    fun createLoginRobotConfiguration(): LoginRobotConfiguration
-
     fun createSnackbarVerification(): SnackbarVerificationHelper
 
     fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory
