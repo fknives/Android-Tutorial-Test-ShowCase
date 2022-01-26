@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.testutils.configuration.LoginRobotConfiguration
+import org.fnives.test.showcase.testutils.configuration.SnackbarVerificationHelper
 import org.fnives.test.showcase.testutils.configuration.SnackbarVerificationTestRule
 import org.fnives.test.showcase.testutils.configuration.SpecificTestConfigurationsFactory
 import org.fnives.test.showcase.testutils.configuration.TestConfigurationsFactory
@@ -26,13 +27,13 @@ import org.hamcrest.core.IsNot.not
 
 class LoginRobot(
     private val loginRobotConfiguration: LoginRobotConfiguration,
-    private val snackbarVerificationTestRule: SnackbarVerificationTestRule
+    private val snackbarVerificationHelper: SnackbarVerificationHelper
 ) : Robot {
 
     constructor(testConfigurationsFactory: TestConfigurationsFactory = SpecificTestConfigurationsFactory) :
         this(
             loginRobotConfiguration = testConfigurationsFactory.createLoginRobotConfiguration(),
-            snackbarVerificationTestRule = testConfigurationsFactory.createSnackbarVerification()
+            snackbarVerificationHelper = SnackbarVerificationTestRule()
         )
 
     override fun init() {
@@ -75,7 +76,7 @@ class LoginRobot(
     }
 
     fun assertErrorIsShown(@StringRes stringResID: Int) = apply {
-        snackbarVerificationTestRule.assertIsShownWithText(stringResID)
+        snackbarVerificationHelper.assertIsShownWithText(stringResID)
     }
 
     fun assertLoadingBeforeRequests() = apply {
@@ -91,7 +92,7 @@ class LoginRobot(
     }
 
     fun assertErrorIsNotShown() = apply {
-        snackbarVerificationTestRule.assertIsNotShown()
+        snackbarVerificationHelper.assertIsNotShown()
     }
 
     fun assertNavigatedToHome() = apply {

@@ -12,7 +12,7 @@ interface TestConfigurationsFactory {
 
     fun createLoginRobotConfiguration(): LoginRobotConfiguration
 
-    fun createSnackbarVerification(): SnackbarVerificationTestRule
+    fun createSnackbarVerification(): SnackbarVerificationHelper
 
     fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory
 }

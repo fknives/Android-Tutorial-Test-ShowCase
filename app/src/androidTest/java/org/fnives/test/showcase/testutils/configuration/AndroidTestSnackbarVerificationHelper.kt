@@ -15,7 +15,7 @@ import org.hamcrest.Matchers
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-object AndroidTestSnackbarVerificationTestRule : SnackbarVerificationTestRule {
+object AndroidTestSnackbarVerificationHelper : SnackbarVerificationHelper {
 
     override fun apply(base: Statement, description: Description): Statement = base
 

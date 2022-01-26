@@ -7,8 +7,8 @@ object SpecificTestConfigurationsFactory : TestConfigurationsFactory {
     override fun createLoginRobotConfiguration(): LoginRobotConfiguration =
         AndroidTestLoginRobotConfiguration
 
-    override fun createSnackbarVerification(): SnackbarVerificationTestRule =
-        AndroidTestSnackbarVerificationTestRule
+    override fun createSnackbarVerification(): SnackbarVerificationHelper =
+        AndroidTestSnackbarVerificationHelper
 
     override fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory =
         AndroidMigrationTestRuleFactory
