@@ -21,12 +21,14 @@ object NetworkSynchronization : KoinTest {
         return CompositeDisposable(idlingResources)
     }
 
-    private fun getOkHttpClient(type: OkHttpClientTypes): OkHttpClient = get(StringQualifier(type.qualifier))
+    private fun getOkHttpClient(type: OkHttpClientTypes): OkHttpClient = get(type.asQualifier())
 
     private fun OkHttpClient.asIdlingResource(name: String): IdlingResource =
         OkHttp3IdlingResource.create(name, this)
 
     enum class OkHttpClientTypes(val qualifier: String) {
-        SESSION("SESSION-NETWORKING"), SESSIONLESS("SESSIONLESS-NETWORKING")
+        SESSION("SESSION-NETWORKING"), SESSIONLESS("SESSIONLESS-NETWORKING");
+
+        fun asQualifier() = StringQualifier(qualifier)
     }
 }

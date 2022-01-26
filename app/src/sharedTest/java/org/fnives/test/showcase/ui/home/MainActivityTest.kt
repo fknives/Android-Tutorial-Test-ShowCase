@@ -8,7 +8,6 @@ import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupTestRule
-import org.fnives.test.showcase.testutils.ReloadKoinModulesIfNecessaryTestRule
 import org.fnives.test.showcase.testutils.configuration.SpecificTestConfigurationsFactory
 import org.fnives.test.showcase.testutils.idling.Disposable
 import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
@@ -52,16 +51,10 @@ class MainActivityTest : KoinTest {
     @JvmField
     val mainDispatcherTestRule = SpecificTestConfigurationsFactory.createMainDispatcherTestRule()
 
-    @Rule
-    @JvmField
-    val reloadKoinModulesIfNecessaryTestRule = ReloadKoinModulesIfNecessaryTestRule()
-
     private lateinit var disposable: Disposable
 
     @Before
     fun setUp() {
-        SpecificTestConfigurationsFactory.createServerTypeConfiguration()
-            .invoke(mockServerScenarioSetup)
 
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
         homeRobot.setupLogin(

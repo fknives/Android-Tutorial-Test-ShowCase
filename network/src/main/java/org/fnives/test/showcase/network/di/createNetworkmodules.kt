@@ -29,11 +29,16 @@ fun createNetworkModules(
     networkSessionExpirationListenerProvider: Scope.() -> NetworkSessionExpirationListener
 ): Sequence<Module> =
     sequenceOf(
+        baseUrlModule(baseUrl),
         loginModule(),
         contentModule(),
-        sessionlessNetworkingModule(baseUrl, enableLogging),
+        sessionlessNetworkingModule(enableLogging),
         sessionNetworkingModule(networkSessionLocalStorageProvider, networkSessionExpirationListenerProvider)
     )
+
+private fun baseUrlModule(baseUrl: BaseUrl) = module {
+    single { baseUrl }
+}
 
 private fun loginModule() = module {
     factory { LoginRemoteSourceImpl(get(), get()) }
@@ -48,7 +53,7 @@ private fun contentModule() = module {
     factory<ContentRemoteSource> { get<ContentRemoteSourceImpl>() }
 }
 
-private fun sessionlessNetworkingModule(baseUrl: BaseUrl, enableLogging: Boolean) = module {
+private fun sessionlessNetworkingModule(enableLogging: Boolean) = module {
     factory { MoshiConverterFactory.create() }
     single(qualifier = sessionless) {
         OkHttpClient.Builder()
@@ -58,7 +63,7 @@ private fun sessionlessNetworkingModule(baseUrl: BaseUrl, enableLogging: Boolean
     }
     single(qualifier = sessionless) {
         Retrofit.Builder()
-            .baseUrl(baseUrl.baseUrl)
+            .baseUrl(get<BaseUrl>().baseUrl)
             .addConverterFactory(get<MoshiConverterFactory>())
             .client(get(sessionless))
             .build()

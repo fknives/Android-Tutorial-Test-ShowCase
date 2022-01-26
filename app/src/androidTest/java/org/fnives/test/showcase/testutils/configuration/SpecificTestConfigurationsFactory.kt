@@ -4,9 +4,6 @@ object SpecificTestConfigurationsFactory : TestConfigurationsFactory {
     override fun createMainDispatcherTestRule(): MainDispatcherTestRule =
         AndroidTestMainDispatcherTestRule()
 
-    override fun createServerTypeConfiguration(): ServerTypeConfiguration =
-        AndroidTestServerTypeConfiguration
-
     override fun createLoginRobotConfiguration(): LoginRobotConfiguration =
         AndroidTestLoginRobotConfiguration
 

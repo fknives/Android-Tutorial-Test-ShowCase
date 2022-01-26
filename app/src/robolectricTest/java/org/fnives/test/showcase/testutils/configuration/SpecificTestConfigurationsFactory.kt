@@ -4,9 +4,6 @@ object SpecificTestConfigurationsFactory : TestConfigurationsFactory {
     override fun createMainDispatcherTestRule(): MainDispatcherTestRule =
         TestCoroutineMainDispatcherTestRule()
 
-    override fun createServerTypeConfiguration(): ServerTypeConfiguration =
-        RobolectricServerTypeConfiguration
-
     override fun createLoginRobotConfiguration(): LoginRobotConfiguration =
         RobolectricLoginRobotConfiguration
 

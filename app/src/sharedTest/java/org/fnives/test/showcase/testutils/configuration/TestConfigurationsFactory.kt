@@ -10,8 +10,6 @@ interface TestConfigurationsFactory {
 
     fun createMainDispatcherTestRule(): MainDispatcherTestRule
 
-    fun createServerTypeConfiguration(): ServerTypeConfiguration
-
     fun createLoginRobotConfiguration(): LoginRobotConfiguration
 
     fun createSnackbarVerification(): SnackbarVerificationTestRule

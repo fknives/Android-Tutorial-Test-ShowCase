@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupTestRule
-import org.fnives.test.showcase.testutils.ReloadKoinModulesIfNecessaryTestRule
 import org.fnives.test.showcase.testutils.configuration.SpecificTestConfigurationsFactory
 import org.fnives.test.showcase.testutils.idling.Disposable
 import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
@@ -47,16 +46,10 @@ class AuthActivityTest : KoinTest {
     @JvmField
     val mainDispatcherTestRule = SpecificTestConfigurationsFactory.createMainDispatcherTestRule()
 
-    @Rule
-    @JvmField
-    val reloadKoinModulesIfNecessaryTestRule = ReloadKoinModulesIfNecessaryTestRule()
-
     private lateinit var disposable: Disposable
 
     @Before
     fun setUp() {
-        SpecificTestConfigurationsFactory.createServerTypeConfiguration()
-            .invoke(mockServerScenarioSetup)
         disposable = NetworkSynchronization.registerNetworkingSynchronization()
     }
 
