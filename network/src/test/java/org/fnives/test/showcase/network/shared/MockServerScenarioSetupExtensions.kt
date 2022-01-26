@@ -7,12 +7,12 @@ import org.junit.jupiter.api.extension.ExtensionContext
 
 class MockServerScenarioSetupExtensions : BeforeEachCallback, AfterEachCallback {
 
-    val url: String = "${MockServerScenarioSetup.HTTP_BASE_URL}:${MockServerScenarioSetup.PORT}/"
+    lateinit var url: String
     lateinit var mockServerScenarioSetup: MockServerScenarioSetup
 
     override fun beforeEach(context: ExtensionContext?) {
         mockServerScenarioSetup = MockServerScenarioSetup()
-        mockServerScenarioSetup.start(false)
+        url = mockServerScenarioSetup.start(false)
     }
 
     override fun afterEach(context: ExtensionContext?) {

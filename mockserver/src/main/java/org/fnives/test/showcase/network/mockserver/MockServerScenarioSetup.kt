@@ -20,13 +20,13 @@ class MockServerScenarioSetup internal constructor(
     var clientCertificates: HandshakeCertificates? = null
         private set
 
-    fun start(useHttps: Boolean) {
+    fun start(useHttps: Boolean): String {
         val mockWebServer = MockWebServer().also { this.mockWebServer = it }
         if (useHttps) {
             clientCertificates = mockWebServer.useHttps()
         }
         mockWebServer.dispatcher = networkDispatcher
-        mockWebServer.start(InetAddress.getLocalHost(), PORT)
+        return mockWebServer.url("/").toString()
     }
 
     /**
@@ -69,9 +69,6 @@ class MockServerScenarioSetup internal constructor(
     }
 
     companion object {
-        const val PORT: Int = 7335
-        val HTTP_BASE_URL get() = "http://${InetAddress.getLocalHost().canonicalHostName}"
-        val HTTPS_BASE_URL get() = "https://localhost"
 
         private fun MockWebServer.useHttps(): HandshakeCertificates {
             val localhost = InetAddress.getByName("localhost").canonicalHostName
