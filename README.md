@@ -154,7 +154,7 @@ We will also see how to test with LiveData.
 We will introduce Rules, aka easy to reuse "Before" and "After" components.
 
 #### App Robolectric Unit Tests.
-Open the [app storage unit tests instruction set](./codekata/storage.instructionset).
+Open the [app robolectric unit tests instruction set](./codekata/robolectric.instructionset.md).
 
 In this section we will see how to test component depending on context such as Room database.
 
