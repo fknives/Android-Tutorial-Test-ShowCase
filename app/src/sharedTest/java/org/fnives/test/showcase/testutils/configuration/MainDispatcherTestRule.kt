@@ -12,3 +12,7 @@ interface MainDispatcherTestRule : TestRule {
 
     fun advanceTimeBy(delayInMillis: Long)
 }
+
+@Suppress("TestFunctionName")
+fun MainDispatcherTestRule(): MainDispatcherTestRule =
+    SpecificTestConfigurationsFactory.createMainDispatcherTestRule()

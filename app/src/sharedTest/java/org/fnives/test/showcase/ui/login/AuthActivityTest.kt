@@ -4,16 +4,14 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
-import org.fnives.test.showcase.testutils.MockServerScenarioSetupTestRule
-import org.fnives.test.showcase.testutils.configuration.SpecificTestConfigurationsFactory
-import org.fnives.test.showcase.testutils.idling.Disposable
-import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
+import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
+import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.koin.test.KoinTest
 
@@ -23,31 +21,20 @@ class AuthActivityTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>
 
-    @Rule
-    @JvmField
-    val robotRule = RobotTestRule(LoginRobot())
-    private val loginRobot get() = robotRule.robot
+    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
+    private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
+    private val mainDispatcherTestRule = MainDispatcherTestRule()
+    private val robot = LoginRobot()
 
     @Rule
     @JvmField
-    val mockServerScenarioSetupTestRule = MockServerScenarioSetupTestRule()
-    val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
-
-    @Rule
-    @JvmField
-    val mainDispatcherTestRule = SpecificTestConfigurationsFactory.createMainDispatcherTestRule()
-
-    private lateinit var disposable: Disposable
-
-    @Before
-    fun setUp() {
-        disposable = NetworkSynchronization.registerNetworkingSynchronization()
-    }
+    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
+        .around(mainDispatcherTestRule)
+        .around(RobotTestRule(robot))
 
     @After
     fun tearDown() {
         activityScenario.close()
-        disposable.dispose()
     }
 
     /** GIVEN non empty password and username and successful response WHEN signIn THEN no error is shown and navigating to home */
@@ -57,7 +44,7 @@ class AuthActivityTest : KoinTest {
             AuthScenario.Success(password = "alma", username = "banan")
         )
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        loginRobot
+        robot
             .setPassword("alma")
             .setUsername("banan")
             .assertPassword("alma")
@@ -66,21 +53,21 @@ class AuthActivityTest : KoinTest {
             .assertLoadingBeforeRequests()
 
         mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
-        loginRobot.assertNavigatedToHome()
+        robot.assertNavigatedToHome()
     }
 
     /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
     fun emptyPasswordShowsProperErrorMessage() {
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        loginRobot
+        robot
             .setUsername("banan")
             .assertUsername("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        loginRobot.assertErrorIsShown(R.string.password_is_invalid)
+        robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotNavigatedToHome()
             .assertNotLoading()
     }
@@ -89,14 +76,14 @@ class AuthActivityTest : KoinTest {
     @Test
     fun emptyUserNameShowsProperErrorMessage() {
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        loginRobot
+        robot
             .setPassword("banan")
             .assertPassword("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        loginRobot.assertErrorIsShown(R.string.username_is_invalid)
+        robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotNavigatedToHome()
             .assertNotLoading()
     }
@@ -108,7 +95,7 @@ class AuthActivityTest : KoinTest {
             AuthScenario.InvalidCredentials(username = "alma", password = "banan")
         )
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        loginRobot
+        robot
             .setUsername("alma")
             .setPassword("banan")
             .assertUsername("alma")
@@ -117,7 +104,7 @@ class AuthActivityTest : KoinTest {
             .assertLoadingBeforeRequests()
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        loginRobot.assertErrorIsShown(R.string.credentials_invalid)
+        robot.assertErrorIsShown(R.string.credentials_invalid)
             .assertNotNavigatedToHome()
             .assertNotLoading()
     }
@@ -129,7 +116,7 @@ class AuthActivityTest : KoinTest {
             AuthScenario.GenericError(username = "alma", password = "banan")
         )
         activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        loginRobot
+        robot
             .setUsername("alma")
             .setPassword("banan")
             .assertUsername("alma")
@@ -138,7 +125,7 @@ class AuthActivityTest : KoinTest {
             .assertLoadingBeforeRequests()
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        loginRobot.assertErrorIsShown(R.string.something_went_wrong)
+        robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotNavigatedToHome()
             .assertNotLoading()
     }

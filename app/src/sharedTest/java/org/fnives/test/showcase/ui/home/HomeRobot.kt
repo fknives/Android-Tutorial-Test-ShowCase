@@ -19,10 +19,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.FavouriteContent
-import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
-import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.robot.Robot
-import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState
 import org.fnives.test.showcase.testutils.viewactions.PullToRefresh
 import org.fnives.test.showcase.testutils.viewactions.WithDrawable
 import org.fnives.test.showcase.testutils.viewactions.notIntended
@@ -33,8 +30,6 @@ class HomeRobot : Robot {
 
     override fun init() {
         Intents.init()
-        Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
-            .respondWith(Instrumentation.ActivityResult(0, null))
     }
 
     override fun release() {
@@ -50,6 +45,9 @@ class HomeRobot : Robot {
     }
 
     fun clickSignOut() = apply {
+        Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
+            .respondWith(Instrumentation.ActivityResult(0, null))
+
         Espresso.onView(withId(R.id.logout_cta)).perform(click())
     }
 
@@ -102,12 +100,5 @@ class HomeRobot : Robot {
     fun assertContainsError() = apply {
         Espresso.onView(withId(R.id.error_message))
             .check(matches(allOf(isDisplayed(), withText(R.string.something_went_wrong))))
-    }
-
-    fun setupLogin(
-        mainDispatcherTestRule: MainDispatcherTestRule,
-        mockServerScenarioSetup: MockServerScenarioSetup
-    ) {
-        SetupAuthenticationState.setupLogin(mainDispatcherTestRule, mockServerScenarioSetup)
     }
 }
