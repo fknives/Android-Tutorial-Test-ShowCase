@@ -1,6 +1,5 @@
 package org.fnives.test.showcase.ui.login
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
@@ -23,14 +22,6 @@ import org.koin.test.KoinTest
 class AuthActivityTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>
-
-    @Rule
-    @JvmField
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
-
-    @Rule
-    @JvmField
-    val snackbarVerificationTestRule = SpecificTestConfigurationsFactory.createSnackbarVerification()
 
     @Rule
     @JvmField
