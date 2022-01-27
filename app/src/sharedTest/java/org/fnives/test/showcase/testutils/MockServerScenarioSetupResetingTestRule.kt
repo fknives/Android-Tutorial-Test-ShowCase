@@ -71,7 +71,6 @@ class MockServerScenarioSetupResetingTestRule(
             .sslSocketFactory(handshakeCertificates.sslSocketFactory(), handshakeCertificates.trustManager)
             .build()
 
-
     private fun after() {
         mockServerScenarioSetup.stop()
     }

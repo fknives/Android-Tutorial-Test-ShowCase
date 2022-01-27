@@ -11,5 +11,5 @@ interface SnackbarVerificationHelper : TestRule {
 }
 
 @Suppress("TestFunctionName")
-fun SnackbarVerificationTestRule(): SnackbarVerificationHelper=
+fun SnackbarVerificationTestRule(): SnackbarVerificationHelper =
     SpecificTestConfigurationsFactory.createSnackbarVerification()

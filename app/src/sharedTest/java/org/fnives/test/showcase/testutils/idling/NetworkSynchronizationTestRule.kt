@@ -24,7 +24,6 @@ class NetworkSynchronizationTestRule : TestRule, KoinTest {
                     dispose()
                 }
             }
-
         }
     }
 

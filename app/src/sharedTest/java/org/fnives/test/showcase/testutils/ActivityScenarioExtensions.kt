@@ -3,7 +3,7 @@ package org.fnives.test.showcase.testutils
 import android.app.Activity
 import androidx.test.core.app.ActivityScenario
 
-fun <T: Activity> ActivityScenario<T>.safeClose() {
+fun <T : Activity> ActivityScenario<T>.safeClose() {
     workaroundForActivityScenarioCLoseLockingUp()
     close()
 }

@@ -52,7 +52,7 @@ fun loopMainThreadUntilIdleWithIdlingResources() {
 }
 
 fun loopMainThreadFor(delay: Long) {
-    if (Looper.getMainLooper().isCurrentThread){
+    if (Looper.getMainLooper().isCurrentThread) {
         Thread.sleep(200L)
     } else {
         Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(delay))
