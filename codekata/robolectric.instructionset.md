@@ -23,7 +23,7 @@ What it does is:
 
 So let's start with the setup.
 
-Our test class is `org.fnives.test.showcase.storage.favourite.CodeKataFavouriteContentLocalStorage`
+Our test class is `org.fnives.test.showcase.storage.favourite.CodeKataFavouriteContentLocalStorageInstrumentedTest`
 
 Question: Why don't we test the DAO and Storage separately using mocking?
 Answer: The same logic applies how we didn't test the RetrofitServices just the RemoteSources. The Service just like the DAO is an implementation detail, our code only accesses them through the RemoteSource / LocalStorage abstraction. With this in mind now we only want to test that we interact with the database properly, we don't really care how many DAOs are used.

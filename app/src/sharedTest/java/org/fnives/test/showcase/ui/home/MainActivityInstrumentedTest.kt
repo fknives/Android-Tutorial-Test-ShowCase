@@ -23,7 +23,7 @@ import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
 @RunWith(AndroidJUnit4::class)
-class MainActivityTest : KoinTest {
+class MainActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<MainActivity>
 

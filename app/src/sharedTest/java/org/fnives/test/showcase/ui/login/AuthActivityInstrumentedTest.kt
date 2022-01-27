@@ -18,7 +18,7 @@ import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
 @RunWith(AndroidJUnit4::class)
-class AuthActivityTest : KoinTest {
+class AuthActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>
 

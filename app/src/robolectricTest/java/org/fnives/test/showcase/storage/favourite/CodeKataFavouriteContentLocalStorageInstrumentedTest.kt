@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Disabled
 
 @Disabled("CodeKata")
 @OptIn(ExperimentalCoroutinesApi::class)
-class CodeKataFavouriteContentLocalStorage {
+class CodeKataFavouriteContentLocalStorageInstrumentedTest {
 
     @Before
     fun setUp() {

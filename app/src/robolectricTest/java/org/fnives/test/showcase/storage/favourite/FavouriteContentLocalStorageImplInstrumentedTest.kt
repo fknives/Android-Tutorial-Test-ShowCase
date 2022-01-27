@@ -26,7 +26,7 @@ import org.koin.test.inject
 @Suppress("TestFunctionName")
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-internal class FavouriteContentLocalStorageImplTest : KoinTest {
+internal class FavouriteContentLocalStorageImplInstrumentedTest : KoinTest {
 
     private val sut by inject<FavouriteContentLocalStorage>()
     private lateinit var testDispatcher: TestDispatcher

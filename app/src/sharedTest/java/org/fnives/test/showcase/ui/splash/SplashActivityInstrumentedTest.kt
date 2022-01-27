@@ -18,7 +18,7 @@ import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
 @RunWith(AndroidJUnit4::class)
-class SplashActivityTest : KoinTest {
+class SplashActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<SplashActivity>
 

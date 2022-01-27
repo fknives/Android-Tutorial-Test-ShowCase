@@ -63,3 +63,19 @@ subprojects { module ->
         }
     }
 }
+
+task jvmTests(dependsOn: ["app:testDebugUnitTest", "core:test", "network:test"]) {
+    group = 'Tests'
+    description = 'Run all JVM tests'
+}
+
+task robolectricTests(type: Exec) {
+    group = 'Tests'
+    description = 'Run all Robolectric tests based on the Instrumented naming convention'
+    commandLine 'sh', './gradlew', 'testDebugUnitTest', '--tests', 'org.fnives.test.*InstrumentedTest'
+}
+
+task androidTests(dependsOn: ["app:connectedDebugAndroidTest"]) {
+    group = 'Tests'
+    description = 'Run Android tests'
+}
