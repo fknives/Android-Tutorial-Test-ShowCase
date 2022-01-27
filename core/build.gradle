@@ -26,4 +26,6 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
     testImplementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     testImplementation "app.cash.turbine:turbine:$turbine_version"
+
+    testImplementation project(':mockserver')
 }

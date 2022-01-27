@@ -2,6 +2,7 @@ package org.fnives.test.showcase.core.content
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.ContentId
@@ -18,6 +19,7 @@ class GetAllContentUseCase internal constructor(
             favouriteContentLocalStorage.observeFavourites(),
             ::combineContentWithFavourites
         )
+            .distinctUntilChanged()
 
     companion object {
         private fun combineContentWithFavourites(
