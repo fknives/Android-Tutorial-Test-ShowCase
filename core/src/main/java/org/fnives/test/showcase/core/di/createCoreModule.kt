@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.core.di.koin
+package org.fnives.test.showcase.core.di
 
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.ContentRepository

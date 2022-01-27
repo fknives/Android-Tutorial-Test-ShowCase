@@ -2,7 +2,7 @@ package org.fnives.test.showcase.core.integration
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.fnives.test.showcase.core.di.koin.createCoreModule
+import org.fnives.test.showcase.core.di.createCoreModule
 import org.fnives.test.showcase.core.integration.fake.FakeFavouriteContentLocalStorage
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase

@@ -12,7 +12,7 @@ import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.FetchContentUseCase
 import org.fnives.test.showcase.core.content.GetAllContentUseCase
 import org.fnives.test.showcase.core.content.RemoveContentFromFavouritesUseCase
-import org.fnives.test.showcase.core.di.koin.createCoreModule
+import org.fnives.test.showcase.core.di.createCoreModule
 import org.fnives.test.showcase.core.integration.fake.FakeFavouriteContentLocalStorage
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.session.SessionExpirationListener
