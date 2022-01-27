@@ -1,4 +1,4 @@
-# 3. Starting of Robolectric testing
+# 5. Starting of Robolectric testing
 
 So we are finally here, so far we didn't had to touch any kind of context or resources, activities, fragments or anything android. This is where we have to get back to reality and actually deal with Android.
 
