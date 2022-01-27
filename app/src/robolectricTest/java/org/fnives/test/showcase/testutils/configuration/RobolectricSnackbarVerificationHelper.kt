@@ -6,7 +6,7 @@ import org.fnives.test.showcase.testutils.shadow.ShadowSnackbarResetTestRule
 import org.junit.Assert
 import org.junit.rules.TestRule
 
-object RobolectricSnackbarVerificationTestRule : SnackbarVerificationTestRule, TestRule by ShadowSnackbarResetTestRule() {
+object RobolectricSnackbarVerificationHelper : SnackbarVerificationHelper, TestRule by ShadowSnackbarResetTestRule() {
 
     override fun assertIsShownWithText(@StringRes stringResID: Int) {
         val latestSnackbar = ShadowSnackbar.latestSnackbar ?: throw IllegalStateException("Snackbar not found")

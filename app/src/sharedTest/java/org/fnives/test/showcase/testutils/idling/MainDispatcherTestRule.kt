@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.configuration
+package org.fnives.test.showcase.testutils.idling
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,12 +8,13 @@ import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
-import org.fnives.test.showcase.testutils.idling.advanceUntilIdleWithIdlingResources
+import org.fnives.test.showcase.testutils.runOnUIAwaitOnCurrent
+import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TestCoroutineMainDispatcherTestRule : MainDispatcherTestRule {
+class MainDispatcherTestRule : TestRule {
 
     private lateinit var testDispatcher: TestDispatcher
 
@@ -33,19 +34,24 @@ class TestCoroutineMainDispatcherTestRule : MainDispatcherTestRule {
             }
         }
 
-    override fun advanceUntilIdleWithIdlingResources() {
+    fun advanceUntilIdleWithIdlingResources() = runOnUIAwaitOnCurrent {
         testDispatcher.advanceUntilIdleWithIdlingResources()
     }
 
-    override fun advanceUntilIdleOrActivityIsDestroyed() {
-        advanceUntilIdleWithIdlingResources()
-    }
-
-    override fun advanceUntilIdle() {
+    fun advanceUntilIdle() = runOnUIAwaitOnCurrent {
         testDispatcher.scheduler.advanceUntilIdle()
     }
 
-    override fun advanceTimeBy(delayInMillis: Long) {
+    fun advanceTimeBy(delayInMillis: Long) = runOnUIAwaitOnCurrent {
         testDispatcher.scheduler.advanceTimeBy(delayInMillis)
+    }
+
+    private fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
+        scheduler.advanceUntilIdle() // advance until a request is sent
+        while (anyResourceIdling()) { // check if any request is in progress
+            awaitIdlingResources() // complete all requests and other idling resources
+            scheduler.advanceUntilIdle() // run coroutines after request is finished
+        }
+        scheduler.advanceUntilIdle()
     }
 }

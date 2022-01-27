@@ -65,11 +65,11 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Run Unit Tests
-        run: ./gradlew unitTests
+        run: ./gradlew jvmTests
       - name: Upload Test Results
         uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: Unit Test Results
+          name: JVM Test Results
           path: ./**/build/reports/tests/**/index.html
           retention-days: 1

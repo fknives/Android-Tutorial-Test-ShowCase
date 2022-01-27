@@ -9,8 +9,8 @@ import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScena
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
 import org.fnives.test.showcase.network.session.NetworkSessionExpirationListener
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
-import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
+import org.fnives.test.showcase.network.testutil.MockServerScenarioSetupExtensions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

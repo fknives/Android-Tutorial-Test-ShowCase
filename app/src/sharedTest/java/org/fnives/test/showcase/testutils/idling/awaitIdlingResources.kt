@@ -1,11 +1,10 @@
 package org.fnives.test.showcase.testutils.idling
 
+import android.os.Looper
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.matcher.ViewMatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestDispatcher
 import org.fnives.test.showcase.testutils.viewactions.LoopMainThreadFor
 import org.fnives.test.showcase.testutils.viewactions.LoopMainThreadUntilIdle
 import java.util.concurrent.Executors
@@ -43,16 +42,6 @@ private fun IdlingResource.awaitUntilIdle() {
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
-fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
-    scheduler.advanceUntilIdle() // advance until a request is sent
-    while (anyResourceIdling()) { // check if any request is in progress
-        awaitIdlingResources() // complete all requests and other idling resources
-        scheduler.advanceUntilIdle() // run coroutines after request is finished
-    }
-    scheduler.advanceUntilIdle()
-}
-
 fun loopMainThreadUntilIdleWithIdlingResources() {
     Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadUntilIdle()) // advance until a request is sent
     while (anyResourceIdling()) { // check if any request is in progress
@@ -63,5 +52,9 @@ fun loopMainThreadUntilIdleWithIdlingResources() {
 }
 
 fun loopMainThreadFor(delay: Long) {
-    Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(delay))
+    if (Looper.getMainLooper().isCurrentThread) {
+        Thread.sleep(200L)
+    } else {
+        Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(delay))
+    }
 }

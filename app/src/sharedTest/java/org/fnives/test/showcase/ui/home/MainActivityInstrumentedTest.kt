@@ -1,79 +1,52 @@
 package org.fnives.test.showcase.ui.home
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
-import org.fnives.test.showcase.testutils.MockServerScenarioSetupTestRule
-import org.fnives.test.showcase.testutils.ReloadKoinModulesIfNecessaryTestRule
-import org.fnives.test.showcase.testutils.configuration.SpecificTestConfigurationsFactory
-import org.fnives.test.showcase.testutils.idling.Disposable
-import org.fnives.test.showcase.testutils.idling.NetworkSynchronization
+import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
+import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.robot.RobotTestRule
+import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
 @RunWith(AndroidJUnit4::class)
-class MainActivityTest : KoinTest {
+class MainActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<MainActivity>
 
-    @Rule
-    @JvmField
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
+    private val mockServerScenarioSetup
+        get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
+    private val mainDispatcherTestRule = MainDispatcherTestRule()
+    private val robot = HomeRobot()
 
     @Rule
     @JvmField
-    val snackbarVerificationTestRule =
-        SpecificTestConfigurationsFactory.createSnackbarVerification()
-
-    @Rule
-    @JvmField
-    val robotRule = RobotTestRule(HomeRobot())
-    private val homeRobot get() = robotRule.robot
-
-    @Rule
-    @JvmField
-    val mockServerScenarioSetupTestRule = MockServerScenarioSetupTestRule()
-
-    val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
-
-    @Rule
-    @JvmField
-    val mainDispatcherTestRule = SpecificTestConfigurationsFactory.createMainDispatcherTestRule()
-
-    @Rule
-    @JvmField
-    val reloadKoinModulesIfNecessaryTestRule = ReloadKoinModulesIfNecessaryTestRule()
-
-    private lateinit var disposable: Disposable
+    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
+        .around(mainDispatcherTestRule)
+        .around(RobotTestRule(robot))
 
     @Before
-    fun setUp() {
-        SpecificTestConfigurationsFactory.createServerTypeConfiguration()
-            .invoke(mockServerScenarioSetup)
-
-        disposable = NetworkSynchronization.registerNetworkingSynchronization()
-        homeRobot.setupLogin(
-            mainDispatcherTestRule,
-            mockServerScenarioSetup
-        )
+    fun setup() {
+        setupLogin(mainDispatcherTestRule, mockServerScenarioSetup)
     }
 
     @After
     fun tearDown() {
-        activityScenario.close()
-        disposable.dispose()
+        activityScenario.safeClose()
     }
 
     /** GIVEN initialized MainActivity WHEN signout is clicked THEN user is signed out */
@@ -83,10 +56,10 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.clickSignOut()
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
+        robot.clickSignOut()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.assertNavigatedToAuth()
+        robot.assertNavigatedToAuth()
     }
 
     /** GIVEN success response WHEN data is returned THEN it is shown on the ui */
@@ -97,9 +70,9 @@ class MainActivityTest : KoinTest {
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
         ContentData.contentSuccess.forEachIndexed { index, content ->
-            homeRobot.assertContainsItem(index, FavouriteContent(content, false))
+            robot.assertContainsItem(index, FavouriteContent(content, false))
         }
-        homeRobot.assertDidNotNavigateToAuth()
+        robot.assertDidNotNavigateToAuth()
     }
 
     /** GIVEN success response WHEN item is clicked THEN ui is updated */
@@ -109,11 +82,11 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
-        homeRobot.assertContainsItem(0, expectedItem)
+        robot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
     }
 
@@ -124,16 +97,16 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
 
-        activityScenario.close()
+        activityScenario.safeClose()
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.assertContainsItem(0, expectedItem)
+        robot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
     }
 
@@ -144,13 +117,13 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        homeRobot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), false)
-        homeRobot.assertContainsItem(0, expectedItem)
+        robot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
     }
 
@@ -161,7 +134,7 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.assertContainsNoItems()
+        robot.assertContainsNoItems()
             .assertContainsError()
             .assertDidNotNavigateToAuth()
     }
@@ -176,14 +149,14 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.swipeRefresh()
+        robot.swipeRefresh()
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
         loopMainThreadFor(2000L)
 
         ContentData.contentSuccess.forEachIndexed { index, content ->
-            homeRobot.assertContainsItem(index, FavouriteContent(content, false))
+            robot.assertContainsItem(index, FavouriteContent(content, false))
         }
-        homeRobot.assertDidNotNavigateToAuth()
+        robot.assertDidNotNavigateToAuth()
     }
 
     /** GIVEN success then error WHEN retried THEN error is shown */
@@ -196,13 +169,13 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.swipeRefresh()
+        robot.swipeRefresh()
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
         loopMainThreadUntilIdleWithIdlingResources()
         mainDispatcherTestRule.advanceTimeBy(1000L)
         loopMainThreadFor(1000)
 
-        homeRobot
+        robot
             .assertContainsError()
             .assertContainsNoItems()
             .assertDidNotNavigateToAuth()
@@ -221,9 +194,9 @@ class MainActivityTest : KoinTest {
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
         ContentData.contentSuccess.forEachIndexed { index, content ->
-            homeRobot.assertContainsItem(index, FavouriteContent(content, false))
+            robot.assertContainsItem(index, FavouriteContent(content, false))
         }
-        homeRobot.assertDidNotNavigateToAuth()
+        robot.assertDidNotNavigateToAuth()
     }
 
     /** GIVEN unauthenticated then error WHEN loaded THEN navigated to auth */
@@ -235,6 +208,6 @@ class MainActivityTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        homeRobot.assertNavigatedToAuth()
+        robot.assertNavigatedToAuth()
     }
 }

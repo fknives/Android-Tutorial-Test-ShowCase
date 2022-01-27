@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.favourite
+package org.fnives.test.showcase.storage.favourite
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +26,7 @@ import org.koin.test.inject
 @Suppress("TestFunctionName")
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-internal class FavouriteContentLocalStorageImplTest : KoinTest {
+internal class FavouriteContentLocalStorageImplInstrumentedTest : KoinTest {
 
     private val sut by inject<FavouriteContentLocalStorage>()
     private lateinit var testDispatcher: TestDispatcher
@@ -40,6 +40,14 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
     @After
     fun tearDown() {
         stopKoin()
+    }
+
+    /** GIVEN just created database WHEN querying THEN empty list is returned */
+    @Test
+    fun atTheStartOurDatabaseIsEmpty() = runTest(testDispatcher) {
+        val actual = sut.observeFavourites().first()
+
+        Assert.assertEquals(emptyList<ContentId>(), actual)
     }
 
     /** GIVEN content_id WHEN added to Favourite THEN it can be read out */
@@ -69,7 +77,6 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
     @Test
     fun addingFavouriteUpdatesExistingObservers() = runTest(testDispatcher) {
         val expected = listOf(listOf(), listOf(ContentId("a")))
-
         val actual = async(coroutineContext) { sut.observeFavourites().take(2).toList() }
         advanceUntilIdle()
 
@@ -94,5 +101,20 @@ internal class FavouriteContentLocalStorageImplTest : KoinTest {
         advanceUntilIdle()
 
         Assert.assertEquals(expected, actual.getCompleted())
+    }
+
+    /** GIVEN an observed WHEN adding and removing from it THEN we only get the expected amount of updates */
+    @Test
+    fun noUnexpectedUpdates() = runTest(testDispatcher) {
+        val actual = async(coroutineContext) { sut.observeFavourites().take(4).toList() }
+        advanceUntilIdle()
+
+        sut.markAsFavourite(ContentId("a"))
+        advanceUntilIdle()
+        sut.deleteAsFavourite(ContentId("a"))
+        advanceUntilIdle()
+
+        Assert.assertFalse(actual.isCompleted)
+        actual.cancel()
     }
 }

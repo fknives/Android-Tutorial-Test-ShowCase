@@ -8,7 +8,7 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.1"
     }
@@ -27,21 +27,6 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-task unitTests(dependsOn: ["app:testDebugUnitTest", "core:test", "network:test"]){
-    group = 'Tests'
-    description = 'Run all unit tests'
-}
-
-task robolectricTests(dependsOn: ["app:testDebugUnitTest"]){
-    group = 'Tests'
-    description = 'Run all robolectric tests'
-}
-
-task androidTests(dependsOn: ["app:connectedDebugAndroidTest"]){
-    group = 'Tests'
-    description = 'Run all Android tests'
 }
 
 apply from: 'gradlescripts/versions.gradle'

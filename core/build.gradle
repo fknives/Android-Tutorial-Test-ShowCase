@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'kotlin'
     id 'kotlin-kapt'
+    id 'java-test-fixtures'
 }
 
 java {
@@ -26,4 +27,9 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
     testImplementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     testImplementation "app.cash.turbine:turbine:$turbine_version"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$testing_junit5_version"
+
+    testImplementation project(':mockserver')
+    testFixturesApi testFixtures(project(':network'))
 }

@@ -2,9 +2,12 @@ package org.fnives.test.showcase.testutils.statesetup
 
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.intent.Intents
+import androidx.test.runner.intent.IntentStubberRegistry
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
-import org.fnives.test.showcase.testutils.configuration.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.fnives.test.showcase.ui.home.HomeRobot
 import org.fnives.test.showcase.ui.home.MainActivity
@@ -15,7 +18,8 @@ object SetupAuthenticationState : KoinTest {
 
     fun setupLogin(
         mainDispatcherTestRule: MainDispatcherTestRule,
-        mockServerScenarioSetup: MockServerScenarioSetup
+        mockServerScenarioSetup: MockServerScenarioSetup,
+        resetIntents: Boolean = true
     ) {
         mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"))
         val activityScenario = ActivityScenario.launch(AuthActivity::class.java)
@@ -27,22 +31,29 @@ object SetupAuthenticationState : KoinTest {
             .setUsername("a")
             .clickOnLogin()
 
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        activityScenario.close()
+        activityScenario.safeClose()
+        resetIntentsIfNeeded(resetIntents)
     }
 
     fun setupLogout(
-        mainDispatcherTestRule: MainDispatcherTestRule
+        mainDispatcherTestRule: MainDispatcherTestRule,
+        resetIntents: Boolean = true
     ) {
         val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         activityScenario.moveToState(Lifecycle.State.RESUMED)
-        val homeRobot = HomeRobot()
-        homeRobot
-            .clickSignOut()
+        HomeRobot().clickSignOut()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        mainDispatcherTestRule.advanceUntilIdleOrActivityIsDestroyed()
+        activityScenario.safeClose()
+        resetIntentsIfNeeded(resetIntents)
+    }
 
-        activityScenario.close()
+    private fun resetIntentsIfNeeded(resetIntents: Boolean) {
+        if (resetIntents && IntentStubberRegistry.isLoaded()) {
+            Intents.release()
+            Intents.init()
+        }
     }
 }
