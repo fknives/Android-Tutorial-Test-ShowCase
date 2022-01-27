@@ -37,9 +37,6 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.verifyZeroInteractions
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -334,31 +331,5 @@ class ContentIntegrationTest : KoinTest {
         verifyZeroInteractions(mockSessionExpirationListener)
         val expectedSession = Session(accessToken = "refreshed-access", refreshToken = "refreshed-refresh")
         Assertions.assertEquals(expectedSession, fakeUserDataLocalStorage.session)
-    }
-
-    @DisplayName("GIVEN session expiration and failing token-refresh response WHEN observing THEN session expiration is attached")
-    @Test
-    fun sessionExpiration() = runTest {
-        mockServerScenarioSetup.setScenario(RefreshTokenScenario.Error)
-            .setScenario(
-                ContentScenario.Unauthorized(usingRefreshedToken = false)
-                    .then(ContentScenario.Success(usingRefreshedToken = true))
-            )
-
-        val actual = async {
-            getAllContentUseCase.get()
-                .take(2)
-                .toList()
-        }
-
-        val actualValues = actual.await()
-        Assertions.assertEquals(Resource.Loading<List<FavouriteContent>>(), actualValues[0])
-        Assertions.assertTrue(actualValues[1] is Resource.Error, "Resource is Error")
-        Assertions.assertTrue((actualValues[1] as Resource.Error).error is NetworkException, "Resource is Network Error")
-
-        verify(mockSessionExpirationListener, times(1)).onSessionExpired()
-        verifyNoMoreInteractions(mockSessionExpirationListener)
-
-        Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
     }
 }
