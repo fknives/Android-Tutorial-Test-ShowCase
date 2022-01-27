@@ -1,18 +1,12 @@
 package org.fnives.test.showcase.testutils
 
-import okhttp3.OkHttpClient
-import okhttp3.tls.HandshakeCertificates
-import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
+import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
 import org.fnives.test.showcase.testutils.idling.NetworkSynchronizationTestRule
-import org.fnives.test.showcase.testutils.idling.NetworkSynchronizationTestRule.OkHttpClientTypes
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
-import org.koin.core.context.loadKoinModules
-import org.koin.dsl.module
 import org.koin.test.KoinTest
-import org.koin.test.get
 
 /**
  * TestRule which ensures Koin is reseted between each tests and setups Network mocking.
@@ -27,8 +21,6 @@ class MockServerScenarioSetupResetingTestRule(
 ) : TestRule, KoinTest {
 
     lateinit var mockServerScenarioSetup: MockServerScenarioSetup
-
-    private val sessionlessQualifier get() = OkHttpClientTypes.SESSIONLESS.asQualifier()
 
     override fun apply(base: Statement, description: Description): Statement =
         networkSynchronizationTestRule.apply(base, description)
@@ -48,28 +40,8 @@ class MockServerScenarioSetupResetingTestRule(
     }
 
     private fun before() {
-        mockServerScenarioSetup = MockServerScenarioSetup()
-        val url = mockServerScenarioSetup.start(true)
-
-        val handshakeCertificates = mockServerScenarioSetup.clientCertificates
-            ?: throw IllegalStateException("ClientCertificate should be accessable")
-
-        val okHttpClientWithCertificate = createUpdateOkHttpClient(handshakeCertificates)
-
-        loadKoinModules(
-            module {
-                // add https certificate to okhttp
-                single(qualifier = sessionlessQualifier) { okHttpClientWithCertificate }
-                // replace base url with mockWebServer's
-                single { BaseUrl(url) }
-            }
-        )
+        mockServerScenarioSetup = NetworkTestConfigurationHelper.startWithHTTPSMockWebServer()
     }
-
-    private fun createUpdateOkHttpClient(handshakeCertificates: HandshakeCertificates) =
-        get<OkHttpClient>(sessionlessQualifier).newBuilder()
-            .sslSocketFactory(handshakeCertificates.sslSocketFactory(), handshakeCertificates.trustManager)
-            .build()
 
     private fun after() {
         mockServerScenarioSetup.stop()

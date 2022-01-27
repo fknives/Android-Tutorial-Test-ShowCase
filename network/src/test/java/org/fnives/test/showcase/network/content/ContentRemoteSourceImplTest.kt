@@ -6,7 +6,7 @@ import org.fnives.test.showcase.network.di.createNetworkModules
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
-import org.fnives.test.showcase.network.shared.MockServerScenarioSetupExtensions
+import org.fnives.test.showcase.network.testutil.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
 import org.junit.jupiter.api.AfterEach

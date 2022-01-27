@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.network.shared
+package org.fnives.test.showcase.network.testutil
 
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.junit.jupiter.api.extension.AfterEachCallback

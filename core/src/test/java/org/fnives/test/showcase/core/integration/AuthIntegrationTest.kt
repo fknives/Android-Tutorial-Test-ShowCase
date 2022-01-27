@@ -14,13 +14,14 @@ import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.model.shared.Answer
 import org.fnives.test.showcase.network.mockserver.ContentData
-import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
+import org.fnives.test.showcase.network.testutil.MockServerScenarioSetupExtensions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -35,7 +36,10 @@ import java.util.stream.Stream
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthIntegrationTest : KoinTest {
 
-    private lateinit var mockServerScenarioSetup: MockServerScenarioSetup
+    @RegisterExtension
+    @JvmField
+    val mockServerScenarioSetupExtensions = MockServerScenarioSetupExtensions()
+    private val mockServerScenarioSetup get() = mockServerScenarioSetupExtensions.mockServerScenarioSetup
     private lateinit var fakeFavouriteContentLocalStorage: FakeFavouriteContentLocalStorage
     private lateinit var mockSessionExpirationListener: SessionExpirationListener
     private lateinit var fakeUserDataLocalStorage: FakeUserDataLocalStorage
@@ -46,15 +50,13 @@ class AuthIntegrationTest : KoinTest {
     @BeforeEach
     fun setup() {
         mockSessionExpirationListener = mock()
-        mockServerScenarioSetup = MockServerScenarioSetup()
-        val url = mockServerScenarioSetup.start(false)
         fakeFavouriteContentLocalStorage = FakeFavouriteContentLocalStorage()
         fakeUserDataLocalStorage = FakeUserDataLocalStorage(null)
 
         startKoin {
             modules(
                 createCoreModule(
-                    baseUrl = BaseUrl(url),
+                    baseUrl = BaseUrl(mockServerScenarioSetupExtensions.url),
                     enableNetworkLogging = true,
                     favouriteContentLocalStorageProvider = { fakeFavouriteContentLocalStorage },
                     sessionExpirationListenerProvider = { mockSessionExpirationListener },
@@ -66,7 +68,6 @@ class AuthIntegrationTest : KoinTest {
 
     @AfterEach
     fun tearDown() {
-        mockServerScenarioSetup.stop()
         stopKoin()
     }
 

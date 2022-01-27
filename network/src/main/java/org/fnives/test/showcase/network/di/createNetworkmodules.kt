@@ -88,5 +88,5 @@ private fun sessionNetworkingModule(
     single(qualifier = session) { get<Retrofit>(sessionless).newBuilder().client(get(session)).build() }
 }
 
-private val session = StringQualifier("SESSION-NETWORKING")
-private val sessionless = StringQualifier("SESSIONLESS-NETWORKING")
+internal val session = StringQualifier("SESSION-NETWORKING")
+internal val sessionless = StringQualifier("SESSIONLESS-NETWORKING")
