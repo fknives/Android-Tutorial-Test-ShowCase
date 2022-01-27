@@ -11,9 +11,9 @@ import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.ContentData.createExpectedLoginRequestJson
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.network.session.NetworkSessionLocalStorage
-import org.fnives.test.showcase.network.testutil.MockServerScenarioSetupExtensions
 import org.fnives.test.showcase.network.shared.exceptions.NetworkException
 import org.fnives.test.showcase.network.shared.exceptions.ParsingException
+import org.fnives.test.showcase.network.testutil.MockServerScenarioSetupExtensions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

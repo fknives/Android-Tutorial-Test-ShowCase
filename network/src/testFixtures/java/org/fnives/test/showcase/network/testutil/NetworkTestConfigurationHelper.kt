@@ -36,7 +36,7 @@ object NetworkTestConfigurationHelper : KoinTest {
      *
      * Url, and injected OkHttpClient is modified for this.
      */
-    fun startWithHTTPSMockWebServer(): MockServerScenarioSetup{
+    fun startWithHTTPSMockWebServer(): MockServerScenarioSetup {
         val mockServerScenarioSetup = MockServerScenarioSetup()
         val url = mockServerScenarioSetup.start(true)
 
