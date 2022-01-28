@@ -487,7 +487,7 @@ fun tearDown() {
 }
 ```
 
-##### Networking syncronization and mocking
+##### Networking synchronization and mocking
 We have a helper method for that, but the basic idea is that, we use our MockWebSetup and synchronize with Espresso using idling resources.
 ```kotlin
 @Before
@@ -514,7 +514,7 @@ fun tearDown() {
 Idling Resources makes sure that Espresso awaits the Idling Resource before touching the UI components. Disposable is just a way to remove them from Espresso when we no longer need it.
 
 ##### Coroutine Test Setup
-We use a TestDispatcher and initialze our database with it as well.
+We use a TestDispatcher and initialize our database with it as well.
 
 ```kotlin
 @Before
@@ -572,7 +572,7 @@ mockServerScenarioSetup.setScenario(
 )
 ```
 
-Next via the Robot we input the data and click on the signin:
+Next via the Robot we input the data and click on the sign in:
 ```kotlin
 robot.setPassword("alma")
     .setUsername("banan")
@@ -627,7 +627,7 @@ robot.assertErrorIsShown(R.string.username_is_invalid)
 
 ### 4. `invalidCredentialsGivenShowsProperErrorMessage`
 
-Now we verify network erros. First let's setup the response:
+Now we verify network errors. First let's setup the response:
 ```kotlin
 mockServerScenarioSetup.setScenario(
    AuthScenario.InvalidCredentials(username = "alma", password = "banan"),
@@ -682,7 +682,7 @@ robot.assertErrorIsShown(R.string.something_went_wrong)
 
 ## Conclusion
 
-With that we finished our Robolectric tests, setup might be a bit tidious but we can use TestRules to make the setup reusable. In fact we will do that in the next session.
+With that we finished our Robolectric tests, setup might be a bit tedious but we can use TestRules to make the setup reusable. In fact we will do that in the next session.
 
 What we have learned:
 - How to use Robolectric to verify context dependent classes
