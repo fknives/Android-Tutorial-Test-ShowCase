@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.ui.home
 
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.network.mockserver.ContentData
@@ -10,7 +11,6 @@ import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRul
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
-import org.fnives.test.showcase.testutils.robot.RobotTestRule
 import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.junit.After
@@ -31,22 +31,24 @@ class MainActivityInstrumentedTest : KoinTest {
     private val mockServerScenarioSetup
         get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
     private val mainDispatcherTestRule = MainDispatcherTestRule()
-    private val robot = HomeRobot()
+    private lateinit var robot : HomeRobot
 
     @Rule
     @JvmField
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
-        .around(RobotTestRule(robot))
 
     @Before
     fun setup() {
+        robot = HomeRobot()
         setupLogin(mainDispatcherTestRule, mockServerScenarioSetup)
+        Intents.init()
     }
 
     @After
     fun tearDown() {
         activityScenario.safeClose()
+        Intents.release()
     }
 
     /** GIVEN initialized MainActivity WHEN signout is clicked THEN user is signed out */

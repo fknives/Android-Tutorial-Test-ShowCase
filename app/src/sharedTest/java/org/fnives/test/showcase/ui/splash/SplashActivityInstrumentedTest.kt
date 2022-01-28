@@ -2,14 +2,15 @@ package org.fnives.test.showcase.ui.splash
 
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
-import org.fnives.test.showcase.testutils.robot.RobotTestRule
 import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogout
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -25,17 +26,23 @@ class SplashActivityInstrumentedTest : KoinTest {
     private val mainDispatcherTestRule = MainDispatcherTestRule()
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
 
-    private val robot = SplashRobot()
+    private lateinit var robot : SplashRobot
 
     @Rule
     @JvmField
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
-        .around(RobotTestRule(robot))
+
+    @Before
+    fun setup() {
+        Intents.init()
+        robot = SplashRobot()
+    }
 
     @After
     fun tearDown() {
         activityScenario.safeClose()
+        Intents.release()
     }
 
     /** GIVEN loggedInState WHEN opened after some time THEN MainActivity is started */

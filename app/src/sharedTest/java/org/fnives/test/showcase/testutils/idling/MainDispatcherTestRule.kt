@@ -46,12 +46,14 @@ class MainDispatcherTestRule : TestRule {
         testDispatcher.scheduler.advanceTimeBy(delayInMillis)
     }
 
-    private fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
-        scheduler.advanceUntilIdle() // advance until a request is sent
-        while (anyResourceIdling()) { // check if any request is in progress
-            awaitIdlingResources() // complete all requests and other idling resources
-            scheduler.advanceUntilIdle() // run coroutines after request is finished
+    companion object {
+        fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
+            scheduler.advanceUntilIdle() // advance until a request is sent
+            while (anyResourceIdling()) { // check if any request is in progress
+                awaitIdlingResources() // complete all requests and other idling resources
+                scheduler.advanceUntilIdle() // run coroutines after request is finished
+            }
+            scheduler.advanceUntilIdle()
         }
-        scheduler.advanceUntilIdle()
     }
 }

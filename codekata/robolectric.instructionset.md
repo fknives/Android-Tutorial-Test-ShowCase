@@ -343,5 +343,351 @@ However this is an optional exercise.
 
 If you want to check it out, `FavouriteContentLocalStorageImplInstrumentedTest` does exactly that.
 
+## Login UI Test
+
+We can do much more with Robolectric than just test our Database or SharedPreferences.
+We can write UI Tests as well. It is still not as good as Running tests on a Real Device. But depending on your need it might still be helpful.
+
+> Note we get to the section where I am the least comfortable with, I don't think I have written enough UI Tests yet, so from now on take evrything with a big grain of salt. Feel free to modify your approach to your need. You may also correct me via issues on GitHub, would be a great pleasure to learn for me.
+
+We can write UI tests that have mocked out UseCases and Business Logic, but I prefer to do a full screen Integration Tests, cause I think my UI changes enough at it is, wouldn't want to maintain one extra testing layer.
+So this will be showcased here. But you should be able to write pure UI tests, if you can follow along this section as well if you choose to do so
+
+### Setup
+
+Our System Under Test will be mainly the `org.fnives.test.showcase.ui.codekata.CodeKataAuthActivityInstrumentedTest`.
+
+First of all we will use [Espresso](https://developer.android.com/training/testing/espresso) to simulate user actions on our UI.
+We need quite a bunch of setup, but first let's start with our Robot.
+
+#### Robot Pattern
+Robot Pattern presented by Jake Wharton here: https://academy.realm.io/posts/kau-jake-wharton-testing-robots/ and as described Kotlin specific here: https://medium.com/android-bits/espresso-robot-pattern-in-kotlin-fc820ce250f7
+
+There is also a Kotlin specific article [here](https://medium.com/android-bits/espresso-robot-pattern-in-kotlin-fc820ce250f7).
+
+Is the idea to separate the logic of finding your views from the logic of the test.
+So basically if for example a View Id changes, it doesn't make our behaviour change too, so in this case only our Robot will change, while the Test Class stays the same.
+
+For now I will keep the synthetic sugar to the minimum, and just declare my actions and verifications there. Feel free to have as much customization there as you think is necessary to make your tests clearer.
+
+Let's open our robot: `org.fnives.test.showcase.ui.codekata.CodeKataLoginRobot`
+
+Here is a list of actions we want to do:
+- we want to be able to type in the username
+- we want to be able to type in the password
+- we want to be able the username or password is indeed shows on the UI
+- we want to be able to click on signin
+- we want to be able verify if we are loading or not
+- we want to verify if an error is shown or not
+- we want to check if we navigated to Main or not
+
+##### So here is the code for our the UI interactions
+.
+```kotlin
+fun setUsername(username: String) = apply {
+    onView(withId(R.id.user_edit_text))
+        .perform(ViewActions.replaceText(username), ViewActions.closeSoftKeyboard())
+}
+
+fun setPassword(password: String) = apply {
+    onView(withId(R.id.password_edit_text))
+        .perform(ViewActions.replaceText(password), ViewActions.closeSoftKeyboard())
+}
+
+fun clickOnLogin() = apply {
+    onView(withId(R.id.login_cta))
+        .perform(ViewActions.click())
+}
+
+fun assertPassword(password: String) = apply {
+    onView(withId((R.id.password_edit_text)))
+        .check(ViewAssertions.matches(ViewMatchers.withText(password)))
+}
+
+fun assertUsername(username: String) = apply {
+    onView(withId((R.id.user_edit_text)))
+        .check(ViewAssertions.matches(ViewMatchers.withText(username)))
+}
+
+fun assertLoadingBeforeRequests() = apply {
+    onView(withId(R.id.loading_indicator))
+        .check(ViewAssertions.matches(isDisplayed()))
+}
+
+fun assertNotLoading() = apply {
+    onView(withId(R.id.loading_indicator))
+        .check(ViewAssertions.matches(not(isDisplayed())))
+}
+```
+
+Here we took advantage of Espresso. It helps us by being able to perform action such as click, find Views, such as by ID, and assert View States such as withText.
+To know what Espresso matchers,assertions are there you just have to use them. It's also easy to extend so if one of your views doesn't have that option, then you can create your own matcher.
+
+##### Next up, we need to verify if we navigated:
+.
+```kotlin
+fun assertNavigatedToHome() = apply {
+    intended(hasComponent(MainActivity::class.java.canonicalName))
+}
+
+fun assertNotNavigatedToHome() = apply {
+    notIntended(hasComponent(MainActivity::class.java.canonicalName))
+}
+```
+
+Here we use Espresso's intents, with this we can verify if an Intent was sent out we can also Intercept it to send a result back.
+
+##### Lastly let's verify Errors
+For Snackbar we still gonna use Espresso, but we have a helper class for that because of we may reuse it in other places.
+So let's add that:
+```kotlin
+class CodeKataLoginRobot(
+    private val snackbarVerificationHelper: SnackbarVerificationHelper = SnackbarVerificationHelper()
+)
+```
+
+Add our functions as well:
+```kotlin
+fun assertErrorIsShown(@StringRes stringResID: Int) = apply {
+    snackbarVerificationHelper.assertIsShownWithText(stringResID)
+}
+
+fun assertErrorIsNotShown() = apply {
+    snackbarVerificationHelper.assertIsNotShown()
+}
+```
+
+With that our Robot is done, we can almost start Testing. We still need setup in our Test class.
+
+#### Test class setup
+
+We open the `org.fnives.test.showcase.ui.codekata.CodeKataAuthActivityInstrumentedTest`.
+
+We declare a couple of fields, it will be described later what exacty are those things.
+```kotlin
+private lateinit var activityScenario: ActivityScenario<AuthActivity>
+private lateinit var robot: RobolectricLoginRobot
+private lateinit var testDispatcher: TestDispatcher
+private lateinit var mockServerScenarioSetup: MockServerScenarioSetup
+private lateinit var disposable : Disposable
+```
+
+##### Espresso Intents
+We add the intent initialization:
+```kotlin
+@Before
+fun setup() {
+    Intents.init()
+}
+
+@After
+fun tearDown() {
+    stopKoin()
+    Intents.release()
+}
+```
+
+##### Networking syncronization and mocking
+We have a helper method for that, but the basic idea is that, we use our MockWebSetup and synchronize with Espresso using idling resources.
+```kotlin
+@Before
+fun setup() {
+    //...
+    mockServerScenarioSetup = NetworkTestConfigurationHelper.startWithHTTPSMockWebServer()
+
+    val idlingResources = NetworkTestConfigurationHelper.getOkHttpClients()
+        .associateBy(keySelector = { it.toString() })
+        .map { (key, client) -> OkHttp3IdlingResource.create(key, client) }
+        .map(::IdlingResourceDisposable)
+    disposable = CompositeDisposable(idlingResources)
+}
+
+@After
+fun tearDown() {
+    stopKoin()
+    Intents.release()
+    mockServerScenarioSetup.stop()
+    disposable.dispose()
+}
+```
+
+Idling Resources makes sure that Espresso awaits the Idling Resource before touching the UI components. Disposable is just a way to remove them from Espresso when we no longer need it.
+
+##### Coroutine Test Setup
+We use a TestDispatcher and initialze our database with it as well.
+
+```kotlin
+@Before
+fun setup() {
+    //...
+    val dispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+    Dispatchers.setMain(dispatcher)
+    testDispatcher = dispatcher
+    DatabaseInitialization.dispatcher = dispatcher
+}
+
+@After
+fun tearDown() {
+    stopKoin()
+    Dispatchers.resetMain()
+    mockServerScenarioSetup.stop()
+    disposable.dispose()
+    Intents.release()
+}
+```
+
+##### Finally we initialize our UI
+
+We create our Robot. And we take advantage or `ActivityScenario` to handle the lifecycle of the Activity.
+```kotlin
+@Before
+fun setup() {
+    //...
+    robot = RobolectricLoginRobot()
+    activityScenario = ActivityScenario.launch(AuthActivity::class.java)
+    activityScenario.moveToState(Lifecycle.State.RESUMED)
+}
+
+@After
+fun tearDown() {
+    //...
+    activityScenario.safeClose()
+}
+```
+
+`safeClose` is a workaround which ActivityScenario has, when an activity is finished from code.
+
+Finally we are done with the setup, now we can start to test
+
+### 1. `properLoginResultsInNavigationToHome`
+
+With this setup our test should be pretty simple.
+
+First we mock our request:
+
+```kotlin
+mockServerScenarioSetup.setScenario(
+    AuthScenario.Success(password = "alma", username = "banan"),
+    validateArguments = true)
+)
+```
+
+Next via the Robot we input the data and click on the signin:
+```kotlin
+robot.setPassword("alma")
+    .setUsername("banan")
+    .assertPassword("alma")
+    .assertUsername("banan")
+    .clickOnLogin()
+    .assertLoadingBeforeRequests()
+    .assertErrorIsNotShown()
+```
+
+Finally we sync Coroutines and Espresso then verify that we navigated:
+```kotlin
+testDispatcher.advanceUntilIdleWithIdlingResources()
+robot.assertNavigatedToHome()
+```
+
+### 2. `emptyPasswordShowsProperErrorMessage`
+
+Next up we verify what happens if the user doesn't set their password. We don't need a request in this case.
+
+```kotlin
+robot.setUsername("banan")
+    .assertUsername("banan")
+    .clickOnLogin()
+    .assertLoadingBeforeRequests()
+```
+
+Finally we let coroutines go and verify the error is shown and we have not navigated:
+```kotlin
+testDispatcher.advanceUntilIdleWithIdlingResources()
+robot.assertErrorIsShown(R.string.password_is_invalid)
+    .assertNotNavigatedToHome()
+    .assertNotLoading()
+```
+
+### 3. `emptyUserNameShowsProperErrorMessage`
+
+This will be really similar as the previous test, so try to do it on your own. The error is `R.string.username_is_invalid`
+
+Still, here is the complete code:
+```kotlin
+robot.setPassword("banan")
+    .assertPassword("banan")
+    .clickOnLogin()
+    .assertLoadingBeforeRequests()
+
+testDispatcher.advanceUntilIdleWithIdlingResources()
+robot.assertErrorIsShown(R.string.username_is_invalid)
+    .assertNotNavigatedToHome()
+    .assertNotLoading()
+```
+
+### 4. `invalidCredentialsGivenShowsProperErrorMessage`
+
+Now we verify network erros. First let's setup the response:
+```kotlin
+mockServerScenarioSetup.setScenario(
+   AuthScenario.InvalidCredentials(username = "alma", password = "banan"),
+    validateArguments = true
+)
+```
+
+Now let's input the data like the user would:
+```kotlin
+robot
+    .setUsername("alma")
+    .setPassword("banan")
+    .assertUsername("alma")
+    .assertPassword("banan")
+    .clickOnLogin()
+    .assertLoadingBeforeRequests()
+    .assertErrorIsNotShown()
+```
+
+Now at the end verify the error is shown properly:
+```kotlin
+testDispatcher.advanceUntilIdleWithIdlingResources()
+robot.assertErrorIsShown(R.string.credentials_invalid)
+    .assertNotNavigatedToHome()
+    .assertNotLoading()
+```
+
+### 5. `networkErrorShowsProperErrorMessage`
+
+Finally we verify the `AuthScenario.GenericError`. This will be really similar as the previous, except the error will be `R.string.something_went_wrong`.
+You should try to do this on your own.
+
+Here is the code for verification:
+```kotlin
+mockServerScenarioSetup.setScenario(
+    AuthScenario.GenericError(username = "alma", password = "banan"),
+    validateArguments = true
+)
+robot.setUsername("alma")
+    .setPassword("banan")
+    .assertUsername("alma")
+    .assertPassword("banan")
+    .clickOnLogin()
+    .assertLoadingBeforeRequests()
+    .assertErrorIsNotShown()
+
+testDispatcher.advanceUntilIdleWithIdlingResources()
+robot.assertErrorIsShown(R.string.something_went_wrong)
+    .assertNotNavigatedToHome()
+    .assertNotLoading()
+```
+
 ## Conclusion
+
+With that we finished our Robolectric tests, setup might be a bit tidious but we can use TestRules to make the setup reusable. In fact we will do that in the next session.
+
+What we have learned:
+- How to use Robolectric to verify context dependent classes
+- We learned about verifying Fakes
+- Robolectric starts an Application instance for each test
+- We can write UI tests with Espresso
+- We learned about the Robot Pattern and how it clears up our UI tests
 

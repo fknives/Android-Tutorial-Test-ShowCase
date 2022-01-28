@@ -1,46 +1,72 @@
-package org.fnives.test.showcase.ui.login
+package org.fnives.test.showcase.ui
 
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.fnives.test.showcase.R
+import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
-import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
-import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
+import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
+import org.fnives.test.showcase.storage.database.DatabaseInitialization
+import org.fnives.test.showcase.testutils.idling.CompositeDisposable
+import org.fnives.test.showcase.testutils.idling.Disposable
+import org.fnives.test.showcase.testutils.idling.IdlingResourceDisposable
+import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule.Companion.advanceUntilIdleWithIdlingResources
+import org.fnives.test.showcase.testutils.idling.OkHttp3IdlingResource
 import org.fnives.test.showcase.testutils.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
+import org.koin.core.context.GlobalContext.stopKoin
 import org.koin.test.KoinTest
 
-@Suppress("TestFunctionName")
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class AuthActivityInstrumentedTest : KoinTest {
+class RobolectricAuthActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>
-
-    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
-    private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
-    private val mainDispatcherTestRule = MainDispatcherTestRule()
-    private lateinit var robot : LoginRobot
-
-    @Rule
-    @JvmField
-    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
-        .around(mainDispatcherTestRule)
+    private lateinit var robot: RobolectricLoginRobot
+    private lateinit var testDispatcher: TestDispatcher
+    private lateinit var mockServerScenarioSetup: MockServerScenarioSetup
+    private lateinit var disposable: Disposable
 
     @Before
     fun setup() {
         Intents.init()
-        robot = LoginRobot()
+        val dispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+        Dispatchers.setMain(dispatcher)
+        testDispatcher = dispatcher
+        DatabaseInitialization.dispatcher = dispatcher
+
+        mockServerScenarioSetup = NetworkTestConfigurationHelper.startWithHTTPSMockWebServer()
+
+        val idlingResources = NetworkTestConfigurationHelper.getOkHttpClients()
+            .associateBy(keySelector = { it.toString() })
+            .map { (key, client) -> OkHttp3IdlingResource.create(key, client) }
+            .map(::IdlingResourceDisposable)
+        disposable = CompositeDisposable(idlingResources)
+
+        robot = RobolectricLoginRobot()
+        activityScenario = ActivityScenario.launch(AuthActivity::class.java)
+        activityScenario.moveToState(Lifecycle.State.RESUMED)
     }
 
     @After
     fun tearDown() {
+        stopKoin()
+        Dispatchers.resetMain()
+        mockServerScenarioSetup.stop()
+        disposable.dispose()
         activityScenario.safeClose()
         Intents.release()
     }
@@ -49,32 +75,32 @@ class AuthActivityInstrumentedTest : KoinTest {
     @Test
     fun properLoginResultsInNavigationToHome() {
         mockServerScenarioSetup.setScenario(
-            AuthScenario.Success(password = "alma", username = "banan")
+            AuthScenario.Success(password = "alma", username = "banan"),
+            validateArguments = true
         )
-        activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        robot
-            .setPassword("alma")
+
+        robot.setPassword("alma")
             .setUsername("banan")
             .assertPassword("alma")
             .assertUsername("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
+            .assertErrorIsNotShown()
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        testDispatcher.advanceUntilIdleWithIdlingResources()
         robot.assertNavigatedToHome()
     }
 
     /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
     fun emptyPasswordShowsProperErrorMessage() {
-        activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        robot
-            .setUsername("banan")
+        robot.setUsername("banan")
             .assertUsername("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
+            .assertErrorIsNotShown()
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        testDispatcher.advanceUntilIdleWithIdlingResources()
         robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotNavigatedToHome()
             .assertNotLoading()
@@ -83,14 +109,12 @@ class AuthActivityInstrumentedTest : KoinTest {
     /** GIVEN password and empty username WHEN signIn THEN error username is shown */
     @Test
     fun emptyUserNameShowsProperErrorMessage() {
-        activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        robot
-            .setPassword("banan")
+        robot.setPassword("banan")
             .assertPassword("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        testDispatcher.advanceUntilIdleWithIdlingResources()
         robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotNavigatedToHome()
             .assertNotLoading()
@@ -100,9 +124,9 @@ class AuthActivityInstrumentedTest : KoinTest {
     @Test
     fun invalidCredentialsGivenShowsProperErrorMessage() {
         mockServerScenarioSetup.setScenario(
-            AuthScenario.InvalidCredentials(username = "alma", password = "banan")
+            AuthScenario.InvalidCredentials(username = "alma", password = "banan"),
+            validateArguments = true
         )
-        activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         robot
             .setUsername("alma")
             .setPassword("banan")
@@ -110,8 +134,9 @@ class AuthActivityInstrumentedTest : KoinTest {
             .assertPassword("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
+            .assertErrorIsNotShown()
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        testDispatcher.advanceUntilIdleWithIdlingResources()
         robot.assertErrorIsShown(R.string.credentials_invalid)
             .assertNotNavigatedToHome()
             .assertNotLoading()
@@ -121,9 +146,9 @@ class AuthActivityInstrumentedTest : KoinTest {
     @Test
     fun networkErrorShowsProperErrorMessage() {
         mockServerScenarioSetup.setScenario(
-            AuthScenario.GenericError(username = "alma", password = "banan")
+            AuthScenario.GenericError(username = "alma", password = "banan"),
+            validateArguments = true
         )
-        activityScenario = ActivityScenario.launch(AuthActivity::class.java)
         robot
             .setUsername("alma")
             .setPassword("banan")
@@ -131,8 +156,9 @@ class AuthActivityInstrumentedTest : KoinTest {
             .assertPassword("banan")
             .clickOnLogin()
             .assertLoadingBeforeRequests()
+            .assertErrorIsNotShown()
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        testDispatcher.advanceUntilIdleWithIdlingResources()
         robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotNavigatedToHome()
             .assertNotLoading()
