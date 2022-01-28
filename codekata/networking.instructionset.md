@@ -3,21 +3,21 @@
 In this testing instruction set you will learn how to write simple tests with retrofit and networking.
 
 Every System Under Test will be injected to ensure the setup of Retrofit is correct.
-In every test class will use a mocked response and verify the requests sent out.
-It will also be verify how OAuth token refreshing can be tested.
+In every test class we will use a mocked response and verify the requests sent out.
+We will also see how OAuth token refreshing can be tested.
 
 I would suggest to open this document in your browser, while working in Android Studio.
 
 ## Simple network test
 
-Our System Under Test will be `org.fnives.test.showcase.network.auth.LoginRemoteSourceImpl` But we will only test the login function. The refresh method is part of sesssion handling, that's why it is internal.
+Our System Under Test will be `org.fnives.test.showcase.network.auth.LoginRemoteSourceImpl`, but we will only test the login function. The refresh method is part of session handling, that's why it is internal.
 
 The login function sends out a retrofit request and parses a response for us, this is what we intend to test.
 
 Let's setup our testClass: `org.fnives.test.showcase.network.auth.CodeKataLoginRemoteSourceTest`
 
 ### Setup
-First since we are using Koin as Service Locator, we should extend KoinTest, thus giving us an easier way to access koin functions.
+First since we are using Koin as Service Locator, we should extend [KoinTest](https://insert-koin.io/docs/reference/koin-test/testing/), thus giving us an easier way to access koin functions.
 
 ```kotlin
 class CodeKataLoginRemoteSourceTest : KoinTest {
@@ -25,7 +25,7 @@ class CodeKataLoginRemoteSourceTest : KoinTest {
 }
 ```
 
-Next we need to inject our System Under Test, setup koin and setup or MockServer. However we also need to tearDown our setup after every test. Let's take it step by step.
+Next we need to inject our System Under Test, setup koin and setup our [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver). However we also need to tearDown our setup after every test. Let's take it step by step.
 
 First we declare our required fields:
 ```kotlin
@@ -117,7 +117,7 @@ mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(readResourceFi
 val expected = LoginStatusResponses.Success(Session(accessToken = "login-access", refreshToken = "login-refresh"))
 ```
 
-As you can see we can set the responseCode of the request and a body. here we use a helper function which goes to the resources folder and reads the content of the given file.
+As you can see we can set the responseCode of the request and a body. Here we use a helper function which goes to the resources folder and reads the content of the given file.
 Usually you will need to create your own files out of the expected responses so please check where the file is located.
 
 Next, we declared the expected value, the accessToken and refreshToken come from the ResponseBody (aka the file), this is where it should be parsed from.
@@ -182,7 +182,7 @@ With this we can be sure our request contains exactly what we want it to contain
 
 Now we take a look at an expected error test:
 
-First we setup or mockwebserver to return 400. This should mean our credentials were invalid.
+First we setup our mockwebserver to return 400. This should mean our credentials were invalid.
 
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(400).setBody(""))
@@ -200,7 +200,7 @@ Notice we expected this error so no exception is thrown.
 
 ### 4. `genericErrorMeansNetworkError`
 
-Next, let's see if we get an unexpected response code. In such case we actually except a specific exception to be thrown, so it looks like this:
+Next, let's see if we get an unexpected response code. In such case we actually expect a specific exception to be thrown, so it looks like this:
 
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(500).setBody(""))
@@ -227,7 +227,7 @@ val actual = Assertions.assertThrows(ParsingException::class.java) {
     runBlocking { sut.login(LoginCredentials(username = "a", password = "b")) }
 }
 
-// you not necessarily care about the details of the exception, but here it's just described how to do it.
+// you don't necessarily care about the details of the exception, but here it's just described how to do it.
 Assertions.assertEquals("Expected BEGIN_OBJECT but was BEGIN_ARRAY at path \$", actual.message)
 Assertions.assertTrue(actual.cause is JsonDataException)
 ```
@@ -272,9 +272,9 @@ So let's describe exactly what happens with session expiration and token refresh
 - we get a new token and call the request again
 - or we get an error and we propagate the error and send a sessionExpiration notice
 
-With that in mind open `Corg.fnives.test.showcase.network.content.odeKataSessionExpirationTest`
+With that in mind, open `org.fnives.test.showcase.network.content.CodeKataSessionExpirationTest`
 
-The setup is alreay done since it's equivalent to our LoginRemoteSource tests except the mocks for storage and expiration listener which we now will care about.
+The setup is already done since it's equivalent to our LoginRemoteSource tests except the mocks for storage and expiration listener which we now will care about.
 
 ### 1. `successRefreshResultsInRequestRetry`
 
@@ -335,14 +335,14 @@ verifyZeroInteractions(mockNetworkSessionExpirationListener)
 
 Now we need to test what if the refresh request fails.
 
-First setup for failuire:
+First setup for failure:
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(401))
 mockWebServer.enqueue(MockResponse().setResponseCode(400))
 whenever(mockNetworkSessionLocalStorage.session).doReturn(Session(accessToken = "before-access", refreshToken = "before-refresh"))
 ```
 
-Next verify do the action which will throw!
+Next verify the action, which will throw!
 
 ```kotlin
 Assertions.assertThrows(NetworkException::class.java) {
@@ -370,7 +370,7 @@ With these presented tests we can verify:
 
 Now if you wondered around the non-CodeKata Test files, you noticed it uses the mockserver module.
 
-The basic idea with this is that it contains all the response, request jsons and make it easier to setup sepcific scenarios.
+The basic idea with this is that it contains all the response, request jsons and make it easier to setup specific scenarios.
 
 This doesn't make sense if we are only testing networking, however if we want to write instrumentation / feature tests as well, there we also need to mock out the requests.
 
