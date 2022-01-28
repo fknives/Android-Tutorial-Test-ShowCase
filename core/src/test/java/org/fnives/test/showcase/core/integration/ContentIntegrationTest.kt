@@ -179,12 +179,14 @@ class ContentIntegrationTest : KoinTest {
             Resource.Success(removedFirstFavouriteData)
         )
 
+        val awaitElementEmitionCount = AwaitElementEmitCount(2)
         val actual = async {
             getAllContentUseCase.get()
                 .take(5)
+                .let(awaitElementEmitionCount::attach)
                 .toList()
         }
-        getAllContentUseCase.get().take(2).toList() // let's await success request
+        awaitElementEmitionCount.await() // let's await success request
 
         addContentToFavouriteUseCase.invoke(startContentData.first().content.id)
         advanceUntilIdle()
