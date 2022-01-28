@@ -52,7 +52,7 @@ fun setUp() {
 
 ### 1. `loggedOutUserGoesToAuthentication`
 
-We want to thest that if the user is not logged in then we are navigated to the Authentication screen.
+We want to test that if the user is not logged in then we are navigated to the Authentication screen.
 So we need to setup the mock's response:
 
 ```kotlin
@@ -60,7 +60,7 @@ whenever(mockIsUserLoggedInUseCase.invoke()).doReturn(false)
 ```
 
 Next up we want to setup our TestObserver for LiveData. This enables us to verify the values sent into a LiveData.
-If a livedata is not observed, it's value may not updated (like a livedata that maps) so it's important to have a proper TestObserver set.
+If a livedata is not observed, its value may not be updated (like a livedata that maps) so it's important to have a proper TestObserver set.
 
 
 ```kotin
@@ -69,7 +69,7 @@ val navigateToTestObserver = sut.navigateTo.test()
 
 Since the action takes place in the ViewModel constructor, instead of additional calls, we need to simulate that time has elapsed.
 
-Note: the Extension we are using StandardTestDispatcher, that's why our test is linear and not shaky.
+Note: the `TestMainDispatcher` Extension we are using sets `StandardTestDispatcher` as the dispatcher for `Dispatcher.Main`, that's why our test is linear and not shaky.
 
 ```kotlin
 testScheduler.advanceTimeBy(501)
@@ -127,11 +127,11 @@ What it does is:
 
 Let's open `org.fnives.test.showcase.ui.auth.CodeKataAuthViewModel`.
 
-The setup is already done because it's almost the same as menitoned in CodeKataSplashViewModelTest.
+The setup is already done because it's almost the same as mentioned in CodeKataSplashViewModelTest.
 
 ### 1. `initialSetup`
 
-As always we start with the easiest test. This usually gives us motivitaion and helps us giving idea for the next tests.
+As always we start with the easiest test. This usually gives us motivation and helps us get ideas for the next tests.
 
 First we setup the observers:
 ```kotlin
@@ -189,8 +189,8 @@ navigateToHomeTestObserver.assertNoValue()
 
 ### 3. `whenUsernameChangedLiveDataIsUpdated`
 
-This is esentially the same as whenPasswordChangedLiveDataIsUpdated, just for the username, so try to do it on your own.
-However for completeness sake:
+This is essentially the same as whenPasswordChangedLiveDataIsUpdated, just for the username, so try to do it on your own.
+However for the sake of completeness:
 
 ```kotlin
 val usernameTestObserver = sut.username.test()
@@ -224,7 +224,7 @@ runBlocking {
 }
 ```
 
-`anyOrNull()` just means we do not care what is passed, any anything is accepted.
+`anyOrNull()` just means we do not care what is passed, anything is accepted.
 
 Let's do the action:
 
@@ -275,7 +275,7 @@ sut.onUsernameChanged("usr")
 testScheduler.advanceUntilIdle()
 ```
 
-Next we do our action and clikc the button:
+Next we do our action and click the button:
 ```kotlin
 sut.onLogin()
 testScheduler.advanceUntilIdle()
