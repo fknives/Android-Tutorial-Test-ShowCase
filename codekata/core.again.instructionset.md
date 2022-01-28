@@ -130,7 +130,7 @@ We are still missing `mockServerScenarioSetupExtensions` this will be our TestEx
 `MockServerScenarioSetupExtensions` is declared in the `:network` test module.
 However we are still able to import it.
 
-That's because of [java-test-fixtures](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) plugin. It is can be used to depend on a specific test module "textFixtures".
+That's because of [java-test-fixtures](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) plugin. It can be used to depend on a specific test module "textFixtures".
 Check out the build.gradle's to see how that's done.
 This can be useful to share some static Test Data, or extensions in our case.
 
@@ -153,13 +153,14 @@ As usual, we start with the simplest test. Let's verify that if the session obje
 
 ```kotlin
 @DisplayName("GIVEN no session saved WHEN checking if user is logged in THEN they are not")
-    @Test
-    fun withoutSessionTheUserIsNotLoggedIn() = runTest {
+@Test
+fun withoutSessionTheUserIsNotLoggedIn() = runTest {
     fakeUserDataLocalStorage.session = null
     val actual = isUserLoggedInUseCase.invoke()
 
     Assertions.assertFalse(actual, "User is expected to be not logged in")
     verifyZeroInteractions(mockSessionExpirationListener)
+}
 ```
 
 ### 2. `loginSuccess`
@@ -251,7 +252,7 @@ fun networkInputError(authScenario: AuthScenario) = runTest {
 
 We have one more expected error type, but this comes from the NetworkResponse. We could add it as parametrized test, but for the sake of readability, let's just keep it separate.
 
-Thi is really similar to the `networkInputError`, the differences are that this is not parametrized, we use `AuthScenario.InvalidCredentials` response and we expect `Answer.Success(LoginStatus.INVALID_CREDENTIALS)`
+This is really similar to the `networkInputError`, the differences are that this is not parametrized, we use `AuthScenario.InvalidCredentials` response and we expect `Answer.Success(LoginStatus.INVALID_CREDENTIALS)`
 
 So together:
 ```kotlin
