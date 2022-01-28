@@ -1,6 +1,8 @@
 package org.fnives.test.showcase.ui.home
 
+import android.app.Activity
 import android.app.Instrumentation
+import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
@@ -19,21 +21,17 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.FavouriteContent
-import org.fnives.test.showcase.testutils.robot.Robot
 import org.fnives.test.showcase.testutils.viewactions.PullToRefresh
 import org.fnives.test.showcase.testutils.viewactions.WithDrawable
 import org.fnives.test.showcase.testutils.viewactions.notIntended
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.hamcrest.Matchers.allOf
 
-class HomeRobot : Robot {
+class HomeRobot {
 
-    override fun init() {
-        Intents.init()
-    }
-
-    override fun release() {
-        Intents.release()
+    fun setupIntentResults() {
+        Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
+            .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()))
     }
 
     fun assertNavigatedToAuth() = apply {

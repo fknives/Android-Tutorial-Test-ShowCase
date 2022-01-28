@@ -8,7 +8,5 @@ package org.fnives.test.showcase.testutils.configuration
  */
 interface TestConfigurationsFactory {
 
-    fun createSnackbarVerification(): SnackbarVerificationHelper
-
     fun createSharedMigrationTestRuleFactory(): SharedMigrationTestRuleFactory
 }

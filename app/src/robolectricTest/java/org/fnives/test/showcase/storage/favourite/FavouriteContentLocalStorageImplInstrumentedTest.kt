@@ -1,6 +1,5 @@
 package org.fnives.test.showcase.storage.favourite
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -11,6 +10,7 @@ import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.fnives.test.showcase.core.integration.fake.FakeFavouriteContentLocalStorage
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
@@ -21,20 +21,24 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
-import org.koin.test.inject
+import org.koin.test.get
+import org.robolectric.ParameterizedRobolectricTestRunner
 
 @Suppress("TestFunctionName")
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(AndroidJUnit4::class)
-internal class FavouriteContentLocalStorageImplInstrumentedTest : KoinTest {
+@RunWith(ParameterizedRobolectricTestRunner::class)
+internal class FavouriteContentLocalStorageImplInstrumentedTest(
+    private val favouriteContentLocalStorageFactory: KoinTest.() -> FavouriteContentLocalStorage
+) : KoinTest {
 
-    private val sut by inject<FavouriteContentLocalStorage>()
+    private lateinit var sut: FavouriteContentLocalStorage
     private lateinit var testDispatcher: TestDispatcher
 
     @Before
     fun setUp() {
         testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
         DatabaseInitialization.dispatcher = testDispatcher
+        sut = favouriteContentLocalStorageFactory()
     }
 
     @After
@@ -116,5 +120,19 @@ internal class FavouriteContentLocalStorageImplInstrumentedTest : KoinTest {
 
         Assert.assertFalse(actual.isCompleted)
         actual.cancel()
+    }
+
+    companion object {
+
+        private fun createFake(): FavouriteContentLocalStorage = FakeFavouriteContentLocalStorage()
+
+        private fun KoinTest.createReal(): FavouriteContentLocalStorage = get()
+
+        @JvmStatic
+        @ParameterizedRobolectricTestRunner.Parameters
+        fun favouriteContentLocalStorageFactories(): List<KoinTest.() -> FavouriteContentLocalStorage> = listOf(
+            { createFake() },
+            { createReal() }
+        )
     }
 }

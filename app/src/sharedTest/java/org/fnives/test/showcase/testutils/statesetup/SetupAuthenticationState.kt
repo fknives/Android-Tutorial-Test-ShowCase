@@ -21,38 +21,48 @@ object SetupAuthenticationState : KoinTest {
         mockServerScenarioSetup: MockServerScenarioSetup,
         resetIntents: Boolean = true
     ) {
-        mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"))
-        val activityScenario = ActivityScenario.launch(AuthActivity::class.java)
-        activityScenario.moveToState(Lifecycle.State.RESUMED)
-        val loginRobot = LoginRobot()
-        loginRobot.setupIntentResults()
-        loginRobot
-            .setPassword("b")
-            .setUsername("a")
-            .clickOnLogin()
+        resetIntentsIfNeeded(resetIntents) {
+            mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"))
+            val activityScenario = ActivityScenario.launch(AuthActivity::class.java)
+            activityScenario.moveToState(Lifecycle.State.RESUMED)
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+            val loginRobot = LoginRobot()
+            loginRobot.setupIntentResults()
+            loginRobot
+                .setPassword("b")
+                .setUsername("a")
+                .clickOnLogin()
+            mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
-        activityScenario.safeClose()
-        resetIntentsIfNeeded(resetIntents)
+            activityScenario.safeClose()
+        }
     }
 
     fun setupLogout(
         mainDispatcherTestRule: MainDispatcherTestRule,
         resetIntents: Boolean = true
     ) {
-        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
-        activityScenario.moveToState(Lifecycle.State.RESUMED)
-        HomeRobot().clickSignOut()
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        resetIntentsIfNeeded(resetIntents) {
+            val activityScenario = ActivityScenario.launch(MainActivity::class.java)
+            activityScenario.moveToState(Lifecycle.State.RESUMED)
 
-        activityScenario.safeClose()
-        resetIntentsIfNeeded(resetIntents)
+            val homeRobot = HomeRobot()
+            homeRobot.setupIntentResults()
+            homeRobot.clickSignOut()
+            mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+            activityScenario.safeClose()
+        }
     }
 
-    private fun resetIntentsIfNeeded(resetIntents: Boolean) {
-        if (resetIntents && IntentStubberRegistry.isLoaded()) {
-            Intents.release()
+    private fun resetIntentsIfNeeded(resetIntents: Boolean, action: () -> Unit) {
+        val wasInitialized = IntentStubberRegistry.isLoaded()
+        if (!wasInitialized) {
+            Intents.init()
+        }
+        action()
+        Intents.release()
+        if (resetIntents && wasInitialized) {
             Intents.init()
         }
     }
