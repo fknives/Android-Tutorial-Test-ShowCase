@@ -26,7 +26,7 @@ class AuthActivityInstrumentedTest : KoinTest {
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
     private val mainDispatcherTestRule = MainDispatcherTestRule()
-    private lateinit var robot : LoginRobot
+    private lateinit var robot: LoginRobot
 
     @Rule
     @JvmField
