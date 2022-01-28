@@ -44,7 +44,7 @@ class CodeKataAuthIntegrationTest : KoinTest {
 
     @BeforeEach
     fun setup() {
-        mockSessionExpirationListener = mock() // we are using mock, since it only has 1 function so we just want to verify if it's called
+        mockSessionExpirationListener = mock() // we are using mock, since it only has 1 function so we just want to verify if its called
         fakeFavouriteContentLocalStorage = FakeFavouriteContentLocalStorage()
         fakeUserDataLocalStorage = FakeUserDataLocalStorage(null)
         startKoin {
