@@ -22,7 +22,7 @@ import org.hamcrest.core.IsNot.not
 
 class LoginRobot(
     private val snackbarVerificationHelper: SnackbarVerificationHelper = SnackbarVerificationHelper()
-){
+) {
 
     fun setupIntentResults() {
         Intents.intending(hasComponent(MainActivity::class.java.canonicalName))

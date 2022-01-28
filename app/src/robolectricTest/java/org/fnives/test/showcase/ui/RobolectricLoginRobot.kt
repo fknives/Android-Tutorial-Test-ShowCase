@@ -1,6 +1,5 @@
 package org.fnives.test.showcase.ui
 
-//import org.fnives.test.showcase.testutils.shadow.ShadowSnackbar
 import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
@@ -70,5 +69,4 @@ class RobolectricLoginRobot(
     fun assertNotNavigatedToHome() = apply {
         notIntended(hasComponent(MainActivity::class.java.canonicalName))
     }
-
 }

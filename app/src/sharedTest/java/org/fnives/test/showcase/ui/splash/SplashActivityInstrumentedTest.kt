@@ -26,7 +26,7 @@ class SplashActivityInstrumentedTest : KoinTest {
     private val mainDispatcherTestRule = MainDispatcherTestRule()
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
 
-    private lateinit var robot : SplashRobot
+    private lateinit var robot: SplashRobot
 
     @Rule
     @JvmField

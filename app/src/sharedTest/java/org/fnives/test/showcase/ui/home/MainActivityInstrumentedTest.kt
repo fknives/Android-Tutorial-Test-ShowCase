@@ -31,7 +31,7 @@ class MainActivityInstrumentedTest : KoinTest {
     private val mockServerScenarioSetup
         get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
     private val mainDispatcherTestRule = MainDispatcherTestRule()
-    private lateinit var robot : HomeRobot
+    private lateinit var robot: HomeRobot
 
     @Rule
     @JvmField
