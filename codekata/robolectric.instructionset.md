@@ -191,7 +191,7 @@ private lateinit var testDispatcher: TestDispatcher
 
 @Before
 fun setUp() {
-    testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+    testDispatcher = StandardTestDispatcher()
     DatabaseInitialization.dispatcher = testDispatcher
 }
 
@@ -523,7 +523,7 @@ We use a TestDispatcher and initialize our database with it as well.
 @Before
 fun setup() {
     //...
-    val dispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+    val dispatcher = StandardTestDispatcher()
     Dispatchers.setMain(dispatcher)
     testDispatcher = dispatcher
     DatabaseInitialization.dispatcher = dispatcher
