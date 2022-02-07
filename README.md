@@ -6,10 +6,9 @@ Mock project showcasing testing on Android. I plan to use this as a [CodeKata](h
 > Disclaimer: Every test you see in this project you should take with a pinch of salt, this is my self-taught experimentation of Testing on Android
 
 ## Project Overview
-The project uses mock api and is really simplified. It's used just to showcase example features I usually encounter on Android.
+The project uses mock api and is really bare bone. It's used just to showcase example features I usually encounter on Android.
 
 You can login with any credentials, mark favourite content items, log out and that's about it.
-
 
 As dependency injection / Service Locator [koin](https://insert-koin.io/) is used.
 
@@ -25,7 +24,6 @@ The application is separated into different modules each module is tested differ
 
 #### Model
 Self explanatory, contains all shared data classes (POJOs) and Exceptions used by the other modules.
-
 There is nothing to test here.
 
 #### App
@@ -34,12 +32,13 @@ The android module of the application, contains the UI (Activities), Room-Databa
 
 The UI is strucured in [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel).
 
-Has dependency on the [core module](#core).
+Has dependency on the [core module](#core) and only on core module.
 
 There are 3 kinds of tests in this module:
-- junit5 tests for ViewModels
-- Robolectric Test for Room Database
+- junit5 tests for ViewModels and Dependency Injection
+- Robolectric Test for Room Database and SharedPreferences
 - Shared Tests for Screens (shared between Robolectric and AndroidTests)
+- End to End Android Tests
 
 ##### Unit tests
 Verify the ViewModels are reacting to the mocked UseCases properly.
@@ -76,9 +75,11 @@ Has dependency on the [network](#networking) module. Database/SharedPreferences 
 All tests are junit5 and they are using [Kotlin-Mockito](https://github.com/mockito/mockito-kotlin) to mock all dependencies.
 
 [Coroutine-test](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/) is also used in every test.
-
+[Turbine](https://github.com/cashapp/turbine) is used to test flows, but tests will be shown without turbine as well.
 
 The tests are verifying the interactions between the RemoteSource and LocalSource components. It also verifies that ErrorHandling is done properly.
+
+Has also Integration tests which verify multiple components working together, for this [Mock Server](mock-server) module is used to mock responses.
 
 #### Networking
 As the name suggests this is the module which sends requests to the Backend and parses the responses received. All responses and requests are mapped to and from models from the [model](#model) data classes.
@@ -90,20 +91,16 @@ All tests are Junit5. The Retrofit Services are injected into tests to make sure
 
 The tests are verifying all the requests contain the correct arguments, headers, path, methods. It is also responsible to verify the responses are parsed properly.
 
-[Mock Server](mock-server) module is used to mock the network requests.
-
+[Mock Server](mock-server) module and [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver)  is  used to respond to the requests sent by OkHttp.
 [JsonAssert](https://github.com/skyscreamer/JSONassert) is used to compare JSON models.
 
 #### Mock Server
-This module is not actually part of the APK. This module is only used to unify mocking of Network request between Instrumentation tests from [app](#app) module and [network](#networking) module.
+This module is not actually part of the APK. This module is only used to unify mocking of Network request between Instrumentation tests from [app](#app) module, [core](#core) integration tests and [network](#networking) module.
 
 It contains a way to setup responses to requests in a unified way. Contains all Response.json and expected Request.json files.
 
-
 [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver) is used to respond to the requests sent by OkHttp.
-
 [JsonAssert](https://github.com/skyscreamer/JSONassert) is used to compare JSON models.
-
 [OkHttp-TLS](https://github.com/square/okhttp/tree/master/okhttp-tls) is used to have HTTPS requests on Android Tests.
 
 ## Server
@@ -114,7 +111,7 @@ The actual server when running the application is [mockapi.io](https://www.mocka
 ### Preparation
 Download the project, open it in [Android Studio](https://developer.android.com/studio?gclid=Cj0KCQjw1PSDBhDbARIsAPeTqrfKrSx8qD_B9FegOmpVgxtPWFHhBHeqnml8n4ak-I5wPvqlwGdwrUQaAtobEALw_wcB&gclsrc=aw.ds).
 
-* In the gradle window you can see in the root gradle there is a "tests" group. In this group you will see a unitTests and androidTests task.
+* In the gradle window you can see in the root gradle there is a "tests" group. In this group you will see a jvmTests, robolectricTests and androidTests task.
 * First run the jvmTests.
 * When that finished, build the application to your phone.
 * Login with whatever credentials and look over the app, what will you test.
@@ -133,7 +130,7 @@ Open the [core instruction set](./codekata/core.instructionset.md).
 
 The core tests are the simplest, we will look into how to use mockito to mock class dependencies and write our first simple tests.
 
-Next we will look how to test flows.
+We will also see how to test flows.
 
 #### Networking
 Open the [networking instruction set](./codekata/networking.instructionset.md).
@@ -151,7 +148,7 @@ We will also see how to test with LiveData.
 
 We will introduce Rules, aka easy to reuse "Before" and "After" components.
 
-#### Core Again
+#### Core Again (Integration)
 Open the [core again instruction set](./codekata/core.again.instructionset.md).
 
 We complicate things here. We write our first Integraiton Test.
@@ -161,15 +158,14 @@ We will verify the Authentication classes and the networking module is working t
 Open the [app robolectric unit tests instruction set](./codekata/robolectric.instructionset.md).
 
 In this section we will see how to test component depending on context such as Room database.
+In this tests we will also see how to interact with View components in tests via Espresso.
+We will also see how to test a specific Activity (same concept can be applied to fragments)
 
 #### Robolectric and Android Tests.
 Open the [shared tests instruction set](./codekata/sharedtests.instructionset).
 
-In this tests we will see how to interact with View components in tests via Espresso.
-
-We will also see how to test a specific Activity (same concept can be applied to fragments)
-
-We will also see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
+In this section we will see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
+We will also see how to write AndroidTest End to End Tests.
 
 ## License
 [License file](./LICENSE)
