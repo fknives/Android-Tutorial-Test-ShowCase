@@ -208,6 +208,9 @@ fun atTheStartOurDatabaseIsEmpty()= runTest(testDispatcher) {
 
 The line `DatabaseInitialization.dispatcher = testDispatcher` may look a bit mysterious, but all we do with it is to overwrite our original DatabaseInitialization in tests, and use the given Dispatcher as an executor for Room setup.
 
+> DatabaseInitialization is overwritten in the Test module, by declaring the same class in the same package with the same methods. This is an easy way to switch out an implementation.
+> This might not look the cleanest, so an alternative way is to switch out the koin-module of how to create the database. For this we could use loadKoinModules. In other dependency injection / service locator frameworks this should also be possible.
+
 ### 1. `atTheStartOurDatabaseIsEmpty`
 
 Our test is as simple as it gets. We get the observable and it's first element. Then we assert that it is an empty list.
