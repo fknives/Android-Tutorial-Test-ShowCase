@@ -514,7 +514,9 @@ fun tearDown() {
 }
 ```
 
-Idling Resources makes sure that Espresso awaits the Idling Resource before touching the UI components. Disposable is just a way to remove them from Espresso when we no longer need it.
+> Idling Resources comes from Espresso. The idea is that anytime we want to interact with the UI via Espresso, it will await any Idling Resource beforehand. This is handy, since our Network component, (OkHttp) uses it's own thread pool, and we would like to have a way to await the responses.
+> Disposable is just a syntetic-sugar way to remove the OkHttpIdling resource from Espresso when we no longer need it.
+> Idling Resources also makes it easy for us, to coordinate coroutines with our network responses, since we can await the IdlingResource and advance the Coroutines afterwards.
 
 ##### Coroutine Test Setup
 We use a TestDispatcher and initialize our database with it as well.
