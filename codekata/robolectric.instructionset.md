@@ -685,6 +685,16 @@ robot.assertErrorIsShown(R.string.something_went_wrong)
     .assertNotLoading()
 ```
 
+### Shadows
+We don't have an example to work through Shadows for now, since it might not be necessary for everyday applications. An example will still be added [here](https://github.com/fknives/AndroidTest-ShowCase/pull/57) at some point.
+
+Since Robolectric is a faking of the Android Framework, there are limitations to it's usage. For example if our Application interacts with the device's AudioManager. Robolectric won't hook into our actual operating system and listen to sounce changes or AudioFocus, but use a mocked/Faked class instead.
+If we need to emulate some kind of interaction with that component, that's when Shadows come in. Example: [ShadowAudioManager](http://robolectric.org/javadoc/4.1/org/robolectric/shadows/ShadowAudioManager.html).
+What happens here is while testing, instead of creating an actual AudioManager, this ShadowAudioManager would be created. We can modify it's implementation or use it like a Fake implementation by feeding it values to be returned.
+That way we can still test our application against the Android API while still having full control over the responses. We can create custom shadows or overwrite existing ones to fit our use cases better.
+
+For a better written introduction to Shadows I recommend this [article](https://himbeer.farm/2018/11/custom-shadows/).
+
 ## Conclusion
 
 With that we finished our Robolectric tests, setup might be a bit tedious but we can use TestRules to make the setup reusable. In fact we will do that in the next session.
@@ -695,4 +705,3 @@ What we have learned:
 - Robolectric starts an Application instance for each test
 - We can write UI tests with Espresso
 - We learned about the Robot Pattern and how it clears up our UI tests
-
