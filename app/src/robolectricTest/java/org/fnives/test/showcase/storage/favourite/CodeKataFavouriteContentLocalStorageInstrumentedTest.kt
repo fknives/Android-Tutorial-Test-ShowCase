@@ -1,7 +1,7 @@
 package org.fnives.test.showcase.storage.favourite
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +21,7 @@ class CodeKataFavouriteContentLocalStorageInstrumentedTest {
 
     /** GIVEN just created database WHEN querying THEN empty list is returned */
     @Test
-    fun atTheStartOurDatabaseIsEmpty() = runBlocking {
+    fun atTheStartOurDatabaseIsEmpty() = runTest {
     }
 
     /** GIVEN content_id WHEN added to Favourite THEN it can be read out */

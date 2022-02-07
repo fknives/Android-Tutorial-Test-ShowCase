@@ -3,7 +3,6 @@ package org.fnives.test.showcase.testutils.idling
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -22,7 +21,7 @@ class MainDispatcherTestRule : TestRule {
         object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
-                val dispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+                val dispatcher = StandardTestDispatcher()
                 Dispatchers.setMain(dispatcher)
                 testDispatcher = dispatcher
                 DatabaseInitialization.dispatcher = dispatcher

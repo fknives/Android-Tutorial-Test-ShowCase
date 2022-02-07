@@ -134,6 +134,9 @@ That's because of [java-test-fixtures](https://docs.gradle.org/current/userguide
 Check out the build.gradle's to see how that's done.
 This can be useful to share some static Test Data, or extensions in our case.
 
+> Test Fixtrues creates a new sourceset between the production code and the test code. test depends on testFixtures and testFixtures depends on source. So test sees everything in testFixtures and other modules can also use testFixtures. This way we can share extensions or other helper classes.
+> An alternative to use test code between modules instead of TestFixtures is to use a separate module, like the :mockserver defined in the project.
+
 So let's add this extension:
 ```kotlin
 @RegisterExtension

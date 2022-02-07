@@ -3,7 +3,6 @@ package org.fnives.test.showcase.testutils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -22,7 +21,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 class TestMainDispatcher : BeforeEachCallback, AfterEachCallback {
 
     override fun beforeEach(context: ExtensionContext?) {
-        val testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+        val testDispatcher = StandardTestDispatcher()
         privateTestDispatcher = testDispatcher
         DatabaseInitialization.dispatcher = testDispatcher
         Dispatchers.setMain(testDispatcher)

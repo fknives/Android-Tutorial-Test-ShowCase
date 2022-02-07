@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -36,7 +35,7 @@ internal class FavouriteContentLocalStorageImplInstrumentedTest(
 
     @Before
     fun setUp() {
-        testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+        testDispatcher = StandardTestDispatcher()
         DatabaseInitialization.dispatcher = testDispatcher
         sut = favouriteContentLocalStorageFactory()
     }
