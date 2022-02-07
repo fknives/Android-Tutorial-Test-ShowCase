@@ -21,7 +21,7 @@ class CodeKataFavouriteContentLocalStorageInstrumentedTest {
 
     /** GIVEN just created database WHEN querying THEN empty list is returned */
     @Test
-    fun atTheStartOurDatabaseIsEmpty() =  runTest {
+    fun atTheStartOurDatabaseIsEmpty() = runTest {
     }
 
     /** GIVEN content_id WHEN added to Favourite THEN it can be read out */
