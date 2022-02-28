@@ -95,6 +95,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$androidx_room_version"
 
     implementation "io.coil-kt:coil:$coil_version"
+    implementation "io.coil-kt:coil-compose:$coil_version"
 
     implementation project(":core")
 

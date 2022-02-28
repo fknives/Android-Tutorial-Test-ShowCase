@@ -15,7 +15,7 @@ import org.fnives.test.showcase.R
 
 @Composable
 fun AuthScreen(
-    authScreenState: AuthScreenState = rememberAuthScreen()
+    authScreenState: AuthScreenState = rememberAuthScreenState()
 ) {
     Column(
         Modifier

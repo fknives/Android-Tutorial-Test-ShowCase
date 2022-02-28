@@ -11,7 +11,7 @@ import org.fnives.test.showcase.ui.shared.Event
 import org.koin.androidx.compose.get
 
 @Composable
-fun rememberAuthScreen(
+fun rememberAuthScreenState(
     stateScope: CoroutineScope = rememberCoroutineScope(),
     loginUseCase: LoginUseCase = get(),
 ): AuthScreenState {
@@ -64,8 +64,7 @@ class AuthScreenState(
         when (loginStatus) {
             LoginStatus.SUCCESS -> navigateToHome = Event(Unit)
             LoginStatus.INVALID_CREDENTIALS -> error = Event(ErrorType.INVALID_CREDENTIALS)
-            LoginStatus.INVALID_USERNAME -> error = Event(ErrorType.UNSUPPORTED_USERNAME).also {         println("asdasdasd: ${it.hashCode()}")
-            }
+            LoginStatus.INVALID_USERNAME -> error = Event(ErrorType.UNSUPPORTED_USERNAME)
             LoginStatus.INVALID_PASSWORD -> error = Event(ErrorType.UNSUPPORTED_PASSWORD)
         }
         println("asdasdasd: ${error.hashCode()}")
