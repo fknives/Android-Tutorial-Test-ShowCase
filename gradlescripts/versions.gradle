@@ -7,6 +7,10 @@ project.ext {
     androidx_swiperefreshlayout_version = "1.1.0"
     androidx_room_version = "2.4.1"
     activity_ktx_version = "1.4.0"
+    androidx_navigation = "2.4.0"
+
+    androidx_compose = "1.1.0-rc03"
+    google_accompanist = "0.20.3"
 
     coroutines_version = "1.6.0"
     turbine_version = "0.7.0"
