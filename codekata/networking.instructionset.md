@@ -323,7 +323,7 @@ Assertions.assertEquals(null, refreshRequest.getHeader("Authorization"))
 Assertions.assertEquals("Android", refreshRequest.getHeader("Platform"))
 Assertions.assertEquals("", refreshRequest.body.readUtf8())
 
-Assertions.assertEquals("login-access", retryAfterTokenRefreshRequest.getHeader("Authorization"))
+Assertions.assertEquals("login-access", contentRequestAfterRefreshed.getHeader("Authorization"))
 
 // this matches the data from the success_response_login.json
 val expectedSavedSession = Session(accessToken = "login-access", refreshToken = "login-refresh")
