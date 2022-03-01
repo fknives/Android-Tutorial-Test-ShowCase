@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -39,18 +40,23 @@ fun HomeScreen(
                     .clickable { homeScreenState.onLogout() }
             )
         }
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = homeScreenState.loading),
-            onRefresh = {
-                homeScreenState.onRefresh()
-            }) {
-            LazyColumn {
-                items(homeScreenState.content) { item ->
-                    Item(
-                        Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        favouriteContent = item,
-                        onFavouriteToggle = { homeScreenState.onFavouriteToggleClicked(item.content.id) }
-                    )
+        Box {
+            if (homeScreenState.isError) {
+                ErrorText(Modifier.align(Alignment.Center))
+            }
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = homeScreenState.loading),
+                onRefresh = {
+                    homeScreenState.onRefresh()
+                }) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(homeScreenState.content) { item ->
+                        Item(
+                            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            favouriteContent = item,
+                            onFavouriteToggle = { homeScreenState.onFavouriteToggleClicked(item.content.id) }
+                        )
+                    }
                 }
             }
         }
@@ -96,5 +102,15 @@ private fun Title(modifier: Modifier = Modifier) {
         stringResource(id = R.string.login_title),
         modifier = modifier.padding(16.dp),
         style = MaterialTheme.typography.h4
+    )
+}
+
+@Composable
+private fun ErrorText(modifier: Modifier = Modifier) {
+    Text(
+        stringResource(id = R.string.something_went_wrong),
+        modifier = modifier.padding(16.dp),
+        style = MaterialTheme.typography.h4,
+        textAlign = TextAlign.Center
     )
 }
