@@ -5,8 +5,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
+import org.fnives.test.showcase.testutils.idling.anyResourceIdling
 import org.fnives.test.showcase.ui.compose.ComposeActivity
-import org.fnives.test.showcase.ui.compose.TestShowCaseApp
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,12 +32,10 @@ class AuthComposeInstrumentedTest : KoinTest {
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
 
+
     @Before
     fun setup() {
         robot = ComposeLoginRobot(composeTestRule)
-        composeTestRule.setContent {
-            TestShowCaseApp()
-        }
     }
 
 //    @After
@@ -51,16 +49,18 @@ class AuthComposeInstrumentedTest : KoinTest {
         mockServerScenarioSetup.setScenario(
             AuthScenario.Success(password = "alma", username = "banan")
         )
+        composeTestRule.mainClock.advanceTimeBy(500L)
+        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         composeTestRule.waitForIdle()
         robot
             .setPassword("alma")
             .setUsername("banan")
-            .assertPassword("alma")
             .assertUsername("banan")
+            .assertPassword("alma")
             .clickOnLogin()
 //            .assertLoadingBeforeRequests()
 
-        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+//        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 //        robot.assertNavigatedToHome()
     }
 

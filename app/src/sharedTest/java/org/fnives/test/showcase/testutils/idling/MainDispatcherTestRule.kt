@@ -22,13 +22,13 @@ class MainDispatcherTestRule : TestRule {
             @Throws(Throwable::class)
             override fun evaluate() {
                 val dispatcher = StandardTestDispatcher()
-                Dispatchers.setMain(dispatcher)
+//                Dispatchers.setMain(dispatcher)
                 testDispatcher = dispatcher
                 DatabaseInitialization.dispatcher = dispatcher
                 try {
                     base.evaluate()
                 } finally {
-                    Dispatchers.resetMain()
+//                    Dispatchers.resetMain()
                 }
             }
         }
