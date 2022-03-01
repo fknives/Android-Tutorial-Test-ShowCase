@@ -29,7 +29,7 @@ class AuthScreenState(
         private set
     var loading by mutableStateOf(false)
         private set
-    var error by mutableStateOf<Event<ErrorType>?>(null)
+    var error by mutableStateOf<ErrorType?>(null)
         private set
     var navigateToHome by mutableStateOf<Event<Unit>?>(null)
         private set
@@ -53,7 +53,7 @@ class AuthScreenState(
                 password = password
             )
             when (val response = loginUseCase.invoke(credentials)) {
-                is Answer.Error -> error = Event(ErrorType.GENERAL_NETWORK_ERROR)
+                is Answer.Error -> error = ErrorType.GENERAL_NETWORK_ERROR
                 is Answer.Success -> processLoginStatus(response.data)
             }
             loading = false
@@ -63,11 +63,15 @@ class AuthScreenState(
     private fun processLoginStatus(loginStatus: LoginStatus) {
         when (loginStatus) {
             LoginStatus.SUCCESS -> navigateToHome = Event(Unit)
-            LoginStatus.INVALID_CREDENTIALS -> error = Event(ErrorType.INVALID_CREDENTIALS)
-            LoginStatus.INVALID_USERNAME -> error = Event(ErrorType.UNSUPPORTED_USERNAME)
-            LoginStatus.INVALID_PASSWORD -> error = Event(ErrorType.UNSUPPORTED_PASSWORD)
+            LoginStatus.INVALID_CREDENTIALS -> error = ErrorType.INVALID_CREDENTIALS
+            LoginStatus.INVALID_USERNAME -> error = ErrorType.UNSUPPORTED_USERNAME
+            LoginStatus.INVALID_PASSWORD -> error = ErrorType.UNSUPPORTED_PASSWORD
         }
         println("asdasdasd: ${error.hashCode()}")
+    }
+
+    fun dismissError() {
+        error = null
     }
 
     enum class ErrorType {

@@ -72,6 +72,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "com.google.android.material:material:$androidx_material_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
     implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:$androidx_livedata_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidx_livedata_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_livedata_version"
