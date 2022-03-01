@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,7 +70,7 @@ private fun CredentialsFields(authScreenState: AuthScreenState, modifier: Modifi
             placeholder = { Text(text = stringResource(id = R.string.username)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             onValueChange = { authScreenState.onUsernameChanged(it) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag(AuthScreenTag.UsernameInput)
         )
         OutlinedTextField(
             value = authScreenState.password,
@@ -85,6 +86,7 @@ private fun CredentialsFields(authScreenState: AuthScreenState, modifier: Modifi
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
+                .testTag(AuthScreenTag.PasswordInput)
         )
     }
 }
@@ -112,7 +114,7 @@ private fun Snackbar(authScreenState: AuthScreenState, modifier: Modifier = Modi
 @Composable
 private fun LoginButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Box(modifier) {
-        Button(onClick = onClick, Modifier.fillMaxWidth()) {
+        Button(onClick = onClick, Modifier.fillMaxWidth().testTag(AuthScreenTag.LoginButton)) {
             Text(text = "Login")
         }
     }
@@ -132,4 +134,10 @@ private fun AuthScreenState.ErrorType.stringResId() = when (this) {
     AuthScreenState.ErrorType.GENERAL_NETWORK_ERROR -> R.string.something_went_wrong
     AuthScreenState.ErrorType.UNSUPPORTED_USERNAME -> R.string.username_is_invalid
     AuthScreenState.ErrorType.UNSUPPORTED_PASSWORD -> R.string.password_is_invalid
+}
+
+object AuthScreenTag {
+    const val UsernameInput = "AuthScreenTag.UsernameInput"
+    const val PasswordInput = "AuthScreenTag.PasswordInput"
+    const val LoginButton = "AuthScreenTag.LoginButton"
 }
