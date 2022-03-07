@@ -6,7 +6,7 @@ import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.anyResourceIdling
-import org.fnives.test.showcase.ui.compose.ComposeActivity
+import org.fnives.test.showcase.compose.ComposeActivity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

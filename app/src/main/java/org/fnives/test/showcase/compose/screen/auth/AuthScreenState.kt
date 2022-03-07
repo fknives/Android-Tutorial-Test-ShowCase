@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.ui.compose.screen.auth
+package org.fnives.test.showcase.compose.screen.auth
 
 import androidx.compose.runtime.*
 import kotlinx.coroutines.CoroutineScope

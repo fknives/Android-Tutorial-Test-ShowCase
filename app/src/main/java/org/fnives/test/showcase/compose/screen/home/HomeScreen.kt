@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.ui.compose.screen.home
+package org.fnives.test.showcase.compose.screen.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

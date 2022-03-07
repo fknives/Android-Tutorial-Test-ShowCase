@@ -26,7 +26,7 @@
         <activity android:name=".ui.home.MainActivity" />
         <activity android:name=".ui.auth.AuthActivity" />
         <activity
-            android:name=".ui.compose.ComposeActivity"
+            android:name="org.fnives.test.showcase.compose.ComposeActivity"
             android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
             android:exported="true">
             <intent-filter>

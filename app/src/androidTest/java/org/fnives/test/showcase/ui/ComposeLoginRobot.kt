@@ -2,7 +2,7 @@ package org.fnives.test.showcase.ui
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import org.fnives.test.showcase.ui.compose.screen.auth.AuthScreenTag
+import org.fnives.test.showcase.compose.screen.auth.AuthScreenTag
 
 class ComposeLoginRobot(
     private val composeTestRule: ComposeTestRule,

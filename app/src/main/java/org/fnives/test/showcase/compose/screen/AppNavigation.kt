@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.ui.compose.screen
+package org.fnives.test.showcase.compose.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.material.MaterialTheme
@@ -10,11 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
-import org.fnives.test.showcase.ui.compose.screen.auth.AuthScreen
-import org.fnives.test.showcase.ui.compose.screen.auth.rememberAuthScreenState
-import org.fnives.test.showcase.ui.compose.screen.home.HomeScreen
-import org.fnives.test.showcase.ui.compose.screen.home.rememberHomeScreenState
-import org.fnives.test.showcase.ui.compose.screen.splash.SplashScreen
+import org.fnives.test.showcase.compose.screen.auth.AuthScreen
+import org.fnives.test.showcase.compose.screen.auth.rememberAuthScreenState
+import org.fnives.test.showcase.compose.screen.home.HomeScreen
+import org.fnives.test.showcase.compose.screen.home.rememberHomeScreenState
+import org.fnives.test.showcase.compose.screen.splash.SplashScreen
 import org.koin.androidx.compose.get
 
 @Composable
