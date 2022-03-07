@@ -17,6 +17,7 @@ class ComposeLoginRobot(
     }
 
     fun assertPassword(password: String): ComposeLoginRobot = apply {
+        composeTestRule.onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
         composeTestRule.onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
     }
 

@@ -85,6 +85,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling:$androidx_compose"
     implementation "androidx.compose.foundation:foundation:$androidx_compose"
     implementation "androidx.compose.material:material:$androidx_compose"
+    implementation "androidx.compose.animation:animation-graphics:$androidx_compose"
     implementation "com.google.accompanist:accompanist-insets:$google_accompanist"
     implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist"
 
