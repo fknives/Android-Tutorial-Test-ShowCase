@@ -17,8 +17,10 @@ class ComposeLoginRobot(
     }
 
     fun assertPassword(password: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
-        composeTestRule.onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
+        with(composeTestRule) {
+            onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
+            onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
+        }
     }
 
     fun assertUsername(username: String): ComposeLoginRobot = apply {
@@ -27,5 +29,9 @@ class ComposeLoginRobot(
 
     fun clickOnLogin(): ComposeLoginRobot = apply {
         composeTestRule.onNodeWithTag(AuthScreenTag.LoginButton).performClick()
+    }
+
+    fun assertLoading(): ComposeLoginRobot = apply {
+        composeTestRule.onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
     }
 }

@@ -8,12 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -47,10 +42,13 @@ fun AuthScreen(
             bottom.linkTo(login.top)
         })
         if (authScreenState.loading) {
-            CircularProgressIndicator(Modifier.constrainAs(loading) {
-                bottom.linkTo(login.top)
-                centerHorizontallyTo(parent)
-            })
+            CircularProgressIndicator(
+                Modifier
+                    .testTag(AuthScreenTag.LoadingIndicator)
+                    .constrainAs(loading) {
+                        bottom.linkTo(login.top)
+                        centerHorizontallyTo(parent)
+                    })
         }
         LoginButton(
             modifier = Modifier
@@ -89,7 +87,8 @@ private fun PasswordField(authScreenState: AuthScreenState) {
             Icon(
                 painter = rememberAnimatedVectorPainter(image, passwordVisible),
                 contentDescription = null,
-                modifier = Modifier.clickable { passwordVisible = !passwordVisible }
+                modifier = Modifier
+                    .clickable { passwordVisible = !passwordVisible }
                     .testTag(AuthScreenTag.PasswordVisibilityToggle)
             )
         },
@@ -144,10 +143,12 @@ private fun Snackbar(authScreenState: AuthScreenState, modifier: Modifier = Modi
 @Composable
 private fun LoginButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Box(modifier) {
-        Button(onClick = onClick,
+        Button(
+            onClick = onClick,
             Modifier
                 .fillMaxWidth()
-                .testTag(AuthScreenTag.LoginButton)) {
+                .testTag(AuthScreenTag.LoginButton)
+        ) {
             Text(text = "Login")
         }
     }
@@ -172,6 +173,7 @@ private fun AuthScreenState.ErrorType.stringResId() = when (this) {
 object AuthScreenTag {
     const val UsernameInput = "AuthScreenTag.UsernameInput"
     const val PasswordInput = "AuthScreenTag.PasswordInput"
+    const val LoadingIndicator = "AuthScreenTag.LoadingIndicator"
     const val LoginButton = "AuthScreenTag.LoginButton"
     const val PasswordVisibilityToggle = "AuthScreenTag.PasswordVisibilityToggle"
 }

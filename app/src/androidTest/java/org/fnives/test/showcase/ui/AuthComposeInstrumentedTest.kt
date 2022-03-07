@@ -2,11 +2,11 @@ package org.fnives.test.showcase.ui
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.fnives.test.showcase.compose.ComposeActivity
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.anyResourceIdling
-import org.fnives.test.showcase.compose.ComposeActivity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,8 +19,6 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComposeActivity>()
-
-//    private lateinit var activityScenario: ActivityScenario<ComposeActivity>
 
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
@@ -38,11 +36,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot = ComposeLoginRobot(composeTestRule)
     }
 
-//    @After
-//    fun tearDown() {
-//        activityScenario.safeClose()
-//    }
-
     /** GIVEN non empty password and username and successful response WHEN signIn THEN no error is shown and navigating to home */
     @Test
     fun properLoginResultsInNavigationToHome() {
@@ -57,8 +50,10 @@ class AuthComposeInstrumentedTest : KoinTest {
             .setUsername("banan")
             .assertUsername("banan")
             .assertPassword("alma")
-            .clickOnLogin()
-//            .assertLoadingBeforeRequests()
+        composeTestRule.mainClock.autoAdvance = false
+        robot.clickOnLogin()
+        composeTestRule.mainClock.advanceTimeByFrame()
+        robot.assertLoading()
 
 //        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 //        robot.assertNavigatedToHome()

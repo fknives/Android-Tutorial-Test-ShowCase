@@ -30,7 +30,7 @@ class NetworkSynchronizationTestRule : TestRule, KoinTest {
 
     @CheckResult
     private fun registerNetworkingSynchronization(): Disposable {
-        val idlingResources = NetworkTestConfigurationHelper.getOkHttpClients()
+        val idlingResources = NetworkTestConfigurationHelper.getOkHttpClients()//.filterIndexed { index, okHttpClient -> index == 0 }
             .associateBy(keySelector = { it.toString() })
             .map { (key, client) -> client.asIdlingResource(key) }
             .map(::IdlingResourceDisposable)
