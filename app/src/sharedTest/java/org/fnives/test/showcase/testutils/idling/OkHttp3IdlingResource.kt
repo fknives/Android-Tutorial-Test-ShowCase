@@ -19,7 +19,11 @@ class OkHttp3IdlingResource private constructor(
     var callback: IdlingResource.ResourceCallback? = null
 
     init {
-        dispatcher.idleCallback = Runnable { callback?.onTransitionToIdle() }
+        val currentCallback = dispatcher.idleCallback
+        dispatcher.idleCallback = Runnable {
+            callback?.onTransitionToIdle()
+            currentCallback?.run()
+        }
     }
 
     override fun getName(): String = name
