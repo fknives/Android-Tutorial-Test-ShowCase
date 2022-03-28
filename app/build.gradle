@@ -119,7 +119,7 @@ dependencies {
     androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
 
-    implementation "io.reactivex.rxjava3:rxjava:3.1.3"
+    implementation "io.reactivex.rxjava3:rxjava:3.1.4"
 
     testImplementation testFixtures(project(':core'))
     androidTestImplementation testFixtures(project(':core'))
