@@ -135,7 +135,7 @@ private fun Snackbar(authScreenState: AuthScreenState, modifier: Modifier = Modi
         val stringId = error?.stringResId()
         if (stringId != null) {
             Snackbar(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(text = stringResource(stringId))
+                Text(text = stringResource(stringId), Modifier.testTag(AuthScreenTag.LoginError))
             }
         }
     }
@@ -176,5 +176,6 @@ object AuthScreenTag {
     const val PasswordInput = "AuthScreenTag.PasswordInput"
     const val LoadingIndicator = "AuthScreenTag.LoadingIndicator"
     const val LoginButton = "AuthScreenTag.LoginButton"
+    const val LoginError = "AuthScreenTag.LoginError"
     const val PasswordVisibilityToggle = "AuthScreenTag.PasswordVisibilityToggle"
 }

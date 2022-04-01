@@ -1,7 +1,9 @@
 package org.fnives.test.showcase.ui
 
+import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.test.core.app.ApplicationProvider
 import org.fnives.test.showcase.compose.screen.auth.AuthScreenTag
 
 class ComposeLoginRobot(
@@ -34,4 +36,13 @@ class ComposeLoginRobot(
     fun assertLoading(): ComposeLoginRobot = apply {
         composeTestRule.onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
     }
+    fun assertNotLoading(): ComposeLoginRobot = apply {
+        composeTestRule.onAllNodesWithTag(AuthScreenTag.LoadingIndicator).assertCountEquals(0)
+    }
+
+    fun assertErrorIsShown(stringId: Int): ComposeLoginRobot = apply {
+        composeTestRule.onNodeWithTag(AuthScreenTag.LoginError)
+            .assertTextContains(ApplicationProvider.getApplicationContext<Context>().resources.getString(stringId))
+    }
+
 }
