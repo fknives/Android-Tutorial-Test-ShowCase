@@ -1,11 +1,8 @@
 package org.fnives.test.showcase.testutils.idling
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
 import org.fnives.test.showcase.testutils.runOnUIAwaitOnCurrent
 import org.junit.rules.TestRule
@@ -13,7 +10,7 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherTestRule : TestRule {
+class ComposeMainDispatcherTestRule : TestRule {
 
     private lateinit var testDispatcher: TestDispatcher
 
@@ -22,14 +19,9 @@ class MainDispatcherTestRule : TestRule {
             @Throws(Throwable::class)
             override fun evaluate() {
                 val dispatcher = StandardTestDispatcher()
-                Dispatchers.setMain(dispatcher)
                 testDispatcher = dispatcher
                 DatabaseInitialization.dispatcher = dispatcher
-                try {
-                    base.evaluate()
-                } finally {
-                    Dispatchers.resetMain()
-                }
+                base.evaluate()
             }
         }
 

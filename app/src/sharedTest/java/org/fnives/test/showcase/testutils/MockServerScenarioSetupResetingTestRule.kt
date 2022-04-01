@@ -17,7 +17,7 @@ import org.koin.test.KoinTest
  */
 class MockServerScenarioSetupResetingTestRule(
     private val reloadKoinModulesIfNecessaryTestRule: ReloadKoinModulesIfNecessaryTestRule = ReloadKoinModulesIfNecessaryTestRule(),
-    private val networkSynchronizationTestRule: NetworkSynchronizationTestRule = NetworkSynchronizationTestRule()
+    private val networkSynchronizationTestRule: TestRule = NetworkSynchronizationTestRule()
 ) : TestRule, KoinTest {
 
     lateinit var mockServerScenarioSetup: MockServerScenarioSetup

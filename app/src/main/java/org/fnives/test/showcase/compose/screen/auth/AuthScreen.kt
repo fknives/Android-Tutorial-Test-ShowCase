@@ -26,9 +26,10 @@ import org.fnives.test.showcase.R
 
 @Composable
 fun AuthScreen(
+    modifier: Modifier = Modifier,
     authScreenState: AuthScreenState = rememberAuthScreenState()
 ) {
-    ConstraintLayout(Modifier.fillMaxSize()) {
+    ConstraintLayout(modifier.fillMaxSize()) {
         val (title, credentials, snackbar, loading, login) = createRefs()
         Title(
             Modifier

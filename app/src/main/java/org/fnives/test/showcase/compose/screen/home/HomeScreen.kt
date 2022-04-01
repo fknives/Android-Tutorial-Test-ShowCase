@@ -26,9 +26,10 @@ import org.fnives.test.showcase.model.content.FavouriteContent
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     homeScreenState: HomeScreenState = rememberHomeScreenState()
 ) {
-    Column(Modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Title(Modifier.weight(1f))
             Image(

@@ -1,15 +1,15 @@
 package org.fnives.test.showcase.testutils.idling
 
 import androidx.annotation.CheckResult
-import androidx.test.espresso.IdlingResource
-import okhttp3.OkHttpClient
+import androidx.compose.ui.test.IdlingResource
+import androidx.compose.ui.test.junit4.ComposeTestRule
 import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.koin.test.KoinTest
 
-class NetworkSynchronizationTestRule : TestRule, KoinTest {
+class ComposeNetworkSynchronizationTestRule(private val composeTestRule: ComposeTestRule) : TestRule, KoinTest {
 
     private var disposable: Disposable? = null
 
@@ -32,12 +32,35 @@ class NetworkSynchronizationTestRule : TestRule, KoinTest {
     private fun registerNetworkingSynchronization(): Disposable {
         val idlingResources = NetworkTestConfigurationHelper.getOkHttpClients()
             .associateBy(keySelector = { it.toString() })
-            .map { (key, client) -> client.asIdlingResource(key) }
-            .map(::IdlingResourceDisposable)
+            .map { (key, client) -> OkHttp3IdlingResource.create(key, client) }
+            .map {
+                ComposeIdlingResourceDisposable(composeTestRule, object : IdlingResource {
+                    override val isIdleNow: Boolean
+                        get() {
+                            return it.isIdleNow
+                        }
+                })
+            }
 
         return CompositeDisposable(idlingResources)
     }
+}
 
-    private fun OkHttpClient.asIdlingResource(name: String): IdlingResource =
-        OkHttp3IdlingResource.create(name, this)
+
+private class ComposeIdlingResourceDisposable(
+    private val composeTestRule: ComposeTestRule,
+    private val idlingResource: IdlingResource
+) : Disposable {
+    override var isDisposed: Boolean = false
+        private set
+
+    init {
+        composeTestRule.registerIdlingResource(idlingResource)
+    }
+
+    override fun dispose() {
+        if (isDisposed) return
+        isDisposed = true
+        composeTestRule.unregisterIdlingResource(idlingResource)
+    }
 }

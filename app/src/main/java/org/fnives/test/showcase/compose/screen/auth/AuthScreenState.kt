@@ -67,7 +67,6 @@ class AuthScreenState(
             LoginStatus.INVALID_USERNAME -> error = ErrorType.UNSUPPORTED_USERNAME
             LoginStatus.INVALID_PASSWORD -> error = ErrorType.UNSUPPORTED_PASSWORD
         }
-        println("asdasdasd: ${error.hashCode()}")
     }
 
     fun dismissError() {
