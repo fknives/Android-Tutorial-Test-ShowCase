@@ -1,9 +1,13 @@
 package org.fnives.test.showcase.ui
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.compose.ComposeActivity
+import org.fnives.test.showcase.compose.screen.AppNavigation
+import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
+import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.ComposeMainDispatcherTestRule
@@ -36,6 +40,9 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     @Before
     fun setup() {
+        composeTestRule.setContent {
+            AppNavigation(isUserLogeInUseCase = IsUserLoggedInUseCase(FakeUserDataLocalStorage()))
+        }
         robot = ComposeLoginRobot(composeTestRule)
         navigationRobot = ComposeNavigationRobot(composeTestRule)
     }
@@ -46,7 +53,7 @@ class AuthComposeInstrumentedTest : KoinTest {
         mockServerScenarioSetup.setScenario(
             AuthScenario.Success(password = "alma", username = "banan")
         )
-        composeTestRule.mainClock.advanceTimeBy(500L)
+
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
         robot.setPassword("alma")
@@ -67,7 +74,7 @@ class AuthComposeInstrumentedTest : KoinTest {
     /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
     fun emptyPasswordShowsProperErrorMessage() {
-        composeTestRule.mainClock.advanceTimeBy(500L)
+
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
 
@@ -84,7 +91,7 @@ class AuthComposeInstrumentedTest : KoinTest {
     /** GIVEN password and empty username WHEN signIn THEN error username is shown */
     @Test
     fun emptyUserNameShowsProperErrorMessage() {
-        composeTestRule.mainClock.advanceTimeBy(500L)
+
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
 
@@ -105,7 +112,7 @@ class AuthComposeInstrumentedTest : KoinTest {
         mockServerScenarioSetup.setScenario(
             AuthScenario.InvalidCredentials(password = "alma", username = "banan")
         )
-        composeTestRule.mainClock.advanceTimeBy(500L)
+
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
         robot.setUsername("alma")
@@ -131,7 +138,7 @@ class AuthComposeInstrumentedTest : KoinTest {
         mockServerScenarioSetup.setScenario(
             AuthScenario.GenericError(username = "alma", password = "banan")
         )
-        composeTestRule.mainClock.advanceTimeBy(500L)
+
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
         robot.setUsername("alma")

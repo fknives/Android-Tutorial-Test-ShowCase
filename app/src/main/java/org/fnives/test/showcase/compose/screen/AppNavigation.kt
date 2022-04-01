@@ -19,10 +19,9 @@ import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.koin.androidx.compose.get
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(isUserLogeInUseCase: IsUserLoggedInUseCase = get()) {
     val navController = rememberNavController()
 
-    val isUserLogeInUseCase = get<IsUserLoggedInUseCase>()
     LaunchedEffect(isUserLogeInUseCase) {
         delay(500)
         navController.navigate(if (isUserLogeInUseCase.invoke()) "Home" else "Auth")
