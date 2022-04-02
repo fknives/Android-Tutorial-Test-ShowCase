@@ -34,11 +34,10 @@ fun AppNavigation(isUserLogeInUseCase: IsUserLoggedInUseCase = get()) {
     ) {
         composable("Splash") { SplashScreen() }
         composable("Auth") {
-            val authState = rememberAuthScreenState()
-            AuthScreen(Modifier.testTag(AppNavigationTag.AuthScreen), authState)
-            if (authState.navigateToHome?.consume() != null) {
-                navController.navigate("Home")
-            }
+            AuthScreen(modifier = Modifier.testTag(AppNavigationTag.AuthScreen),
+                authScreenState = rememberAuthScreenState(
+                    onLoginSuccess = { navController.navigate("Home") }
+                ))
         }
         composable("Home") {
             HomeScreen(

@@ -1,10 +1,8 @@
 package org.fnives.test.showcase.ui
 
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
-import org.fnives.test.showcase.compose.ComposeActivity
 import org.fnives.test.showcase.compose.screen.AppNavigation
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
@@ -24,7 +22,7 @@ import org.koin.test.KoinTest
 class AuthComposeInstrumentedTest : KoinTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComposeActivity>()
+    val composeTestRule = createComposeRule()
 
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule(networkSynchronizationTestRule = ComposeNetworkSynchronizationTestRule(composeTestRule))
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup

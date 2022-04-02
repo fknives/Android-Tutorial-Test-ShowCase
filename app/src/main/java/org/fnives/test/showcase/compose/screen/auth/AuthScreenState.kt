@@ -1,26 +1,29 @@
 package org.fnives.test.showcase.compose.screen.auth
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.shared.Answer
-import org.fnives.test.showcase.ui.shared.Event
 import org.koin.androidx.compose.get
 
 @Composable
 fun rememberAuthScreenState(
-    stateScope: CoroutineScope = rememberCoroutineScope(),
+    stateScope: CoroutineScope = rememberCoroutineScope { Dispatchers.Main },
     loginUseCase: LoginUseCase = get(),
+    onLoginSuccess: () -> Unit = {},
 ): AuthScreenState {
-    return remember { AuthScreenState(stateScope, loginUseCase) }
+    return remember { AuthScreenState(stateScope, loginUseCase, onLoginSuccess) }
 }
 
 class AuthScreenState(
     private val stateScope: CoroutineScope,
     private val loginUseCase: LoginUseCase,
+    private val onLoginSuccess: () -> Unit = {},
 ) {
 
     var username by mutableStateOf("")
@@ -30,8 +33,6 @@ class AuthScreenState(
     var loading by mutableStateOf(false)
         private set
     var error by mutableStateOf<ErrorType?>(null)
-        private set
-    var navigateToHome by mutableStateOf<Event<Unit>?>(null)
         private set
 
     fun onUsernameChanged(username: String) {
@@ -62,7 +63,7 @@ class AuthScreenState(
 
     private fun processLoginStatus(loginStatus: LoginStatus) {
         when (loginStatus) {
-            LoginStatus.SUCCESS -> navigateToHome = Event(Unit)
+            LoginStatus.SUCCESS -> onLoginSuccess()
             LoginStatus.INVALID_CREDENTIALS -> error = ErrorType.INVALID_CREDENTIALS
             LoginStatus.INVALID_USERNAME -> error = ErrorType.UNSUPPORTED_USERNAME
             LoginStatus.INVALID_PASSWORD -> error = ErrorType.UNSUPPORTED_PASSWORD

@@ -135,7 +135,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$testing_espresso_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose"
     testImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose"
-//    debugImplementation "androidx.compose.ui:ui-test-manifest:$androidx_compose"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$androidx_compose"
     androidTestImplementation project(':mockserver')
     androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
