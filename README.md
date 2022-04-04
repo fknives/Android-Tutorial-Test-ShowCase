@@ -161,6 +161,9 @@ In this section we will see how to test component depending on context such as R
 In this tests we will also see how to interact with View components in tests via Espresso.
 We will also see how to test a specific Activity (same concept can be applied to fragments)
 
+Bonus:
+* Testing Compose UI: Open the [compose instruction set](./codekata/compose.instructionset.md)
+
 #### Robolectric and Android Tests.
 Open the [shared tests instruction set](./codekata/sharedtests.instructionset).
 
