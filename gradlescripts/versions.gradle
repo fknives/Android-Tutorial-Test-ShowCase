@@ -11,6 +11,7 @@ project.ext {
 
     androidx_compose = "1.1.0"
     google_accompanist = "0.23.1"
+    androidx_compose_constraintlayout_version = "1.0.0"
 
     coroutines_version = "1.6.0"
     turbine_version = "0.7.0"
