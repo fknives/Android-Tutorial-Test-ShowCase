@@ -1,7 +1,9 @@
 package org.fnives.test.showcase.compose.screen.auth
 
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.AndroidUiDispatcher
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.mapSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +19,9 @@ fun rememberAuthScreenState(
     loginUseCase: LoginUseCase = get(),
     onLoginSuccess: () -> Unit = {},
 ): AuthScreenState {
-    return remember { AuthScreenState(stateScope, loginUseCase, onLoginSuccess) }
+    return rememberSaveable(saver = AuthScreenState.getSaver(stateScope, loginUseCase, onLoginSuccess)) {
+        AuthScreenState(stateScope, loginUseCase, onLoginSuccess)
+    }
 }
 
 class AuthScreenState(
@@ -79,5 +83,24 @@ class AuthScreenState(
         GENERAL_NETWORK_ERROR,
         UNSUPPORTED_USERNAME,
         UNSUPPORTED_PASSWORD
+    }
+
+    companion object {
+        private const val USERNAME = "USERNAME"
+        private const val PASSWORD = "PASSWORD"
+
+        fun getSaver(
+            stateScope: CoroutineScope,
+            loginUseCase: LoginUseCase,
+            onLoginSuccess: () -> Unit,
+        ): Saver<AuthScreenState, *> = mapSaver(
+            save = { mapOf(USERNAME to it.username, PASSWORD to it.password) },
+            restore = {
+                AuthScreenState(stateScope, loginUseCase, onLoginSuccess).apply {
+                    onUsernameChanged(it.getOrElse(USERNAME) { "" } as String)
+                    onPasswordChanged(it.getOrElse(PASSWORD) { "" } as String)
+                }
+            }
+        )
     }
 }

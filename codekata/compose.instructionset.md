@@ -324,3 +324,31 @@ robot.assertErrorIsShown(R.string.something_went_wrong)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
 ```
+
+### 6. `restoringContentShowPreviousCredentials`
+
+Since we're writing apps for Android, we must handle state restoration so let's write a test for it.
+
+For simulating the recreation of the UI, we first need a `StateRestorationTester`:
+```kotlin
+    private val stateRestorationTester = StateRestorationTester(composeTestRule)
+```
+
+Then in `setup()`, we need to `setContent` on `stateRestorationTester` instead of on `composeTestRule`.
+
+Now for the actual test, we first setup the content then we trigger restoration by calling `stateRestorationTester.emulateSavedInstanceStateRestore()`, afterwards we can verify that the content is recreated in the correct way:
+
+```kotlin
+composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+navigationRobot.assertAuthScreen()
+robot.setUsername("alma")
+    .setPassword("banan")
+    .assertUsername("alma")
+    .assertPassword("banan")
+
+stateRestorationTester.emulateSavedInstanceStateRestore()
+
+navigationRobot.assertAuthScreen()
+robot.assertUsername("alma")
+    .assertPassword("banan")
+```

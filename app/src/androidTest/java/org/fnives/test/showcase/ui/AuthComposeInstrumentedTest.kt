@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.ui
 
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
@@ -22,6 +23,7 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+    private val stateRestorationTester = StateRestorationTester(composeTestRule)
 
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
@@ -37,7 +39,7 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     @Before
     fun setup() {
-        composeTestRule.setContent {
+        stateRestorationTester.setContent {
             AppNavigation(isUserLogeInUseCase = IsUserLoggedInUseCase(FakeUserDataLocalStorage()))
         }
         robot = ComposeLoginRobot(composeTestRule)
@@ -151,5 +153,22 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
+    }
+
+    /** GIVEN username and password WHEN restoring THEN username and password fields contain the same text */
+    @Test
+    fun restoringContentShowPreviousCredentials() {
+        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        navigationRobot.assertAuthScreen()
+        robot.setUsername("alma")
+            .setPassword("banan")
+            .assertUsername("alma")
+            .assertPassword("banan")
+
+        stateRestorationTester.emulateSavedInstanceStateRestore()
+
+        navigationRobot.assertAuthScreen()
+        robot.assertUsername("alma")
+            .assertPassword("banan")
     }
 }
