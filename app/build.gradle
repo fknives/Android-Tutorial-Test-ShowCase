@@ -37,7 +37,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = project.androidx_compose
+        kotlinCompilerExtensionVersion = project.androidx_compose_version
     }
 
     sourceSets {
@@ -81,13 +81,13 @@ dependencies {
     implementation "androidx.activity:activity-compose:$activity_ktx_version"
     implementation "androidx.navigation:navigation-compose:$androidx_navigation"
 
-    implementation "androidx.compose.ui:ui:$androidx_compose"
-    implementation "androidx.compose.ui:ui-tooling:$androidx_compose"
-    implementation "androidx.compose.foundation:foundation:$androidx_compose"
-    implementation "androidx.compose.material:material:$androidx_compose"
-    implementation "androidx.compose.animation:animation-graphics:$androidx_compose"
-    implementation "com.google.accompanist:accompanist-insets:$google_accompanist"
-    implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist"
+    implementation "androidx.compose.ui:ui:$androidx_compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    implementation "androidx.compose.foundation:foundation:$androidx_compose_version"
+    implementation "androidx.compose.material:material:$androidx_compose_version"
+    implementation "androidx.compose.animation:animation-graphics:$androidx_compose_version"
+    implementation "com.google.accompanist:accompanist-insets:$google_accompanist_version"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
 
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
@@ -133,9 +133,9 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$testing_espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$testing_espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$testing_espresso_version"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose"
-    testImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$androidx_compose"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose_version"
+    testImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$androidx_compose_version"
     androidTestImplementation project(':mockserver')
     androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
     androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
