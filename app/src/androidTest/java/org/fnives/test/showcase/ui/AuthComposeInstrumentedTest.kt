@@ -8,8 +8,7 @@ import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
-import org.fnives.test.showcase.testutils.idling.ComposeMainDispatcherTestRule
-import org.fnives.test.showcase.testutils.idling.ComposeNetworkSynchronizationTestRule
+import org.fnives.test.showcase.testutils.idling.DispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.anyResourceIdling
 import org.junit.Before
 import org.junit.Rule
@@ -24,16 +23,16 @@ class AuthComposeInstrumentedTest : KoinTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule(networkSynchronizationTestRule = ComposeNetworkSynchronizationTestRule(composeTestRule))
+    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
-    private val mainDispatcherTestRule = ComposeMainDispatcherTestRule()
+    private val dispatcherTestRule = DispatcherTestRule()
     private lateinit var robot: ComposeLoginRobot
     private lateinit var navigationRobot: ComposeNavigationRobot
 
     @Rule
     @JvmField
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
-        .around(mainDispatcherTestRule)
+        .around(dispatcherTestRule)
 
 
     @Before
@@ -72,7 +71,6 @@ class AuthComposeInstrumentedTest : KoinTest {
     /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
     fun emptyPasswordShowsProperErrorMessage() {
-
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
 
@@ -89,7 +87,6 @@ class AuthComposeInstrumentedTest : KoinTest {
     /** GIVEN password and empty username WHEN signIn THEN error username is shown */
     @Test
     fun emptyUserNameShowsProperErrorMessage() {
-
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
 

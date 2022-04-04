@@ -10,7 +10,7 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ComposeMainDispatcherTestRule : TestRule {
+class DispatcherTestRule : TestRule {
 
     private lateinit var testDispatcher: TestDispatcher
 
