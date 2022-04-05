@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.ui.shared
 
-class Event<T : Any>(private val data: T) {
+@Suppress("DataClassContainsFunctions")
+data class Event<T : Any>(private val data: T) {
 
     private var consumed: Boolean = false
 
