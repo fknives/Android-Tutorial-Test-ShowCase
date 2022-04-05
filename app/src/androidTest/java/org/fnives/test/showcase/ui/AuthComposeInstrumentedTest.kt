@@ -36,7 +36,6 @@ class AuthComposeInstrumentedTest : KoinTest {
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(dispatcherTestRule)
 
-
     @Before
     fun setup() {
         stateRestorationTester.setContent {

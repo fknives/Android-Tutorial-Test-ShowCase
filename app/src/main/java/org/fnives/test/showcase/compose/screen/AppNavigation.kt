@@ -34,16 +34,19 @@ fun AppNavigation(isUserLogeInUseCase: IsUserLoggedInUseCase = get()) {
     ) {
         composable("Splash") { SplashScreen() }
         composable("Auth") {
-            AuthScreen(modifier = Modifier.testTag(AppNavigationTag.AuthScreen),
+            AuthScreen(
+                modifier = Modifier.testTag(AppNavigationTag.AuthScreen),
                 authScreenState = rememberAuthScreenState(
                     onLoginSuccess = { navController.navigate("Home") }
-                ))
+                )
+            )
         }
         composable("Home") {
             HomeScreen(
-                Modifier.testTag(AppNavigationTag.HomeScreen),
+                modifier = Modifier.testTag(AppNavigationTag.HomeScreen),
                 homeScreenState = rememberHomeScreenState(
-                    onLogout = { navController.navigate("Auth") })
+                    onLogout = { navController.navigate("Auth") }
+                )
             )
         }
     }

@@ -4,11 +4,29 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -32,16 +50,23 @@ fun AuthScreen(
     ConstraintLayout(modifier.fillMaxSize()) {
         val (title, credentials, snackbar, loading, login) = createRefs()
         Title(
-            Modifier
+            modifier = Modifier
                 .statusBarsPadding()
-                .constrainAs(title) { top.linkTo(parent.top) })
-        CredentialsFields(authScreenState, Modifier.constrainAs(credentials) {
-            top.linkTo(title.bottom)
-            bottom.linkTo(login.top)
-        })
-        Snackbar(authScreenState, Modifier.constrainAs(snackbar) {
-            bottom.linkTo(login.top)
-        })
+                .constrainAs(title) { top.linkTo(parent.top) }
+        )
+        CredentialsFields(
+            authScreenState = authScreenState,
+            modifier = Modifier.constrainAs(credentials) {
+                top.linkTo(title.bottom)
+                bottom.linkTo(login.top)
+            }
+        )
+        Snackbar(
+            authScreenState = authScreenState,
+            modifier = Modifier.constrainAs(snackbar) {
+                bottom.linkTo(login.top)
+            }
+        )
         if (authScreenState.loading) {
             CircularProgressIndicator(
                 Modifier
@@ -49,7 +74,8 @@ fun AuthScreen(
                     .constrainAs(loading) {
                         bottom.linkTo(login.top)
                         centerHorizontallyTo(parent)
-                    })
+                    }
+            )
         }
         LoginButton(
             modifier = Modifier
@@ -84,7 +110,7 @@ private fun PasswordField(authScreenState: AuthScreenState) {
         label = { Text(text = stringResource(id = R.string.password)) },
         placeholder = { Text(text = stringResource(id = R.string.password)) },
         trailingIcon = {
-            val image = AnimatedImageVector.animatedVectorResource(R.drawable.avd_show_password)
+            val image = AnimatedImageVector.animatedVectorResource(R.drawable.show_password)
             Icon(
                 painter = rememberAnimatedVectorPainter(image, passwordVisible),
                 contentDescription = null,
@@ -94,7 +120,11 @@ private fun PasswordField(authScreenState: AuthScreenState) {
             )
         },
         onValueChange = { authScreenState.onPasswordChanged(it) },
-        keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Done, keyboardType = KeyboardType.Password),
+        keyboardOptions = KeyboardOptions(
+            autoCorrect = false,
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Password
+        ),
         keyboardActions = KeyboardActions(onDone = {
             keyboardController?.hide()
             authScreenState.onLogin()

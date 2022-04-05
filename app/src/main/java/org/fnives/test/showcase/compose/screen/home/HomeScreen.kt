@@ -2,7 +2,14 @@ package org.fnives.test.showcase.compose.screen.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,7 +56,8 @@ fun HomeScreen(
                 state = rememberSwipeRefreshState(isRefreshing = homeScreenState.loading),
                 onRefresh = {
                     homeScreenState.onRefresh()
-                }) {
+                }
+            ) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(homeScreenState.content) { item ->
                         Item(
@@ -88,14 +96,14 @@ private fun Item(
             Text(text = favouriteContent.content.title)
             Text(text = favouriteContent.content.description)
         }
+        val favouriteIcon = if (favouriteContent.isFavourite) R.drawable.favorite_24 else R.drawable.favorite_border_24
         Image(
-            painter = painterResource(id = if (favouriteContent.isFavourite) R.drawable.favorite_24 else R.drawable.favorite_border_24),
+            painter = painterResource(id = favouriteIcon),
             contentDescription = null,
             Modifier.clickable { onFavouriteToggle() }
         )
     }
 }
-
 
 @Composable
 private fun Title(modifier: Modifier = Modifier) {

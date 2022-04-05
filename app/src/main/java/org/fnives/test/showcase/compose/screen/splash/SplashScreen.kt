@@ -13,7 +13,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.fnives.test.showcase.R
 
-
 @Composable
 fun SplashScreen() {
     Box(Modifier.fillMaxSize().background(colorResource(R.color.purple_700)), contentAlignment = Alignment.Center) {

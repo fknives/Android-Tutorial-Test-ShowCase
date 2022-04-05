@@ -1,8 +1,14 @@
 package org.fnives.test.showcase.ui
 
 import android.content.Context
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import org.fnives.test.showcase.compose.screen.auth.AuthScreenTag
 
@@ -44,5 +50,4 @@ class ComposeLoginRobot(
         composeTestRule.onNodeWithTag(AuthScreenTag.LoginError)
             .assertTextContains(ApplicationProvider.getApplicationContext<Context>().resources.getString(stringId))
     }
-
 }

@@ -19,6 +19,7 @@ import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.model.shared.Resource
 import org.koin.androidx.compose.get
 
+@Suppress("LongParameterList")
 @Composable
 fun rememberHomeScreenState(
     stateScope: CoroutineScope = rememberCoroutineScope(),
@@ -42,6 +43,7 @@ fun rememberHomeScreenState(
     }
 }
 
+@Suppress("LongParameterList")
 class HomeScreenState(
     private val stateScope: CoroutineScope,
     private val getAllContentUseCase: GetAllContentUseCase,
