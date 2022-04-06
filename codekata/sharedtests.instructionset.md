@@ -1,6 +1,6 @@
 # 6. Starting of Shared tests and Android Tests
 
-This is our last instructionset and it's all about testing on Real Android devices and on Emulators.
+This is our last instruction set and it's all about testing on Real Android devices and on Emulators.
 It's important for this section to finish the Robolectric testing, because we will continue from that.
 
 In this testing instruction set you will learn how to write simple tests running on real devices and run the same tests via Robolectric.

@@ -162,7 +162,7 @@ In this tests we will also see how to interact with View components in tests via
 We will also see how to test a specific Activity (same concept can be applied to fragments)
 
 #### Robolectric and Android Tests.
-Open the [shared tests instruction set](./codekata/sharedtests.instructionset).
+Open the [shared tests instruction set](./codekata/sharedtests.instructionset.md).
 
 In this section we will see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
 We will also see how to write AndroidTest End to End Tests.
