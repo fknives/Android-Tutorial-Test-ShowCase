@@ -107,10 +107,10 @@ at org.fnives.test.showcase.ui.login.codekata.CodeKataAuthActivitySharedTest.tea
 ...
 ```
 
-Now that's a weird one, it points to our tearDown. So our test crashes in the `tearDown`, because the mockServerScenarioSetup is not initalized?
-When you see similar crashes, that suggest you had an exception in your `setup` actually, and it didn't finish, so the `tearDown` also fails, because not all the elements are initialized.
+Now that's a weird one, it points to our tearDown. So our test crashes in the `tearDown`, because the `mockServerScenarioSetup` is not initalized?
+When you see similar crashes, that suggest you had an exception in your `setup` and it didn't finish, so the `tearDown` also fails, because not all the elements are initialized.
 
-If you select any other than the firt that failed, you will see an issue something like:
+If you select any other than the first that failed, and look for a root cause in the logs, you will see an issue along the lines of:
 ```kotlin
 03-21 16:23:58.254 11370 11414 E TestRunner: java.lang.IllegalStateException: #init was called twice in a row. Make sure to call #release after every #init
 03-21 16:23:58.254 11370 11414 E TestRunner: 	at androidx.test.espresso.intent.Checks.checkState(Checks.java:70)
@@ -118,9 +118,9 @@ If you select any other than the firt that failed, you will see an issue somethi
 
 That's still not the real issue however. This just means one of your tests before called `Intents.init()`, but didn't call `Intents.release()`.
 
-So that's because something went wrong in our first test. I am describing these checks so you are more prepared in the future if you have similar issues to refer to.
+So that's because something went wrong in our first test. I am describing these steps so you are more prepared in the future if you have similar issues.
 
-**So now for the real cause**, checking the first test, we see a different error:
+**So now for the real cause**, checking the first test and scrolling up it's logs, we see a different error:
 ```kotlin
 03-21 16:23:58.248 11370 11414 E TestRunner: java.lang.IllegalStateException: KoinApplication has not been started
 03-21 16:23:58.248 11370 11414 E TestRunner: 	at org.koin.core.context.GlobalContext.get(GlobalContext.kt:36)
@@ -128,7 +128,7 @@ So that's because something went wrong in our first test. I am describing these 
 ```
 
 Now, here is a new difference between Robolectric and AndroidTest. In Robolectric, before every test, the Application class is initialized, however in AndroidTests, the Application class is only initialized once.
-This is great if you want to have End-to-End tests that follow each other, but since now we only want to tests some small subsection of the functionallity, we have to restart Koin before every tests if it isn't yet started so our tests don't use the same instances.
+This is great if you want to have End-to-End tests that follow each other, but since now we only want to tests some small subsection of the functionality, we have to restart Koin before every tests if it isn't yet started so our tests don't use the same instances.
 We will check if koin is initalized, if it isn't then we simply initalize it:
 ```kotlin
 ...
@@ -172,18 +172,18 @@ And use this in my Robot, just before some Animating View is being shown.
 
 ### 4. ~~Extensions~~ Rules
 
-Now our setup was already tedious in Robolectric Tests, it became even more tedious with sharedTests, so now we will take care of that.
-We have used previously Extensions in viewModel and later core.again tests sets. Extensions are the JUnit5 version of JUnit4's Rules.
+Now our setup was already tedious in Robolectric Tests, it became even more tedious with sharedTests, it's time we take care of that.
+We have used previously Extensions in `viewModel` and later `core.again` tests. Extensions are the JUnit5 version of JUnit4's Rules.
 So since with Robolectric and AndroidTests we are in the world of JUnit4, we will have to write Rules instead.
 
 #### 1. Intent init rule.
-As we saw some of our test's setup failuire also failed our other tests because of the initialization of the Intents, it would be nice if we wouldn't have to worry about that anymore.
+As we saw some of our test's setup failure also failed our other tests because of the initialization of the Intents, it would be nice if we wouldn't have to worry about that anymore.
 So let's create a Rule for that.
 
 Open `org.fnives.test.showcase.ui.login.codekata.rule.intent.CodeKataIntentInitRule`
 
 You will see a basic TestRule. We get a Statement which you can think of like a Runnable. And we need to return another Statement.
-Since from the function signature it's pretty clear what should we do, here is our implementation is as follows:
+Since from the function signature it's pretty clear what should we do, here is our implementation:
 ```kotlin
 override fun apply(base: Statement, description: Description): Statement =
     object : Statement() {
@@ -274,7 +274,7 @@ We create the modifyable private field and make it accessable publicly to our te
 One addition is that it's probably better to also clear that dispatcher at the end, so:
 ```kotlin
 } finally {
-    _testDispatcher = dispatcher
+    _testDispatcher = null
     Dispatchers.resetMain()
 }
 ```
@@ -292,7 +292,7 @@ val dispatcher = if (useStandard) StandardTestDispatcher() else UnconfinedTestDi
 ```
 
 ##### Apply the Rule.
-Just like before we can add our Rule as before. One not, we have to overwrite the TestDispatcher in our Test class, so it will be like this:
+Just like before we can add our Rule as before. One note, we have to overwrite the TestDispatcher in our Test class, so it will be like this:
 
 ```kotlin
 @Rule
@@ -306,10 +306,12 @@ Not all we need to do is remove our previous dispatcher setups.
 
 ##### Rule order
 
-What order our Rules are applied now? Well, frankly I have no idea. That's because we can be explicit about our Rule's order, via RuleChain. I recommend doing this, so it's easier to read your test classes and you are explict.
+What order our Rules are applied? Well, frankly I have no idea, that's because we can be explicit about our Rule's order, via RuleChain, so I always use that.
+I recommend doing this, so it's easier to read your test classes and being explicit what happens in what order.
+
 So how would that look like:
 ```kotlin
-private val intentRule = IntentInitRule()
+private val intentRule = CodeKataIntentInitRule()
 private val mainDispatcherRule = CodeKataMainDispatcherRule()
 private val testDispatcher: TestDispatcher get() = mainDispatcherRule.testDispatcher
 
@@ -330,7 +332,7 @@ That's all for Rules, if you wish you can write rules for the other setups as we
 
 #### 5. End-to-End tests
 
-With all the weponary you have been armed, you should be able to write End-to-End tests. You start your activity and do you tests without any mocking, just using in memory database.
+With all the weaponry you have been armed, you should be able to write End-to-End tests. You start your activity and do your tests without any mocking, or minmal mocking.
 So we won't go into that in more detail, instead we will show an alternative to that.
 
 ##### Test records
@@ -339,21 +341,25 @@ An Android developer writing with more detail, is [here](https://developer.andro
 So basically you can use this Test Recorder tool to create Espresso tests.
 You might be thinking, then why did we go through how to do these stuff manually?! Well, there are a couple of reasons:
 - the generated tests, at least for me, still use deprecated ActivityTestRule instead of ActivityScenario
-- the generated tests, might still have issues in team, like syncronization with Okhttp and such.
+- the generated tests, might still have issues in them, like syncronization with Okhttp and such.
 - Some actions might be too specific, and you have to manually adjust the espresso test for it to work.
 
-All in all it is a good tool to get started on your test, but you probably still need to do manual modifications on it. So personally I would suggest them for bigger tests, which would take too much time manually, and then do the adjustments while running the tests.
+All in all, it is a good tool to get started on your test, but you probably still need to do manual modifications on it. So personally I would suggest them for bigger tests, which would take too much time manually, and then do the adjustments while running the tests.
 
 Okay, but how do we do it? As it's written on the site, we select `Run > Record Espresso Test`.
-This will start the application on your device and you can do interactions with it. Such as writing into a text input. Then in the Studio you may add assertions.
+This will start the application on your device and you can do interactions with it. Such as writing into a text input.
+
+Then in the Studio you may add assertions.
 Assertions are espresso assertions, so you click on `Select an element from screenshot` and select what you want to check. It will highlight the element selected on the screenshot.
 Then it will automatically suggest some assertion, like what it's text.
 
 And that's all to it.
+
 You can check out `org.fnives.test.showcase.endtoend.LoginLogoutEndToEndTest` which was created with TestRecording and the modifications that needed to be added.
 > Note, the TestRule still should be switched out.
 
-That's all to it, with End-to-End tests you basically write the same as in Robolectric and SharedTests, only that the Tests shouldn't really use mocks.
+So End-to-End tests you basically write the same as in Robolectric and SharedTests, only that the Tests shouldn't use mocks or at least trying to minimize their usage, while in integration tests you may use Fakes more recently for speed.
+
 ##### Test Suits
 Your End-to-End tests or even your Instrumentation tests can be bundled into a TestSuit. This is usually used so some tests run together, one after another.
 An example I could think of is a Login Test at start, some Flow Tests and at the end a Logout Tests.
@@ -372,16 +378,18 @@ You can find it, at: `org.fnives.test.showcase.endtoend.MyTestSuit`
 ##### Test function orders
 In End-to-End tests, it's possible you are testing file, database, sharedPreferences or other modifications as well.
 This could make your tests dependent one on another. This can be good if you are verifying some specific scenario and trying to break it into smaller chunks.
+
 I wouldn't recommend it in any other test type however.
-If it is however needed, you can use the following annotation:
+
+If it is needed or mathing your case better, you can use the following annotation:
 `@FixMethodOrder(MethodSorters.NAME_ASCENDING)`
 And name your tests with an alphabetic order, like starting with numbers or something similar.
 
-### 6. Some notes on other differences you may face
+### 6. Some notes on other differences you may face between Robolectric and AndroidTests
 #### 1. Hilt
 Since currently only Koin is available in this repo, for updates follow this [issue](https://github.com/fknives/AndroidTest-ShowCase/issues/41), I thought to mentionen some issues with Hilt you may face:
 
-##### Hilt requires a `HiltTestApplication` or something similar to test with
+##### Hilt requires a `HiltTestApplication` or something similar to test with.
 You can replace the test application by creating a `AndroidJUnitRunner` and return your Custom Application class.
 Then modify your build.gradle to reference that CustomAndroidJUnitRunner with full package.
 Example:
@@ -408,7 +416,7 @@ An other issue can be that Crashlytics or similar services is enabled in your te
 Dialogs cannot be tested properly via Robolectric without usage of Shadows, but they can be on Real Device. So what I usually do is setup a function which does one thing in one sourceset while does something else in another. You can see such example like `SpecificTestConfigurationsFactory`. To ease the usage I usually put a function in the sharedTest which uses the object `SpecificTestConfigurationsFactory`.
 
 #### 5. Resource Access
-Accessing test Resource files can also be an issue, you might not able to access your same test/res foulder in AndroidTests. A way to do this is to declare the same folder as androidTest/assets in build gradle and similar to dialogs, create a function which uses Assets in Android Tests and uses Resources in Robolectric tests.
+Accessing test Resource files can also be an issue, you might not able to access your same test/res folder in AndroidTests. A way to do this is to declare the same folder as androidTest/assets in build gradle and similar to dialogs, create a function which uses Assets in Android Tests and uses Resources in Robolectric tests.
 
 ### Conclusion
 Instrumentation and End-to-End tests are finally really similar, thanks to ~~Project Nitrogen~~ *Unified Test Platform*.
