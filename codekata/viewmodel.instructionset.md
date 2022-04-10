@@ -289,7 +289,34 @@ runBlocking {
 verifyNoMoreInteractions(mockLoginUseCase)
 ```
 
-### 7. `invalidStatusResultsInErrorState`
+### 7. `loginUnexpectedErrorResultsInErrorState`
+
+Next up, we will test a network error state.
+
+So we return and Answer.Error state from our UseCase and set up the TestObservers, as usual:
+```kotlin
+runBlocking {
+   whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
+}
+val loadingTestObserver = sut.loading.test()
+val errorTestObserver = sut.error.test()
+val navigateToHomeTestObserver = sut.navigateToHome.test()
+```
+
+The action is the same, login:
+```kotlin
+sut.onLogin()
+testScheduler.advanceUntilIdle()
+```
+
+And we verify loading state, no navigation event and that it is indeed the correct error state:
+```kotlin
+loadingTestObserver.assertValueHistory(false, true, false)
+errorTestObserver.assertValueHistory(Event(AuthViewModel.ErrorType.GENERAL_NETWORK_ERROR))
+navigateToHomeTestObserver.assertNoValue()
+```
+
+### 8. `invalidStatusResultsInErrorState`
 
 Time to test Errors.
 First we setup our UseCase and the TestObservers:
@@ -316,8 +343,8 @@ navigateToHomeTestObserver.assertNoValue()
 ```
 
 Probably you are already getting bored of writing almost the same tests, and we need 2 more tests just like this only for different Error types.
-So let's not writing the same test again, but parametrize this one.
-First we need to annotate or test, that it should be parametrized:
+So let's not write the same test again, but parametrize this one.
+First we need to annotate our test, signal that it should be parametrized:
 
 ```kotlin
 @MethodSource("loginErrorStatusesArguments")
@@ -353,7 +380,7 @@ errorTestObserver.assertValueHistory(Event(errorType))
 And now if we run the test we see 3 different tests, with different names based on the parameters.
 Great, this is how we can reduce duplication in tests, without losing readability.
 
-### 8. `successLoginResultsInNavigation`
+### 9. `successLoginResultsInNavigation`
 
 And finally let's test the happy flow as well.
 
