@@ -130,7 +130,7 @@ class AuthIntegrationTest : KoinTest {
         verifyZeroInteractions(mockSessionExpirationListener)
     }
 
-    @DisplayName("GIVEN no session WHEN user is logging in THEN they get session")
+    @DisplayName("GIVEN invalid credentials response WHEN user is logging in THEN they get proper error")
     @Test
     fun loginInvalidCredentials() = runTest {
         mockServerScenarioSetup.setScenario(AuthScenario.InvalidCredentials(username = "usr", password = "sEc"), validateArguments = true)

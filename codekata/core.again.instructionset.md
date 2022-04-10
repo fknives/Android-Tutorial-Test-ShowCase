@@ -249,6 +249,18 @@ fun networkInputError(authScenario: AuthScenario) = runTest {
     Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
     verifyZeroInteractions(mockSessionExpirationListener)
 }
+
+//...
+companion object {
+//...
+    @JvmStatic
+    fun networkErrorArguments() = Stream.of(
+        Arguments.of(AuthScenario.GenericError(username = "a", password = "b")),
+        Arguments.of(AuthScenario.UnexpectedJsonAsSuccessResponse(username = "a", password = "b")),
+        Arguments.of(AuthScenario.MalformedJsonAsSuccessResponse(username = "a", password = "b")),
+        Arguments.of(AuthScenario.MissingFieldJson(username = "a", password = "b"))
+    )
+}
 ```
 
 ### 5. `loginInvalidCredentials`
