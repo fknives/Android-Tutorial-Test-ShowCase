@@ -90,12 +90,12 @@ class CodeKataAuthIntegrationTest : KoinTest {
     fun loginInvalidCredentials() = runTest {
     }
 
-    @DisplayName("GIVEN logged in user WHEN user is login out THEN they no longer have a session and content is cleared")
+    @DisplayName("GIVEN logged in user WHEN user is logging out THEN they no longer have a session and content is cleared")
     @Test
     fun logout() = runTest {
     }
 
-    @DisplayName("GIVEN logged in user WHEN user is login out THEN content is cleared")
+    @DisplayName("GIVEN logged in user WHEN user is logging out THEN content is cleared")
     @Test
     fun logoutReleasesContent() = runTest {
     }

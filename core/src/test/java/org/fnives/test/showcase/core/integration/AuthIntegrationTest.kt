@@ -144,7 +144,7 @@ class AuthIntegrationTest : KoinTest {
         verifyZeroInteractions(mockSessionExpirationListener)
     }
 
-    @DisplayName("GIVEN logged in user WHEN user is login out THEN they no longer have a session")
+    @DisplayName("GIVEN logged in user WHEN user is logging out THEN they no longer have a session")
     @Test
     fun logout() = runTest {
         mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "usr", password = "sEc"), validateArguments = true)
@@ -158,7 +158,7 @@ class AuthIntegrationTest : KoinTest {
         verifyZeroInteractions(mockSessionExpirationListener)
     }
 
-    @DisplayName("GIVEN logged in user WHEN user is login out THEN content is cleared")
+    @DisplayName("GIVEN logged in user WHEN user is logging out THEN content is cleared")
     @Test
     fun logoutReleasesContent() = runTest {
         mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "usr", password = "sEc"), validateArguments = true)
