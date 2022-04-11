@@ -7,11 +7,16 @@ project.ext {
     androidx_swiperefreshlayout_version = "1.1.0"
     androidx_room_version = "2.4.1"
     activity_ktx_version = "1.4.0"
+    androidx_navigation = "2.4.0"
+
+    androidx_compose_version = "1.1.0"
+    google_accompanist_version = "0.23.1"
+    androidx_compose_constraintlayout_version = "1.0.0"
 
     coroutines_version = "1.6.0"
     turbine_version = "0.7.0"
     koin_version = "3.1.2"
-    coil_version = "1.1.1"
+    coil_version = "1.4.0"
     retrofit_version = "2.9.0"
     okhttp_version = "4.9.3"
     moshi_version = "1.13.0"
