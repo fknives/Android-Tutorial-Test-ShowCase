@@ -14,7 +14,7 @@ import org.fnives.test.showcase.compose.screen.auth.AuthScreenTag
 
 class ComposeLoginRobot(
     composeTestRule: ComposeTestRule,
-): ComposeTestRule by composeTestRule {
+) : ComposeTestRule by composeTestRule {
 
     fun setUsername(username: String): ComposeLoginRobot = apply {
         onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
@@ -40,6 +40,7 @@ class ComposeLoginRobot(
     fun assertLoading(): ComposeLoginRobot = apply {
         onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
     }
+
     fun assertNotLoading(): ComposeLoginRobot = apply {
         onAllNodesWithTag(AuthScreenTag.LoadingIndicator).assertCountEquals(0)
     }

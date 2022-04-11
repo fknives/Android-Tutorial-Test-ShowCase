@@ -23,7 +23,7 @@ Here is a list of actions we want to do:
 ```kotlin
 class ComposeLoginRobot(
     composeTestRule: ComposeTestRule,
-): ComposeTestRule by composeTestRule {
+) : ComposeTestRule by composeTestRule {
 
     fun setUsername(username: String): ComposeLoginRobot = apply {
         onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
