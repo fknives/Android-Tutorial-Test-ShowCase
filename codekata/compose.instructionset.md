@@ -1,8 +1,8 @@
 ## Login UI Test with Compose
 
-This section is equivalent to the one with Login UI Test from robolectric.instructionset.md. 
+This section is equivalent to the one with ["Login UI Test"](../robolectric.instructionset.md#login-ui-test) from robolectric.instructionset.md.
 Make sure to read that one first as this one only focuses on the differences that Compose brings.
-We will write the same tests so that we see clearly the differences between the two.
+We will write the same tests from `AuthActivityInstrumentedTest` so that we see clearly the differences between the two.
 
 ### Robot Pattern
 
@@ -21,40 +21,43 @@ Here is a list of actions we want to do:
 ##### So here is the code for our the UI interactions
 
 ```kotlin
+class ComposeLoginRobot(
+    composeTestRule: ComposeTestRule,
+): ComposeTestRule by composeTestRule {
+
     fun setUsername(username: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
+        onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
     }
 
     fun setPassword(password: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.PasswordInput).performTextInput(password)
+        onNodeWithTag(AuthScreenTag.PasswordInput).performTextInput(password)
     }
 
     fun assertPassword(password: String): ComposeLoginRobot = apply {
-        with(composeTestRule) {
-            onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
-            onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
-        }
+        onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
+        onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
     }
 
     fun assertUsername(username: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.UsernameInput).assertTextContains(username)
+        onNodeWithTag(AuthScreenTag.UsernameInput).assertTextContains(username)
     }
 
     fun clickOnLogin(): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.LoginButton).performClick()
+        onNodeWithTag(AuthScreenTag.LoginButton).performClick()
     }
 
     fun assertLoading(): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
+        onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
     }
     fun assertNotLoading(): ComposeLoginRobot = apply {
-        composeTestRule.onAllNodesWithTag(AuthScreenTag.LoadingIndicator).assertCountEquals(0)
+        onAllNodesWithTag(AuthScreenTag.LoadingIndicator).assertCountEquals(0)
     }
 
     fun assertErrorIsShown(stringId: Int): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.LoginError)
+        onNodeWithTag(AuthScreenTag.LoginError)
             .assertTextContains(ApplicationProvider.getApplicationContext<Context>().resources.getString(stringId))
     }
+}
 ```
 
 While in the View system we're using Espresso to interact with views, 

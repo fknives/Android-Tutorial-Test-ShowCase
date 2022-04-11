@@ -13,41 +13,39 @@ import androidx.test.core.app.ApplicationProvider
 import org.fnives.test.showcase.compose.screen.auth.AuthScreenTag
 
 class ComposeLoginRobot(
-    private val composeTestRule: ComposeTestRule,
-) {
+    composeTestRule: ComposeTestRule,
+): ComposeTestRule by composeTestRule {
 
     fun setUsername(username: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
+        onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
     }
 
     fun setPassword(password: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.PasswordInput).performTextInput(password)
+        onNodeWithTag(AuthScreenTag.PasswordInput).performTextInput(password)
     }
 
     fun assertPassword(password: String): ComposeLoginRobot = apply {
-        with(composeTestRule) {
-            onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
-            onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
-        }
+        onNodeWithTag(AuthScreenTag.PasswordVisibilityToggle).performClick()
+        onNodeWithTag(AuthScreenTag.PasswordInput).assertTextContains(password)
     }
 
     fun assertUsername(username: String): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.UsernameInput).assertTextContains(username)
+        onNodeWithTag(AuthScreenTag.UsernameInput).assertTextContains(username)
     }
 
     fun clickOnLogin(): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.LoginButton).performClick()
+        onNodeWithTag(AuthScreenTag.LoginButton).performClick()
     }
 
     fun assertLoading(): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
+        onNodeWithTag(AuthScreenTag.LoadingIndicator).assertIsDisplayed()
     }
     fun assertNotLoading(): ComposeLoginRobot = apply {
-        composeTestRule.onAllNodesWithTag(AuthScreenTag.LoadingIndicator).assertCountEquals(0)
+        onAllNodesWithTag(AuthScreenTag.LoadingIndicator).assertCountEquals(0)
     }
 
     fun assertErrorIsShown(stringId: Int): ComposeLoginRobot = apply {
-        composeTestRule.onNodeWithTag(AuthScreenTag.LoginError)
+        onNodeWithTag(AuthScreenTag.LoginError)
             .assertTextContains(ApplicationProvider.getApplicationContext<Context>().resources.getString(stringId))
     }
 }
