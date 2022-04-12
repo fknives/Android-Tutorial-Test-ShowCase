@@ -37,7 +37,10 @@ And if we run our test class we already get an exception:
 So we need to mock the creation of `SharedPreferences`, then the `SharedPreferences` as well.
 Since our classes main purpose is to handle `SharedPreferences`, that doesn't really make sense.
 
-Well, I would rather not do that. So then we need to test on a Real Device or Emulator. Well we could, but then we need to integrate a Testing Farm with our CI. It would be good to do that, but sometimes that's just not possible, here is where [Robolectric](http://robolectric.org/) comes in.
+Well, I would rather not do that. So then we need to run our tests on a Real Device or Emulator during development.
+Well we could do that, but it just takes that much more time.
+We would also need to to integrate a Testing Farm, or run Emulators in docker with our CI.
+It would be good to do that, but sometimes that's just not possible, here is where [Robolectric](http://robolectric.org/) comes in.
 
 >Robolectric is the industry-standard unit testing framework for Android. With Robolectric, your tests run in a simulated Android environment inside a JVM, without the overhead and flakiness of an emulator. Robolectric tests routinely run 10x faster than those on cold-started emulators.
 
