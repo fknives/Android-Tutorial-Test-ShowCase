@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.configuration
+package org.fnives.test.showcase.android.testutil
 
 import android.app.Instrumentation
 import androidx.room.RoomDatabase
@@ -10,6 +10,9 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
+/**
+ * Wrapper around [MigrationTestHelper] so it can be created in SharedTests, in both Robolectric and on Device.
+ */
 class AndroidMigrationTestRule : SharedMigrationTestRule {
 
     private val migrationTestHelper: MigrationTestHelper
@@ -35,8 +38,7 @@ class AndroidMigrationTestRule : SharedMigrationTestRule {
         specs: List<AutoMigrationSpec>,
         openFactory: SupportSQLiteOpenHelper.Factory
     ) {
-        migrationTestHelper =
-            MigrationTestHelper(instrumentation, databaseClass, specs, openFactory)
+        migrationTestHelper = MigrationTestHelper(instrumentation, databaseClass, specs, openFactory)
     }
 
     override fun apply(base: Statement, description: Description): Statement =

@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.configuration;
+package org.fnives.test.showcase.android.testutil.robolectric;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
@@ -32,6 +32,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
 
+import org.fnives.test.showcase.android.testutil.SharedMigrationTestRule;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -56,8 +57,9 @@ import java.util.Set;
  *
  * reference: https://github.com/robolectric/robolectric/issues/2065
  */
-public class RobolectricMigrationTestHelper extends TestWatcher implements SharedMigrationTestRule {
-    private static final String TAG = "RobolectricMigrationTestHelper";
+@SuppressLint("RestrictedApi")
+public class RobolectricMigrationTestRule extends TestWatcher implements SharedMigrationTestRule {
+    private static final String TAG = "RobolectricMigrationTR";
     private final String mAssetsFolder;
     private final SupportSQLiteOpenHelper.Factory mOpenFactory;
     private List<WeakReference<SupportSQLiteDatabase>> mManagedDatabases = new ArrayList<>();
@@ -77,7 +79,7 @@ public class RobolectricMigrationTestHelper extends TestWatcher implements Share
      * @param instrumentation The instrumentation instance.
      * @param databaseClass   The Database class to be tested.
      */
-    public RobolectricMigrationTestHelper(@NonNull Instrumentation instrumentation,
+    public RobolectricMigrationTestRule(@NonNull Instrumentation instrumentation,
                                           @NonNull Class<? extends RoomDatabase> databaseClass) {
         this(instrumentation, databaseClass, new ArrayList<>(),
                 new FrameworkSQLiteOpenHelperFactory());
@@ -96,7 +98,7 @@ public class RobolectricMigrationTestHelper extends TestWatcher implements Share
      * @param specs           The list of available auto migration specs that will be provided to
      *                        Room at runtime.
      */
-    public RobolectricMigrationTestHelper(@NonNull Instrumentation instrumentation,
+    public RobolectricMigrationTestRule(@NonNull Instrumentation instrumentation,
                                           @NonNull Class<? extends RoomDatabase> databaseClass,
                                           @NonNull List<AutoMigrationSpec> specs) {
         this(instrumentation, databaseClass, specs, new FrameworkSQLiteOpenHelperFactory());
@@ -116,7 +118,7 @@ public class RobolectricMigrationTestHelper extends TestWatcher implements Share
      *                        Room at runtime.
      * @param openFactory     Factory class that allows creation of {@link SupportSQLiteOpenHelper}
      */
-    public RobolectricMigrationTestHelper(@NonNull Instrumentation instrumentation,
+    public RobolectricMigrationTestRule(@NonNull Instrumentation instrumentation,
                                           @NonNull Class<? extends RoomDatabase> databaseClass,
                                           @NonNull List<AutoMigrationSpec> specs,
                                           @NonNull SupportSQLiteOpenHelper.Factory openFactory

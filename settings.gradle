@@ -1,6 +1,8 @@
+rootProject.name = "TestShowCase"
 include ':mockserver'
 include ':model'
 include ':core'
 include ':network'
 include ':app'
-rootProject.name = "TestShowCase"
+include ':test-util-shared-android'
+include ':test-util-shared-robolectric'

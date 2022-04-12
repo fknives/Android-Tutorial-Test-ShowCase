@@ -15,11 +15,13 @@ import org.hamcrest.Matchers
 
 class SnackbarVerificationHelper {
 
-    fun assertIsShownWithText(@StringRes stringResID: Int) {
+    fun assertIsShownWithText(@StringRes stringResID: Int, doDismiss: Boolean = true) {
         Espresso.onView(ViewMatchers.withId(R.id.snackbar_text))
             .check(ViewAssertions.matches(ViewMatchers.withText(stringResID)))
-        Espresso.onView(ViewMatchers.isAssignableFrom(Snackbar.SnackbarLayout::class.java)).perform(ViewActions.swipeRight())
-        Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainUntilSnackbarDismissed())
+        if (doDismiss) {
+            Espresso.onView(ViewMatchers.isAssignableFrom(Snackbar.SnackbarLayout::class.java)).perform(ViewActions.swipeRight())
+            Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainUntilSnackbarDismissed())
+        }
     }
 
     fun assertIsNotShown() {

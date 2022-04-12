@@ -1,16 +1,14 @@
 package org.fnives.test.showcase.storage.migration
 
 import androidx.room.Room
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.fnives.test.showcase.android.testutil.SharedMigrationTestRule
 import org.fnives.test.showcase.storage.LocalDatabase
 import org.fnives.test.showcase.storage.favourite.FavouriteEntity
 import org.fnives.test.showcase.storage.migation.Migration1To2
-import org.fnives.test.showcase.testutils.configuration.SharedMigrationTestRule
-import org.fnives.test.showcase.testutils.configuration.createSharedMigrationTestRule
 import org.junit.After
 import org.junit.Assert
 import org.junit.Rule
@@ -28,11 +26,7 @@ import java.io.IOException
 class MigrationToLatestInstrumentedTest {
 
     @get:Rule
-    val helper: SharedMigrationTestRule = createSharedMigrationTestRule<LocalDatabase>(
-        InstrumentationRegistry.getInstrumentation(),
-        emptyList(),
-        FrameworkSQLiteOpenHelperFactory()
-    )
+    val helper = SharedMigrationTestRule<LocalDatabase>(instrumentation = InstrumentationRegistry.getInstrumentation())
 
     private fun getMigratedRoomDatabase(): LocalDatabase {
         val database: LocalDatabase = Room.databaseBuilder(
