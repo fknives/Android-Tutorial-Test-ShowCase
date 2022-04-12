@@ -358,7 +358,9 @@ And that's all to it.
 You can check out `org.fnives.test.showcase.endtoend.LoginLogoutEndToEndTest` which was created with TestRecording and the modifications that needed to be added.
 > Note, the TestRule still should be switched out.
 
-So End-to-End tests you basically write the same as in Robolectric and SharedTests, only that the Tests shouldn't use mocks or at least trying to minimize their usage, while in integration tests you may use Fakes more recently for speed.
+So End-to-End tests you basically write the same as in Robolectric and SharedTests, only that the Tests shouldn't use mocks or at least trying to minimize their usage, while in integration tests you may use Fakes more frequently.
+One Additional benefit of AndroidTests over Robolectric is that your tests can interact with the Full Feature set of the device, with Notifications, Broadcast, Sensors etc.
+I personally don't have too much experience with that part, so you will have to look up each of those when you want to write test for them.
 
 ##### Test Suits
 Your End-to-End tests or even your Instrumentation tests can be bundled into a TestSuit. This is usually used so some tests run together, one after another.
