@@ -17,7 +17,7 @@ import org.fnives.test.showcase.R
 fun SplashScreen() {
     Box(Modifier.fillMaxSize().background(colorResource(R.color.purple_700)), contentAlignment = Alignment.Center) {
         Image(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
+            painter = painterResource(R.mipmap.ic_launcher_round),
             contentDescription = null,
             modifier = Modifier.size(120.dp)
         )
