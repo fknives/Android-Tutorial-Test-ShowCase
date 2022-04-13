@@ -27,8 +27,8 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 import retrofit2.HttpException
 
@@ -97,7 +97,7 @@ class SessionExpirationTest : KoinTest {
             ContentData.refreshSuccessResponse.accessToken,
             retryAfterTokenRefreshRequest.getHeader("Authorization")
         )
-        verifyZeroInteractions(mockNetworkSessionExpirationListener)
+        verifyNoInteractions(mockNetworkSessionExpirationListener)
     }
 
     @DisplayName("GIVEN 401 THEN failing refresh WHEN content requested THE error is returned and callback is Called")

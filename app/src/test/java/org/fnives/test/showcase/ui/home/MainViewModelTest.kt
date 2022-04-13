@@ -24,8 +24,8 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
@@ -150,7 +150,7 @@ internal class MainViewModelTest {
         sut.onRefresh()
         testScheduler.advanceUntilIdle()
 
-        verifyZeroInteractions(mockFetchContentUseCase)
+        verifyNoInteractions(mockFetchContentUseCase)
     }
 
     @DisplayName("GIVEN non loading viewModel WHEN refreshing THEN usecase is called")
@@ -209,8 +209,8 @@ internal class MainViewModelTest {
         sut.onFavouriteToggleClicked(ContentId("c"))
         testScheduler.advanceUntilIdle()
 
-        verifyZeroInteractions(mockRemoveContentFromFavouritesUseCase)
-        verifyZeroInteractions(mockAddContentToFavouriteUseCase)
+        verifyNoInteractions(mockRemoveContentFromFavouritesUseCase)
+        verifyNoInteractions(mockAddContentToFavouriteUseCase)
     }
 
     @DisplayName("GIVEN success content list viewModel WHEN toggling a favourite contentId THEN remove favourite usecase is called")
@@ -229,7 +229,7 @@ internal class MainViewModelTest {
 
         runBlocking { verify(mockRemoveContentFromFavouritesUseCase, times(1)).invoke(ContentId("b")) }
         verifyNoMoreInteractions(mockRemoveContentFromFavouritesUseCase)
-        verifyZeroInteractions(mockAddContentToFavouriteUseCase)
+        verifyNoInteractions(mockAddContentToFavouriteUseCase)
     }
 
     @DisplayName("GIVEN success content list viewModel WHEN toggling a not favourite contentId THEN add favourite usecase is called")
@@ -246,7 +246,7 @@ internal class MainViewModelTest {
         sut.onFavouriteToggleClicked(ContentId("a"))
         testScheduler.advanceUntilIdle()
 
-        verifyZeroInteractions(mockRemoveContentFromFavouritesUseCase)
+        verifyNoInteractions(mockRemoveContentFromFavouritesUseCase)
         runBlocking { verify(mockAddContentToFavouriteUseCase, times(1)).invoke(ContentId("a")) }
         verifyNoMoreInteractions(mockAddContentToFavouriteUseCase)
     }

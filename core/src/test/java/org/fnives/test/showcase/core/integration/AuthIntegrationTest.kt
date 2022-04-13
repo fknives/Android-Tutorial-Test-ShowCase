@@ -38,7 +38,7 @@ import org.koin.test.KoinTest
 import org.koin.test.get
 import org.koin.test.inject
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyZeroInteractions
+import org.mockito.kotlin.verifyNoInteractions
 import java.util.stream.Stream
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -86,7 +86,7 @@ class AuthIntegrationTest : KoinTest {
         val actual = isUserLoggedInUseCase.invoke()
 
         Assertions.assertFalse(actual, "User is expected to be not logged in")
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @DisplayName("GIVEN no session WHEN user is logging in THEN they get session")
@@ -101,7 +101,7 @@ class AuthIntegrationTest : KoinTest {
         Assertions.assertEquals(Answer.Success(LoginStatus.SUCCESS), answer)
         Assertions.assertTrue(actual, "User is expected to be logged in")
         Assertions.assertEquals(expectedSession, fakeUserDataLocalStorage.session)
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @MethodSource("localInputErrorArguments")
@@ -113,7 +113,7 @@ class AuthIntegrationTest : KoinTest {
         Assertions.assertEquals(Answer.Success(loginError), answer)
         Assertions.assertFalse(actual, "User is expected to be not logged in")
         Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @MethodSource("networkErrorArguments")
@@ -127,7 +127,7 @@ class AuthIntegrationTest : KoinTest {
         Assertions.assertTrue(answer is Answer.Error, "Answer is expected to be an Error")
         Assertions.assertFalse(actual, "User is expected to be not logged in")
         Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @DisplayName("GIVEN invalid credentials response WHEN user is logging in THEN they get proper error")
@@ -141,7 +141,7 @@ class AuthIntegrationTest : KoinTest {
         Assertions.assertEquals(Answer.Success(LoginStatus.INVALID_CREDENTIALS), answer)
         Assertions.assertFalse(actual, "User is expected to be not logged in")
         Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @DisplayName("GIVEN logged in user WHEN user is logging out THEN they no longer have a session")
@@ -155,7 +155,7 @@ class AuthIntegrationTest : KoinTest {
 
         Assertions.assertFalse(actual, "User is expected to be logged out")
         Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @DisplayName("GIVEN logged in user WHEN user is logging out THEN content is cleared")

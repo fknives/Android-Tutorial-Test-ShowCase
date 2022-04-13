@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 
 @Suppress("TestFunctionName")
 internal class SessionExpirationAdapterTest {
@@ -24,7 +24,7 @@ internal class SessionExpirationAdapterTest {
     @DisplayName("WHEN nothing is changed THEN delegate is not touched")
     @Test
     fun verifyNoInteractionsIfNoInvocations() {
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
     }
 
     @DisplayName("WHEN onSessionExpired is called THEN delegated is also called")

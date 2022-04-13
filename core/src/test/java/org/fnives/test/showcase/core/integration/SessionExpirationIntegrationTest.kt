@@ -34,8 +34,8 @@ import org.koin.test.inject
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SessionExpirationIntegrationTest : KoinTest {
@@ -82,7 +82,7 @@ class SessionExpirationIntegrationTest : KoinTest {
         mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"), validateArguments = true)
         loginUseCase.invoke(LoginCredentials(username = "a", password = "b"))
         Assertions.assertTrue(isUserLoggedInUseCase.invoke())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
 
         mockServerScenarioSetup.setScenario(ContentScenario.Unauthorized(usingRefreshedToken = false))
             .setScenario(RefreshTokenScenario.Error)

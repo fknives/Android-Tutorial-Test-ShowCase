@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyZeroInteractions
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
@@ -26,7 +26,7 @@ internal class IsUserLoggedInUseCaseTest {
     @DisplayName("WHEN nothing is called THEN storage is not called")
     @Test
     fun creatingDoesntAffectStorage() {
-        verifyZeroInteractions(mockUserDataLocalStorage)
+        verifyNoInteractions(mockUserDataLocalStorage)
     }
 
     @DisplayName("GIVEN session data saved WHEN is user logged in checked THEN true is returned")

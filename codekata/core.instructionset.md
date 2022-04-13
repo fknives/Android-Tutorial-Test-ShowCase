@@ -56,7 +56,7 @@ When the class is created, the delegate should not yet be touched, so we start t
 @DisplayName("WHEN nothing is changed THEN delegate is not touched") // this will show up when running our tests and is a great way to document what we are testing
 @Test // this defines that this method is a test, needs to be org.junit.jupiter.api.Test
 fun verifyNoInteractionsIfNoInvocations() {
-    verifyZeroInteractions(mockSessionExpirationListener) // we verify that our mock object's functions / properties have not been touched
+    verifyNoInteractions(mockSessionExpirationListener) // we verify that our mock object's functions / properties have not been touched
 }
 ```
 
@@ -131,8 +131,8 @@ Lastly we add verification:
 
 ```kotlin
 Assertions.assertEquals(expected, actual) // assert the result is what we expected
-verifyZeroInteractions(mockLoginRemoteSource) // assert no request was called
-verifyZeroInteractions(mockUserDataLocalStorage) // assert we didn't modify our storage
+verifyNoInteractions(mockLoginRemoteSource) // assert no request was called
+verifyNoInteractions(mockUserDataLocalStorage) // assert we didn't modify our storage
 ```
 
 But something is wrong, the invoke method cannot be executed since it's a suspending function.
@@ -148,8 +148,8 @@ fun emptyUserNameReturnsLoginStatusError() = runTest {
     val actual = sut.invoke(LoginCredentials("", "a"))
 
     Assertions.assertEquals(expected, actual)
-    verifyZeroInteractions(mockLoginRemoteSource)
-    verifyZeroInteractions(mockUserDataLocalStorage)
+    verifyNoInteractions(mockLoginRemoteSource)
+    verifyNoInteractions(mockUserDataLocalStorage)
 }
 ```
 
@@ -172,8 +172,8 @@ fun emptyPasswordNameReturnsLoginStatusError() = runTest {
     val actual = sut.invoke(LoginCredentials("a", ""))
 
     Assertions.assertEquals(expected, actual)
-    verifyZeroInteractions(mockLoginRemoteSource)
-    verifyZeroInteractions(mockUserDataLocalStorage)
+    verifyNoInteractions(mockLoginRemoteSource)
+    verifyNoInteractions(mockUserDataLocalStorage)
 }
 ```
 
@@ -211,7 +211,7 @@ And finally verification:
 
 ```kotlin
 Assertions.assertEquals(expected, actual)
-verifyZeroInteractions(mockUserDataLocalStorage)
+verifyNoInteractions(mockUserDataLocalStorage)
 ```
 
 Together:
@@ -226,7 +226,7 @@ fun invalidLoginResponseReturnInvalidCredentials() = runTest {
     val actual = sut.invoke(LoginCredentials("a", "b"))
 
     Assertions.assertEquals(expected, actual)
-    verifyZeroInteractions(mockUserDataLocalStorage)
+    verifyNoInteractions(mockUserDataLocalStorage)
 }
 ```
 
@@ -291,7 +291,7 @@ Verification:
 
 ```kotlin
 Assertions.assertEquals(expected, actual)
-verifyZeroInteractions(mockUserDataLocalStorage)
+verifyNoInteractions(mockUserDataLocalStorage)
 ```
 
 Together:
@@ -308,7 +308,7 @@ fun invalidResponseResultsInErrorReturned() = runTest {
     val actual = sut.invoke(LoginCredentials("a", "b"))
 
     Assertions.assertEquals(expected, actual)
-    verifyZeroInteractions(mockUserDataLocalStorage)
+    verifyNoInteractions(mockUserDataLocalStorage)
 }
 ```
 #### Lessons learned

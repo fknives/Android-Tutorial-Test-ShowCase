@@ -6,14 +6,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.fnives.test.showcase.storage.database.DatabaseInitialization
 import org.fnives.test.showcase.testutils.TestMainDispatcher.Companion.testDispatcher
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
 /**
- * Custom Junit5 Extension which replaces the [DatabaseInitialization]'s dispatcher and main dispatcher with a [TestDispatcher]
+ * Custom Junit5 Extension which replaces the main dispatcher with a [TestDispatcher]
  *
  * One can access the test dispatcher via [testDispatcher] static getter.
  */
@@ -23,7 +22,6 @@ class TestMainDispatcher : BeforeEachCallback, AfterEachCallback {
     override fun beforeEach(context: ExtensionContext?) {
         val testDispatcher = StandardTestDispatcher()
         privateTestDispatcher = testDispatcher
-        DatabaseInitialization.dispatcher = testDispatcher
         Dispatchers.setMain(testDispatcher)
     }
 

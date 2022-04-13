@@ -186,7 +186,7 @@ class CodeKataFavouriteContentLocalStorage: KoinTest
 - we add a testDispatcher to Room
 - we switch to runTest(testDispatcher)
 
-Since Room has their own exercutors, that could make our tests flaky, since it might get out of sync. Luckily we can switch out these executors, so we do that to make sure our tests run just as we would like them to.
+Since Room has their own executors, that could make our tests flaky, since it might get out of sync. Luckily we can switch out these executors, so we do that to make sure our tests run just as we would like them to.
 
 ```
 private val sut by inject<FavouriteContentLocalStorage>()
@@ -195,7 +195,7 @@ private lateinit var testDispatcher: TestDispatcher
 @Before
 fun setUp() {
     testDispatcher = StandardTestDispatcher()
-    DatabaseInitialization.dispatcher = testDispatcher
+    TestDatabaseInitialization.overwriteDatabaseInitialization(testDispatcher)
 }
 
 @After
@@ -204,15 +204,16 @@ fun tearDown() {
 }
 
 @Test
-fun atTheStartOurDatabaseIsEmpty()= runTest(testDispatcher) {
+fun atTheStartOurDatabaseIsEmpty() = runTest(testDispatcher) {
     sut.observeFavourites().first()
 }
 ```
 
-The line `DatabaseInitialization.dispatcher = testDispatcher` may look a bit mysterious, but all we do with it is to overwrite our original DatabaseInitialization in tests, and use the given Dispatcher as an executor for Room setup.
+The line `TestDatabaseInitialization.overwriteDatabaseInitialization(testDispatcher)` may look a bit mysterious, but all we do with it is overwrite the koin module to use our an InMemoryDatabase in our tests with the Dispatcher used as executor.
 
-> DatabaseInitialization is overwritten in the Test module, by declaring the same class in the same package with the same methods. This is an easy way to switch out an implementation.
-> This might not look the cleanest, so an alternative way is to switch out the koin-module of how to create the database. For this we could use loadKoinModules. In other dependency injection / service locator frameworks this should also be possible.
+> Above min API 24
+> DatabaseInitialization could be overwritten in Test module, by declaring the same class in the same package with the same methods. This is an easy way to switch out an implementation.
+> That might not look the cleanest, so an the presented way of switch out the koin-module creating the database is preferred. In other dependency injection / service locator frameworks this should also be possible.
 
 ### 1. `atTheStartOurDatabaseIsEmpty`
 
@@ -518,7 +519,7 @@ fun tearDown() {
 ```
 
 > Idling Resources comes from Espresso. The idea is that anytime we want to interact with the UI via Espresso, it will await any Idling Resource beforehand. This is handy, since our Network component, (OkHttp) uses it's own thread pool, and we would like to have a way to await the responses.
-> Disposable is just a syntetic-sugar way to remove the OkHttpIdling resource from Espresso when we no longer need it.
+> Disposable is just a synthetic-sugar way to remove the OkHttpIdling resource from Espresso when we no longer need it.
 > Idling Resources also makes it easy for us, to coordinate coroutines with our network responses, since we can await the IdlingResource and advance the Coroutines afterwards.
 
 ##### Coroutine Test Setup
@@ -531,7 +532,7 @@ fun setup() {
     val dispatcher = StandardTestDispatcher()
     Dispatchers.setMain(dispatcher)
     testDispatcher = dispatcher
-    DatabaseInitialization.dispatcher = dispatcher
+    TestDatabaseInitialization.overwriteDatabaseInitialization(testDispatcher)
 }
 
 @After

@@ -14,13 +14,13 @@ import org.fnives.test.showcase.R
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
-import org.fnives.test.showcase.storage.database.DatabaseInitialization
 import org.fnives.test.showcase.testutils.idling.CompositeDisposable
 import org.fnives.test.showcase.testutils.idling.Disposable
 import org.fnives.test.showcase.testutils.idling.IdlingResourceDisposable
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule.Companion.advanceUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.idling.OkHttp3IdlingResource
 import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
 import org.junit.Before
@@ -45,7 +45,7 @@ class RobolectricAuthActivityInstrumentedTest : KoinTest {
         val dispatcher = StandardTestDispatcher()
         Dispatchers.setMain(dispatcher)
         testDispatcher = dispatcher
-        DatabaseInitialization.dispatcher = dispatcher
+        TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
 
         mockServerScenarioSetup = NetworkTestConfigurationHelper.startWithHTTPSMockWebServer()
 

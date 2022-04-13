@@ -6,8 +6,8 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.fnives.test.showcase.storage.database.DatabaseInitialization
 import org.fnives.test.showcase.testutils.runOnUIAwaitOnCurrent
+import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -24,7 +24,7 @@ class MainDispatcherTestRule : TestRule {
                 val dispatcher = StandardTestDispatcher()
                 Dispatchers.setMain(dispatcher)
                 testDispatcher = dispatcher
-                DatabaseInitialization.dispatcher = dispatcher
+                TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
                 try {
                     base.evaluate()
                 } finally {
