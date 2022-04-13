@@ -31,7 +31,7 @@ jobs:
         if: always()
         with:
           name: Detekt Results
-          path: build/reports/detekt.html
+          path: ./build/reports/detekt/detekt.html
           retention-days: 1
       - name: Run ktlint
         run: ./gradlew ktlintCheck
