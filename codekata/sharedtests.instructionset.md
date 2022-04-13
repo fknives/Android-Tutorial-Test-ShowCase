@@ -129,10 +129,10 @@ So that's because something went wrong in our first test. I am describing these 
 
 Now, here is a new difference between Robolectric and AndroidTest. In Robolectric, before every test, the Application class is initialized, however in AndroidTests, the Application class is only initialized once.
 This is great if you want to have End-to-End tests that follow each other, but since now we only want to tests some small subsection of the functionality, we have to restart Koin before every tests if it isn't yet started so our tests don't use the same instances.
-We will check if koin is initalized, if it isn't then we simply initalize it:
+We will check if koin is initialized, if it isn't then we simply initialize it:
 ```kotlin
 ...
-DatabaseInitialization.dispatcher = dispatcher
+TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
 if (GlobalContext.getOrNull() == null) {
     val application = ApplicationProvider.getApplicationContext<TestShowcaseApplication>()
     val baseUrl = BaseUrl(BuildConfig.BASE_URL)
@@ -237,7 +237,7 @@ Let's create a TestRule for that setup next.
 val dispatcher = StandardTestDispatcher()
 Dispatchers.setMain(dispatcher)
 testDispatcher = dispatcher
-DatabaseInitialization.dispatcher = dispatcher
+TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
 
 // after
 Dispatchers.resetMain()
@@ -253,7 +253,7 @@ override fun apply(base: Statement, description: Description): Statement = objec
         try {
             val dispatcher = StandardTestDispatcher()
             Dispatchers.setMain(dispatcher)
-            DatabaseInitialization.dispatcher = dispatcher
+            TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
             _testDispatcher = dispatcher
             base.evaluate()
         } finally {

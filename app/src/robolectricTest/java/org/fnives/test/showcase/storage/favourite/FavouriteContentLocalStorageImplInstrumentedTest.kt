@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.fnives.test.showcase.core.integration.fake.FakeFavouriteContentLocalStorage
 import org.fnives.test.showcase.core.storage.content.FavouriteContentLocalStorage
 import org.fnives.test.showcase.model.content.ContentId
-import org.fnives.test.showcase.storage.database.DatabaseInitialization
+import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -36,7 +36,7 @@ internal class FavouriteContentLocalStorageImplInstrumentedTest(
     @Before
     fun setUp() {
         testDispatcher = StandardTestDispatcher()
-        DatabaseInitialization.dispatcher = testDispatcher
+        TestDatabaseInitialization.overwriteDatabaseInitialization(testDispatcher)
         sut = favouriteContentLocalStorageFactory()
     }
 

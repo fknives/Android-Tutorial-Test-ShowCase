@@ -12,12 +12,12 @@ import androidx.test.runner.AndroidJUnit4
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
-import org.fnives.test.showcase.storage.database.DatabaseInitialization
 import org.fnives.test.showcase.testutils.idling.CompositeDisposable
 import org.fnives.test.showcase.testutils.idling.Disposable
 import org.fnives.test.showcase.testutils.idling.IdlingResourceDisposable
 import org.fnives.test.showcase.testutils.idling.OkHttp3IdlingResource
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
+import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.fnives.test.showcase.ui.splash.SplashActivity
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -45,7 +45,7 @@ class LoginLogoutEndToEndTest {
     @Before
     fun before() {
         /** Needed to add the dispatcher to the Database */
-        DatabaseInitialization.dispatcher = UnconfinedTestDispatcher()
+        TestDatabaseInitialization.overwriteDatabaseInitialization(UnconfinedTestDispatcher())
 
         /** Needed to register the Okhttp as Idling resource, so Espresso actually waits for the response.*/
         val idlingResources = NetworkTestConfigurationHelper.getOkHttpClients()

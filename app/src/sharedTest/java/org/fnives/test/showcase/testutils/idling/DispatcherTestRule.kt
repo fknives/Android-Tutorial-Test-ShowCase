@@ -3,8 +3,8 @@ package org.fnives.test.showcase.testutils.idling
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
-import org.fnives.test.showcase.storage.database.DatabaseInitialization
 import org.fnives.test.showcase.testutils.runOnUIAwaitOnCurrent
+import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -20,7 +20,7 @@ class DispatcherTestRule : TestRule {
             override fun evaluate() {
                 val dispatcher = StandardTestDispatcher()
                 testDispatcher = dispatcher
-                DatabaseInitialization.dispatcher = dispatcher
+                TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
                 base.evaluate()
             }
         }

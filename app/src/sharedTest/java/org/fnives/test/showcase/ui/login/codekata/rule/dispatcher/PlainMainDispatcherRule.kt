@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.fnives.test.showcase.storage.database.DatabaseInitialization
+import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -28,7 +29,7 @@ class PlainMainDispatcherRule(private val useStandard: Boolean = true) : TestRul
             try {
                 val dispatcher = if (useStandard) StandardTestDispatcher() else UnconfinedTestDispatcher()
                 Dispatchers.setMain(dispatcher)
-                DatabaseInitialization.dispatcher = dispatcher
+                TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
                 _testDispatcher = dispatcher
                 base.evaluate()
             } finally {
