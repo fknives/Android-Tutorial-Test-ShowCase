@@ -17,8 +17,8 @@ import org.koin.test.KoinTest
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 
 @Suppress("TestFunctionName")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -52,7 +52,7 @@ internal class LogoutUseCaseTest : KoinTest {
     @DisplayName("WHEN no call THEN storage is not interacted")
     @Test
     fun initializedDoesntAffectStorage() {
-        verifyZeroInteractions(mockUserDataLocalStorage)
+        verifyNoInteractions(mockUserDataLocalStorage)
     }
 
     @DisplayName("WHEN logout invoked THEN storage is cleared")

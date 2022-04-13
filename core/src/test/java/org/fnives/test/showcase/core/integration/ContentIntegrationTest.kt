@@ -38,7 +38,7 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyZeroInteractions
+import org.mockito.kotlin.verifyNoInteractions
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ContentIntegrationTest : KoinTest {
@@ -97,7 +97,7 @@ class ContentIntegrationTest : KoinTest {
         }
 
         Assertions.assertEquals(expected, actual.await())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         Assertions.assertSame(session, fakeUserDataLocalStorage.session)
     }
 
@@ -120,7 +120,7 @@ class ContentIntegrationTest : KoinTest {
         }
 
         Assertions.assertEquals(expected, actual.await())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         Assertions.assertSame(session, fakeUserDataLocalStorage.session)
     }
 
@@ -150,7 +150,7 @@ class ContentIntegrationTest : KoinTest {
         }
 
         Assertions.assertEquals(expected, actual.await())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         Assertions.assertSame(session, fakeUserDataLocalStorage.session)
     }
 
@@ -201,7 +201,7 @@ class ContentIntegrationTest : KoinTest {
 
         Assertions.assertIterableEquals(expected, actual.await())
         Assertions.assertEquals(expected.last(), verifyCaching.await())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         Assertions.assertSame(session, fakeUserDataLocalStorage.session)
     }
 
@@ -229,7 +229,7 @@ class ContentIntegrationTest : KoinTest {
         }
 
         Assertions.assertIterableEquals(expected, actual.await())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         Assertions.assertSame(session, fakeUserDataLocalStorage.session)
     }
 
@@ -268,7 +268,7 @@ class ContentIntegrationTest : KoinTest {
         Assertions.assertTrue((actualValues[1] as Resource.Error).error is NetworkException, "Resource is Network Error")
         Assertions.assertEquals(expected[2], actualValues[2])
         Assertions.assertEquals(expected[3], actualValues[3])
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         Assertions.assertSame(session, fakeUserDataLocalStorage.session)
     }
 
@@ -331,7 +331,7 @@ class ContentIntegrationTest : KoinTest {
         }
 
         Assertions.assertIterableEquals(expected, actual.await())
-        verifyZeroInteractions(mockSessionExpirationListener)
+        verifyNoInteractions(mockSessionExpirationListener)
         val expectedSession = Session(accessToken = "refreshed-access", refreshToken = "refreshed-refresh")
         Assertions.assertEquals(expectedSession, fakeUserDataLocalStorage.session)
     }

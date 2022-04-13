@@ -24,8 +24,10 @@ object TestDatabaseInitialization {
     }
 
     fun overwriteDatabaseInitialization(dispatcher: CoroutineDispatcher) {
-        loadKoinModules(module {
-            single { create(androidContext(), dispatcher) }
-        })
+        loadKoinModules(
+            module {
+                single { create(androidContext(), dispatcher) }
+            }
+        )
     }
 }

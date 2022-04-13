@@ -328,7 +328,7 @@ Assertions.assertEquals("login-access", contentRequestAfterRefreshed.getHeader("
 // this matches the data from the success_response_login.json
 val expectedSavedSession = Session(accessToken = "login-access", refreshToken = "login-refresh")
 verify(mockNetworkSessionLocalStorage, times(1)).session = expectedSavedSession
-verifyZeroInteractions(mockNetworkSessionExpirationListener)
+verifyNoInteractions(mockNetworkSessionExpirationListener)
 ```
 
 ### 2. `failingRefreshResultsInSessionExpiration`

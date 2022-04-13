@@ -19,8 +19,8 @@ import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
@@ -46,8 +46,8 @@ internal class LoginUseCaseTest {
         val actual = sut.invoke(LoginCredentials("", "a"))
 
         Assertions.assertEquals(expected, actual)
-        verifyZeroInteractions(mockLoginRemoteSource)
-        verifyZeroInteractions(mockUserDataLocalStorage)
+        verifyNoInteractions(mockLoginRemoteSource)
+        verifyNoInteractions(mockUserDataLocalStorage)
     }
 
     @DisplayName("GIVEN empty password WHEN trying to login THEN invalid password is returned")
@@ -58,8 +58,8 @@ internal class LoginUseCaseTest {
         val actual = sut.invoke(LoginCredentials("a", ""))
 
         Assertions.assertEquals(expected, actual)
-        verifyZeroInteractions(mockLoginRemoteSource)
-        verifyZeroInteractions(mockUserDataLocalStorage)
+        verifyNoInteractions(mockLoginRemoteSource)
+        verifyNoInteractions(mockUserDataLocalStorage)
     }
 
     @DisplayName("GIVEN invalid credentials response WHEN trying to login THEN invalid credentials is returned ")
@@ -72,7 +72,7 @@ internal class LoginUseCaseTest {
         val actual = sut.invoke(LoginCredentials("a", "b"))
 
         Assertions.assertEquals(expected, actual)
-        verifyZeroInteractions(mockUserDataLocalStorage)
+        verifyNoInteractions(mockUserDataLocalStorage)
     }
 
     @DisplayName("GIVEN success response WHEN trying to login THEN session is saved and success is returned")
@@ -100,6 +100,6 @@ internal class LoginUseCaseTest {
         val actual = sut.invoke(LoginCredentials("a", "b"))
 
         Assertions.assertEquals(expected, actual)
-        verifyZeroInteractions(mockUserDataLocalStorage)
+        verifyNoInteractions(mockUserDataLocalStorage)
     }
 }

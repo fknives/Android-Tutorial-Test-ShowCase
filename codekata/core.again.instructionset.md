@@ -162,7 +162,7 @@ fun withoutSessionTheUserIsNotLoggedIn() = runTest {
     val actual = isUserLoggedInUseCase.invoke()
 
     Assertions.assertFalse(actual, "User is expected to be not logged in")
-    verifyZeroInteractions(mockSessionExpirationListener)
+    verifyNoInteractions(mockSessionExpirationListener)
 }
 ```
 
@@ -187,7 +187,7 @@ And just verify:
 Assertions.assertEquals(Answer.Success(LoginStatus.SUCCESS), answer)
 Assertions.assertTrue(actual, "User is expected to be logged in")
 Assertions.assertEquals(expectedSession, fakeUserDataLocalStorage.session)
-verifyZeroInteractions(mockSessionExpirationListener)
+verifyNoInteractions(mockSessionExpirationListener)
 ```
 
 With this, looks like our Integration works correctly. Requests are called, proper response is received, login state is changed.
@@ -214,7 +214,7 @@ And do our verifications, aka not logged in, not session expired and the correct
 Assertions.assertEquals(Answer.Success(loginError), answer)
 Assertions.assertFalse(actual, "User is expected to be not logged in")
 Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-verifyZeroInteractions(mockSessionExpirationListener)
+verifyNoInteractions(mockSessionExpirationListener)
 ```
 
 Now we just need to declare our parameters for our test:
@@ -247,7 +247,7 @@ fun networkInputError(authScenario: AuthScenario) = runTest {
     Assertions.assertTrue(answer is Answer.Error, "Answer is expected to be an Error")
     Assertions.assertFalse(actual, "User is expected to be not logged in")
     Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-    verifyZeroInteractions(mockSessionExpirationListener)
+    verifyNoInteractions(mockSessionExpirationListener)
 }
 
 //...
@@ -282,7 +282,7 @@ fun loginInvalidCredentials() = runTest {
     Assertions.assertEquals(Answer.Success(LoginStatus.INVALID_CREDENTIALS), answer)
     Assertions.assertFalse(actual, "User is expected to be not logged in")
     Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-    verifyZeroInteractions(mockSessionExpirationListener)
+    verifyNoInteractions(mockSessionExpirationListener)
 }
 ```
 
@@ -305,7 +305,7 @@ And we verify the user is indeed logged out now:
 ```kotlin
 Assertions.assertFalse(actual, "User is expected to be logged out")
 Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
-verifyZeroInteractions(mockSessionExpirationListener)
+verifyNoInteractions(mockSessionExpirationListener)
 ```
 
 ### 7. `logoutReleasesContent`

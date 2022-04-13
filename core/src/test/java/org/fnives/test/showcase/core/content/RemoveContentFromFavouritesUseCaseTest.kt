@@ -13,8 +13,8 @@ import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
@@ -33,7 +33,7 @@ internal class RemoveContentFromFavouritesUseCaseTest {
     @DisplayName("WHEN nothing happens THEN the storage is not touched")
     @Test
     fun initializationDoesntAffectStorage() {
-        verifyZeroInteractions(mockFavouriteContentLocalStorage)
+        verifyNoInteractions(mockFavouriteContentLocalStorage)
     }
 
     @DisplayName("GIVEN contentId WHEN called THEN storage is called")

@@ -11,8 +11,8 @@ import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
@@ -31,7 +31,7 @@ internal class FetchContentUseCaseTest {
     @DisplayName("WHEN nothing happens THEN the storage is not touched")
     @Test
     fun initializationDoesntAffectRepository() {
-        verifyZeroInteractions(mockContentRepository)
+        verifyNoInteractions(mockContentRepository)
     }
 
     @DisplayName("WHEN called THEN repository is called")
