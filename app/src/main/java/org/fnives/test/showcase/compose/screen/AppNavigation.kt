@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -24,32 +25,51 @@ fun AppNavigation(isUserLogeInUseCase: IsUserLoggedInUseCase = get()) {
 
     LaunchedEffect(isUserLogeInUseCase) {
         delay(500)
-        navController.navigate(if (isUserLogeInUseCase.invoke()) "Home" else "Auth")
+        navController.navigate(
+            route = if (isUserLogeInUseCase.invoke()) RouteTag.HOME else RouteTag.AUTH,
+            navOptions = NavOptions.Builder().setPopUpTo(route = RouteTag.SPLASH, inclusive = true).build()
+        )
     }
 
     NavHost(
         navController,
-        startDestination = "Splash",
+        startDestination = RouteTag.SPLASH,
         modifier = Modifier.background(MaterialTheme.colors.surface)
     ) {
-        composable("Splash") { SplashScreen() }
-        composable("Auth") {
+        composable(RouteTag.SPLASH) { SplashScreen() }
+        composable(RouteTag.AUTH) {
             AuthScreen(
                 modifier = Modifier.testTag(AppNavigationTag.AuthScreen),
                 authScreenState = rememberAuthScreenState(
-                    onLoginSuccess = { navController.navigate("Home") }
+                    onLoginSuccess = {
+                        navController.navigate(
+                            route = RouteTag.HOME,
+                            navOptions = NavOptions.Builder().setPopUpTo(route = RouteTag.AUTH, inclusive = true).build()
+                        )
+                    }
                 )
             )
         }
-        composable("Home") {
+        composable(RouteTag.HOME) {
             HomeScreen(
                 modifier = Modifier.testTag(AppNavigationTag.HomeScreen),
                 homeScreenState = rememberHomeScreenState(
-                    onLogout = { navController.navigate("Auth") }
+                    onLogout = {
+                        navController.navigate(
+                            route = RouteTag.AUTH,
+                            navOptions = NavOptions.Builder().setPopUpTo(route = RouteTag.HOME, inclusive = true).build()
+                        )
+                    }
                 )
             )
         }
     }
+}
+
+object RouteTag {
+    const val HOME = "Home"
+    const val AUTH = "Auth"
+    const val SPLASH = "Splash"
 }
 
 object AppNavigationTag {
