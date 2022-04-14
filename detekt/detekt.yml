@@ -279,7 +279,7 @@ formatting:
     active: false
     autoCorrect: true
     indentSize: 4
-    maxLineLength: 120
+    maxLineLength: 140
   ChainWrapping:
     active: true
     autoCorrect: true
@@ -306,7 +306,7 @@ formatting:
     continuationIndentSize: 4
   MaximumLineLength:
     active: true
-    maxLineLength: 120
+    maxLineLength: 140
     ignoreBackTickedIdentifier: false
   ModifierOrdering:
     active: true
@@ -356,7 +356,7 @@ formatting:
     active: true
     autoCorrect: true
     indentSize: 4
-    maxLineLength: 120
+    maxLineLength: 140
   SpacingAroundAngleBrackets:
     active: false
     autoCorrect: true
@@ -678,7 +678,7 @@ style:
     active: false
   MaxLineLength:
     active: true
-    maxLineLength: 120
+    maxLineLength: 140
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
