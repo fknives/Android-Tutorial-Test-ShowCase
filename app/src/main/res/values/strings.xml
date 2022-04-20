@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Test ShowCase</string>
+    <string name="app_name_compose">Compose Test ShowCase</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
