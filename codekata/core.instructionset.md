@@ -452,13 +452,12 @@ We can simply implement the interface of ContentRemoteSource. Have it's method s
 Something along the way of:
 
 ```kotlin
-class SuspendingContentRemoteSource {
+class SuspendingContentRemoteSource : ContentRemoteSource {
 
     private var completableDeferred = CompletableDeferred<Unit>()
 
     @Throws(NetworkException::class, ParsingException::class)
-    suspend fun get(): List<Content> {
-       completableDeferred = CompletableDeferred()
+    override suspend fun get(): List<Content> {
        completableDeferred.await()
        return emptyList()
     }

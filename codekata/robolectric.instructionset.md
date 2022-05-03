@@ -35,11 +35,11 @@ And if we run our test class we already get an exception:
 	at org.fnives.test.showcase.storage.SharedPreferencesManagerImpl$Companion.create(SharedPreferencesManagerImpl.kt:65)
 
 So we need to mock the creation of `SharedPreferences`, then the `SharedPreferences` as well.
-Since our classes main purpose is to handle `SharedPreferences`, that doesn't really make sense.
+Since our class's main purpose is to handle `SharedPreferences`, that doesn't really make sense.
 
 Well, I would rather not do that. So then we need to run our tests on a Real Device or Emulator during development.
 Well we could do that, but it just takes that much more time.
-We would also need to to integrate a Testing Farm, or run Emulators in docker with our CI.
+We would also need to integrate a Testing Farm, or run Emulators in docker with our CI.
 It would be good to do that, but sometimes that's just not possible, here is where [Robolectric](http://robolectric.org/) comes in.
 
 >Robolectric is the industry-standard unit testing framework for Android. With Robolectric, your tests run in a simulated Android environment inside a JVM, without the overhead and flakiness of an emulator. Robolectric tests routinely run 10x faster than those on cold-started emulators.
@@ -60,7 +60,7 @@ class CodeKataUserDataLocalStorageTest: KoinTest {
     }
 ```
 
-Okay, now we just need to get a context. With Robolectric we can get our application class the following way:
+Okay, now we just need to get a context as follows:
 
 ```kotlin
 val application = ApplicationProvider.getApplicationContext<Application>()
@@ -101,7 +101,7 @@ Assert.assertEquals(null, actual)
 ### 3. Fake
 
 So if you are doing these instructions in order, you may remember that in our core integration tests, namely `org.fnives.test.showcase.core.integration.CodeKataAuthIntegrationTest` we actually had a Fake implementation of this class.
-But we never verified that the Fake behaves exactly as will the real thing, so let's do that.
+But we never verified that the Fake behaves exactly as the real thing, so let's do that.
 Sadly we can't depend on the `org.fnives.test.showcase.core.integration.fake.CodeKataUserDataLocalStorage` since it's in a test module.
 However with usage of testFixtures we are able to share test classes as we had previously shared an Extension.
 Take a look at `core/src/testFixtures/java`, in package `org.fnives.test.showcase.core.integration.fake` We have a `FakeUserDataLocalStorage`. We can use that since it's in the testFixture.
@@ -116,7 +116,7 @@ To do that we will parametrize our test. Note, it will be different than previou
 Let's modify our annotation and Test Class constructor:
 ```kotlin
 @RunWith(ParameterizedRobolectricTestRunner::class)
-class CodeKataUserDataLocalStorageTest(val userDataLocalStorageFactory: () -> UserDataLocalStorage) : TestKoin {
+class CodeKataUserDataLocalStorageTest(private val userDataLocalStorageFactory: () -> UserDataLocalStorage) : KoinTest {
     //...
 }
 ```
@@ -188,7 +188,7 @@ class CodeKataFavouriteContentLocalStorage: KoinTest
 
 Since Room has their own executors, that could make our tests flaky, since it might get out of sync. Luckily we can switch out these executors, so we do that to make sure our tests run just as we would like them to.
 
-```
+```kotlin
 private val sut by inject<FavouriteContentLocalStorage>()
 private lateinit var testDispatcher: TestDispatcher
 
@@ -213,7 +213,7 @@ The line `TestDatabaseInitialization.overwriteDatabaseInitialization(testDispatc
 
 > Above min API 24
 > DatabaseInitialization could be overwritten in Test module, by declaring the same class in the same package with the same methods. This is an easy way to switch out an implementation.
-> That might not look the cleanest, so an the presented way of switch out the koin-module creating the database is preferred. In other dependency injection / service locator frameworks this should also be possible.
+> That might not look the cleanest, so the presented way of switch out the koin-module creating the database is preferred. In other dependency injection / service locator frameworks this should also be possible.
 
 ### 1. `atTheStartOurDatabaseIsEmpty`
 
@@ -288,7 +288,7 @@ sut.markAsFavourite(ContentId("a"))
 advanceUntilIdle()
 ```
 
-And let's assert that indeed we only get these two updates and no more things happening. To do this we won't wait for the async, but just get it's Completed value, aka ensure it is finished.
+And let's assert that indeed we only get these two updates and nothing more happens. To do this we won't wait for the async, but just get it's Completed value, aka ensure it is finished.
 
 ```kotlin
 Assert.assertEquals(expected, actual.getCompleted())
@@ -355,10 +355,10 @@ If you want to check it out, `FavouriteContentLocalStorageImplInstrumentedTest` 
 We can do much more with Robolectric than just test our Database or SharedPreferences.
 We can write UI Tests as well. It is still not as good as Running tests on a Real Device. But depending on your need it might still be helpful.
 
-> Note we get to the section where I am the least comfortable with, I don't think I have written enough UI Tests yet, so from now on take evrything with a big grain of salt. Feel free to modify your approach to your need. You may also correct me via issues on GitHub, would be a great pleasure to learn for me.
+> Note we get to the section where I am the least comfortable with, I don't think I have written enough UI Tests yet, so from now on take everything with a big grain of salt. Feel free to modify your approach to your need. You may also correct me via issues on GitHub, would be a great pleasure to learn for me.
 
-We can write UI tests that have mocked out UseCases and Business Logic, but I prefer to do a full screen Integration Tests, cause I think my UI changes enough as it is, wouldn't want to maintain one extra testing layer.
-So this will be showcased here. But you should be able to write pure UI tests, if you can follow along this section as well if you choose to do so
+We can write UI tests that have mocked out UseCases and Business Logic, but I prefer to do a full screen Integration Tests, cause I think my UI changes enough already and I wouldn't want to maintain one extra testing layer.
+So this will be showcased here. But you should be able to write pure UI tests, if you can follow along this section as well if you choose not to do so.
 
 ### Setup
 
@@ -368,23 +368,21 @@ First of all we will use [Espresso](https://developer.android.com/training/testi
 We need quite a bunch of setup, but first let's start with our Robot.
 
 #### Robot Pattern
-Robot Pattern presented by Jake Wharton here: https://academy.realm.io/posts/kau-jake-wharton-testing-robots/ and as described Kotlin specific here: https://medium.com/android-bits/espresso-robot-pattern-in-kotlin-fc820ce250f7
-
-There is also a Kotlin specific article [here](https://medium.com/android-bits/espresso-robot-pattern-in-kotlin-fc820ce250f7).
+The Robot Pattern is presented by Jake Wharton [here](https://jakewharton.com/testing-robots/) and there is also a Kotlin specific article describing the same pattern [here](https://medium.com/android-bits/espresso-robot-pattern-in-kotlin-fc820ce250f7).
 
 The idea is to separate the logic of finding your views from the logic of the test.
 So basically if for example a View Id changes, it doesn't make our behaviour change too, so in this case only our Robot will change, while the Test Class stays the same.
 
-For now I will keep the synthetic sugar to the minimum, and just declare my actions and verifications there. Feel free to have as much customization there as you think is necessary to make your tests clearer.
+For now I will keep the syntactic sugar to a minimum, and just declare my actions and verifications there. Feel free to have as much customization there as you think is necessary to make your tests clearer.
 
 Let's open our robot: `org.fnives.test.showcase.ui.codekata.CodeKataLoginRobot`
 
 Here is a list of actions we want to do:
 - we want to be able to type in the username
 - we want to be able to type in the password
-- we want to be able the username or password is indeed shows on the UI
+- we want to be able to verify that the username or password is indeed shown on the UI
 - we want to be able to click on signin
-- we want to be able verify if we are loading or not
+- we want to be able to verify if we are loading or not
 - we want to verify if an error is shown or not
 - we want to check if we navigated to Main or not
 
@@ -427,8 +425,8 @@ fun assertNotLoading() = apply {
 }
 ```
 
-Here we took advantage of Espresso. It helps us by being able to perform action such as click, find Views, such as by ID, and assert View States such as withText.
-To know what Espresso matchers, assertions are there you just have to use them. It's also easy to extend so if one of your views doesn't have that option, then you can create your own matcher.
+Here we took advantage of Espresso. It helps us by being able to perform actions, such as clicks, find Views, such as by ID, and assert View States, such as withText.
+To know what Espresso matches, assertions are there you just have to use them. It's also easy to extend so if one of your views doesn't have that option, then you can create your own matcher.
 
 ##### Next up, we need to verify if we navigated:
 
@@ -442,7 +440,7 @@ fun assertNotNavigatedToHome() = apply {
 }
 ```
 
-Here we use Espresso's intents, with this we can verify if an Intent was sent out we can also Intercept it to send a result back.
+Here we use Espresso's intents, with this we can verify if an Intent was sent out. We can also Intercept it to send a result back.
 
 ##### Lastly let's verify Errors
 For Snackbar we still gonna use Espresso, but we have a helper class for that because we may reuse it in other places.
@@ -519,8 +517,8 @@ fun tearDown() {
 ```
 
 > Idling Resources comes from Espresso. The idea is that anytime we want to interact with the UI via Espresso, it will await any Idling Resource beforehand. This is handy, since our Network component, (OkHttp) uses it's own thread pool, and we would like to have a way to await the responses.
-> Disposable is just a synthetic-sugar way to remove the OkHttpIdling resource from Espresso when we no longer need it.
-> Idling Resources also makes it easy for us, to coordinate coroutines with our network responses, since we can await the IdlingResource and advance the Coroutines afterwards.
+> Disposable is just a syntactic-sugar to remove the OkHttpIdling resource from Espresso when we no longer need it.
+> Idling Resources also make it easy for us, to coordinate coroutines with our network responses, since we can await the IdlingResource and advance the Coroutines afterwards.
 
 ##### Coroutine Test Setup
 We use a TestDispatcher and initialize our database with it as well.
@@ -547,7 +545,7 @@ fun tearDown() {
 
 ##### Finally we initialize our UI
 
-We create our Robot. And we take advantage or `ActivityScenario` to handle the lifecycle of the Activity.
+We create our Robot and we take advantage of `ActivityScenario` to handle the lifecycle of the Activity.
 ```kotlin
 @Before
 fun setup() {
@@ -577,7 +575,7 @@ First we mock our request:
 ```kotlin
 mockServerScenarioSetup.setScenario(
     AuthScenario.Success(password = "alma", username = "banan"),
-    validateArguments = true)
+    validateArguments = true
 )
 ```
 
@@ -639,8 +637,8 @@ robot.assertErrorIsShown(R.string.username_is_invalid)
 Now we verify network errors. First let's setup the response:
 ```kotlin
 mockServerScenarioSetup.setScenario(
-   AuthScenario.InvalidCredentials(username = "alma", password = "banan"),
-    validateArguments = true
+    AuthScenario.InvalidCredentials(username = "alma", password = "banan"),
+	validateArguments = true
 )
 ```
 
@@ -692,7 +690,7 @@ robot.assertErrorIsShown(R.string.something_went_wrong)
 ### Shadows
 We don't have an example to work through Shadows for now, since it might not be necessary for everyday applications. An example will still be added [here](https://github.com/fknives/AndroidTest-ShowCase/pull/57) at some point.
 
-Since Robolectric is a faking of the Android Framework, there are limitations to it's usage. For example if our Application interacts with the device's AudioManager. Robolectric won't hook into our actual operating system and listen to sounce changes or AudioFocus, but use a mocked/Faked class instead.
+Since Robolectric is a faking of the Android Framework, there are limitations to it's usage. For example if our Application interacts with the device's AudioManager, Robolectric won't hook into our actual operating system and listen to sound changes or AudioFocus, but use a mocked/Faked class instead.
 If we need to emulate some kind of interaction with that component, that's when Shadows come in. Example: [ShadowAudioManager](http://robolectric.org/javadoc/4.1/org/robolectric/shadows/ShadowAudioManager.html).
 What happens here is while testing, instead of creating an actual AudioManager, this ShadowAudioManager would be created. We can modify it's implementation or use it like a Fake implementation by feeding it values to be returned.
 That way we can still test our application against the Android API while still having full control over the responses. We can create custom shadows or overwrite existing ones to fit our use cases better.

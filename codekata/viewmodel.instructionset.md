@@ -34,9 +34,9 @@ To add this to our TestClass we need to do the following:
 class CodeKataSplashViewModelTest {
 ```
 
-Note you can use `@RegisterExtension` to register an extension as a field and make it easier to reference.
+Note: you can use `@RegisterExtension` to register an extension as a field and make it easier to reference.
 
-Next let's setup or System Under Test as usual:
+Next let's setup our System Under Test as usual:
 
 ```kotlin
 private lateinit var mockIsUserLoggedInUseCase: IsUserLoggedInUseCase
@@ -60,7 +60,7 @@ whenever(mockIsUserLoggedInUseCase.invoke()).doReturn(false)
 ```
 
 Next up we want to setup our TestObserver for LiveData. This enables us to verify the values sent into a LiveData.
-If a livedata is not observed, its value may not be updated (like a livedata that maps) so it's important to have a proper TestObserver set.
+If a LiveData is not observed, its value may not be updated (like a LiveData that maps) so it's important to have a proper TestObserver set.
 
 
 ```kotin
@@ -108,7 +108,7 @@ val navigateToTestObserver = sut.navigateTo.test()
 testScheduler.advanceTimeBy(100) // we wait only 100ms not 500ms
 ```
 
-And the as verification we just check that no values were submitted.
+And as verification we just check that no values were submitted.
 
 ```kotlin
 navigateToTestObserver.assertNoValue() // this is the way to test that no value has been sent out
@@ -175,6 +175,12 @@ Next we do the action and update the password and advance the scheduler:
 ```kotlin
 sut.onPasswordChanged("a")
 sut.onPasswordChanged("al")
+```
+
+Advance the test scheduler before proceeding with the verifications.
+
+```kotlin
+testScheduler.advanceUntilIdle()
 ```
 
 And at the end we verify the passwordTestObserver was updated and the others weren't:
@@ -343,7 +349,7 @@ navigateToHomeTestObserver.assertNoValue()
 ```
 
 Probably you are already getting bored of writing almost the same tests, and we need 2 more tests just like this only for different Error types.
-So let's not write the same test again, but parametrize this one.
+So let's not write the same test again, but parametrize this one instead.
 First we need to annotate our test, signal that it should be parametrized:
 
 ```kotlin
@@ -355,7 +361,7 @@ fun invalidStatusResultsInErrorState(
 )
 ```
 
-Define the parameters for our tests, the field should be static and notice the field name:
+Define the parameters for our tests, the method should be static and notice its name:
 ```kotlin
 companion object {
 
@@ -408,11 +414,11 @@ navigateToHomeTestObserver.assertValueHistory(Event(Unit))
 ```
 
 ## Conclusion
-That concludes or ViewModel tests.
+That concludes our ViewModel tests.
 As you can see it's not too different from the previous tests, we just needed to add a couple of additional setup and helper classes.
 With this we are able to:
 - Test ViewModels
 - Test LiveData
 - Use TestScheduler for ViewModels
-- How to use Test Extensions
-- How to parametrize tests to reduce duplication
+- Use Test Extensions
+- Parametrize tests to reduce duplication
