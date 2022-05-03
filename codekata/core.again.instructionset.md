@@ -130,11 +130,11 @@ We are still missing `mockServerScenarioSetupExtensions` this will be our TestEx
 `MockServerScenarioSetupExtensions` is declared in the `:network` test module.
 However we are still able to import it.
 
-That's because of [java-test-fixtures](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) plugin. It can be used to depend on a specific test module "textFixtures".
+That's because of [java-test-fixtures](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) plugin. It can be used to depend on a specific test module "testFixtures".
 Check out the build.gradle's to see how that's done.
 This can be useful to share some static Test Data, or extensions in our case.
 
-> Test Fixtrues creates a new sourceset between the production code and the test code. test depends on testFixtures and testFixtures depends on source. So test sees everything in testFixtures and other modules can also use testFixtures. This way we can share extensions or other helper classes.
+> Test Fixtures create a new sourceset between the production code and the test code. test depends on testFixtures and testFixtures depends on source. So test sees everything in testFixtures and other modules can also use testFixtures. This way we can share extensions or other helper classes.
 > An alternative to use test code between modules instead of TestFixtures is to use a separate module, like the :mockserver defined in the project.
 
 So let's add this extension:
@@ -161,14 +161,14 @@ fun withoutSessionTheUserIsNotLoggedIn() = runTest {
     fakeUserDataLocalStorage.session = null
     val actual = isUserLoggedInUseCase.invoke()
 
-    Assertions.assertFalse(actual, "User is expected to be not logged in")
+    Assertions.assertFalse(actual, "User is expected not to be logged in")
     verifyNoInteractions(mockSessionExpirationListener)
 }
 ```
 
 ### 2. `loginSuccess`
 
-Let's test that given good credentials and success response, our user can login in.
+Let's test that given good credentials and success response, our user can log in.
 
 First we setup our mock server and the expected session:
 ```kotlin
@@ -193,7 +193,7 @@ verifyNoInteractions(mockSessionExpirationListener)
 With this, looks like our Integration works correctly. Requests are called, proper response is received, login state is changed.
 
 ### 3. `localInputError`
-We have to expected errors, that are returned even before running requests, if the username or password is empty.
+We have two expected errors, that are returned even before running requests, if the username or password is empty.
 This two tests would be really similar, so let's do Parametrized tests.
 
 First we modify our method signature:
@@ -212,7 +212,7 @@ val actual = isUserLoggedInUseCase.invoke()
 And do our verifications, aka not logged in, not session expired and the correct error:
 ```kotlin
 Assertions.assertEquals(Answer.Success(loginError), answer)
-Assertions.assertFalse(actual, "User is expected to be not logged in")
+Assertions.assertFalse(actual, "User is expected not to be logged in")
 Assertions.assertEquals(null, fakeUserDataLocalStorage.session)
 verifyNoInteractions(mockSessionExpirationListener)
 ```
