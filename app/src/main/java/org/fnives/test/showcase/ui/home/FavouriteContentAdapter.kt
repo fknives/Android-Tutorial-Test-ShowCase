@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.ui.home
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import org.fnives.test.showcase.R
@@ -8,13 +9,16 @@ import org.fnives.test.showcase.databinding.ItemFavouriteContentBinding
 import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.ui.shared.ViewBindingAdapter
+import org.fnives.test.showcase.ui.shared.executor.AsyncTaskExecutor
 import org.fnives.test.showcase.ui.shared.layoutInflater
 import org.fnives.test.showcase.ui.shared.loadRoundedImage
 
 class FavouriteContentAdapter(
     private val listener: OnFavouriteItemClicked,
 ) : ListAdapter<FavouriteContent, ViewBindingAdapter<ItemFavouriteContentBinding>>(
-    DiffUtilItemCallback()
+    AsyncDifferConfig.Builder(DiffUtilItemCallback())
+        .setBackgroundThreadExecutor(AsyncTaskExecutor.iOThreadExecutor)
+        .build()
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewBindingAdapter<ItemFavouriteContentBinding> =

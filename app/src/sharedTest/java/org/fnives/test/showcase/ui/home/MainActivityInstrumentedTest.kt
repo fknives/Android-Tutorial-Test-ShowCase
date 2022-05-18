@@ -8,6 +8,7 @@ import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
 import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
+import org.fnives.test.showcase.testutils.idling.AsyncDiffUtilInstantTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
@@ -37,6 +38,7 @@ class MainActivityInstrumentedTest : KoinTest {
     @JvmField
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
+        .around(AsyncDiffUtilInstantTestRule())
 
     @Before
     fun setup() {
