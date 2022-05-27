@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.idling
+package org.fnives.test.showcase.android.testutil.synchronization.idlingresources
 
 import androidx.annotation.CheckResult
 import androidx.annotation.NonNull
@@ -40,7 +40,7 @@ class OkHttp3IdlingResource private constructor(
          * this instance using `Espresso.registerIdlingResources`.
          */
         @CheckResult
-        @NonNull // Extra guards as a library.
+        @NonNull
         fun create(@NonNull name: String?, @NonNull client: OkHttpClient?): OkHttp3IdlingResource {
             if (name == null) throw NullPointerException("name == null")
             if (client == null) throw NullPointerException("client == null")

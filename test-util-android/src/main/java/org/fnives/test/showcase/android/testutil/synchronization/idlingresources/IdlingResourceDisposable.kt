@@ -1,9 +1,9 @@
-package org.fnives.test.showcase.testutils.idling
+package org.fnives.test.showcase.android.testutil.synchronization.idlingresources
 
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 
-internal class IdlingResourceDisposable(private val idlingResource: IdlingResource) : Disposable {
+class IdlingResourceDisposable(private val idlingResource: IdlingResource) : Disposable {
     override var isDisposed: Boolean = false
         private set
 

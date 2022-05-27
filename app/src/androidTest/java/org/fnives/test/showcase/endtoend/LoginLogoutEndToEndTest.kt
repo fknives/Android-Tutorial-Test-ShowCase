@@ -11,12 +11,12 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.fnives.test.showcase.R
-import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
-import org.fnives.test.showcase.testutils.idling.CompositeDisposable
-import org.fnives.test.showcase.testutils.idling.Disposable
-import org.fnives.test.showcase.testutils.idling.IdlingResourceDisposable
-import org.fnives.test.showcase.testutils.idling.OkHttp3IdlingResource
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.CompositeDisposable
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.Disposable
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.IdlingResourceDisposable
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.OkHttp3IdlingResource
 import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
+import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
 import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.fnives.test.showcase.ui.splash.SplashActivity
 import org.hamcrest.Description

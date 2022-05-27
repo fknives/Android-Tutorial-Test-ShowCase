@@ -33,4 +33,5 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     implementation "androidx.test:core:$androidx_test_version"
     implementation"androidx.test.espresso:espresso-core:$espresso_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 }
