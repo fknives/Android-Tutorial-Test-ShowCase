@@ -1,5 +1,6 @@
-package org.fnives.test.showcase.testutils.configuration
+package org.fnives.test.showcase.android.testutil.snackbar
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso
@@ -8,15 +9,16 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
-import com.google.android.material.R
+import com.google.android.material.R as MaterialR
 import com.google.android.material.snackbar.Snackbar
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class SnackbarVerificationHelper {
+object SnackbarVerificationHelper {
 
-    fun assertIsShownWithText(@StringRes stringResID: Int, doDismiss: Boolean = true) {
-        Espresso.onView(ViewMatchers.withId(R.id.snackbar_text))
+    @SuppressLint("RestrictedApi")
+    fun assertSnackBarIsShownWithText(@StringRes stringResID: Int, doDismiss: Boolean = true) {
+        Espresso.onView(ViewMatchers.withId(MaterialR.id.snackbar_text))
             .check(ViewAssertions.matches(ViewMatchers.withText(stringResID)))
         if (doDismiss) {
             Espresso.onView(ViewMatchers.isAssignableFrom(Snackbar.SnackbarLayout::class.java)).perform(ViewActions.swipeRight())
@@ -24,8 +26,8 @@ class SnackbarVerificationHelper {
         }
     }
 
-    fun assertIsNotShown() {
-        Espresso.onView(ViewMatchers.withId(R.id.snackbar_text)).check(ViewAssertions.doesNotExist())
+    fun assertSnackBarIsNotShown() {
+        Espresso.onView(ViewMatchers.withId(MaterialR.id.snackbar_text)).check(ViewAssertions.doesNotExist())
     }
 
     class LoopMainUntilSnackbarDismissed : ViewAction {

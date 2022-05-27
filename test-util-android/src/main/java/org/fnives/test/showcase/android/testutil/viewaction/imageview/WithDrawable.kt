@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.viewactions
+package org.fnives.test.showcase.android.testutil.viewaction.imageview
 
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
@@ -26,7 +26,7 @@ class WithDrawable(
     override fun matchesSafely(view: View): Boolean {
         val context = view.context
         val tintColor = tint?.let { ContextCompat.getColor(view.context, it) }
-        val expectedBitmap = context.getDrawable(id)?.apply {
+        val expectedBitmap = ContextCompat.getDrawable(context, id)?.apply {
             if (tintColor != null) {
                 setTintList(ColorStateList.valueOf(tintColor))
                 setTintMode(tintMode)

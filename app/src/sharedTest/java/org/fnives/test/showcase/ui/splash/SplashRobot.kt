@@ -5,7 +5,7 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import org.fnives.test.showcase.testutils.viewactions.notIntended
+import org.fnives.test.showcase.android.testutil.intent.notIntended
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.fnives.test.showcase.ui.home.MainActivity
 

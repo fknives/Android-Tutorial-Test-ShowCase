@@ -10,14 +10,13 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import org.fnives.test.showcase.R
-import org.fnives.test.showcase.testutils.configuration.SnackbarVerificationHelper
-import org.fnives.test.showcase.testutils.viewactions.notIntended
+import org.fnives.test.showcase.android.testutil.intent.notIntended
+import org.fnives.test.showcase.android.testutil.snackbar.SnackbarVerificationHelper.assertSnackBarIsNotShown
+import org.fnives.test.showcase.android.testutil.snackbar.SnackbarVerificationHelper.assertSnackBarIsShownWithText
 import org.fnives.test.showcase.ui.home.MainActivity
 import org.hamcrest.core.IsNot.not
 
-class RobolectricLoginRobot(
-    private val snackbarVerificationHelper: SnackbarVerificationHelper = SnackbarVerificationHelper()
-) {
+class RobolectricLoginRobot {
 
     fun setUsername(username: String): RobolectricLoginRobot = apply {
         onView(withId(R.id.user_edit_text))
@@ -55,11 +54,11 @@ class RobolectricLoginRobot(
     }
 
     fun assertErrorIsShown(@StringRes stringResID: Int) = apply {
-        snackbarVerificationHelper.assertIsShownWithText(stringResID)
+        assertSnackBarIsShownWithText(stringResID)
     }
 
     fun assertErrorIsNotShown() = apply {
-        snackbarVerificationHelper.assertIsNotShown()
+        assertSnackBarIsNotShown()
     }
 
     fun assertNavigatedToHome() = apply {

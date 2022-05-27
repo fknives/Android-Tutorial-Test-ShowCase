@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.viewactions
+package org.fnives.test.showcase.android.testutil.viewaction.progressbar
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

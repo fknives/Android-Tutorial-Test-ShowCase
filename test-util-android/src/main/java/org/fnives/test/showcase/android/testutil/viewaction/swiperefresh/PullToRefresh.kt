@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.viewactions
+package org.fnives.test.showcase.android.testutil.viewaction.swiperefresh
 
 import android.view.View
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout

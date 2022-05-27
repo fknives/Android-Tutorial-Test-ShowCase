@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.viewactions
+package org.fnives.test.showcase.android.testutil.intent
 
 import android.content.Intent
 import androidx.test.espresso.intent.Intents.intended
