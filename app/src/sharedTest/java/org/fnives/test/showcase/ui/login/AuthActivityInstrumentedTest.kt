@@ -7,7 +7,7 @@ import org.fnives.test.showcase.R
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
-import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
 import org.junit.Before

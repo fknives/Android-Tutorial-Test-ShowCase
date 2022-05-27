@@ -19,7 +19,7 @@ import org.fnives.test.showcase.testutils.idling.Disposable
 import org.fnives.test.showcase.testutils.idling.IdlingResourceDisposable
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule.Companion.advanceUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.idling.OkHttp3IdlingResource
-import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After

@@ -7,7 +7,7 @@ import androidx.test.runner.intent.IntentStubberRegistry
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
-import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.fnives.test.showcase.ui.home.HomeRobot
 import org.fnives.test.showcase.ui.home.MainActivity

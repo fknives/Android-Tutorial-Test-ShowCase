@@ -6,7 +6,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
-import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogout
 import org.junit.After

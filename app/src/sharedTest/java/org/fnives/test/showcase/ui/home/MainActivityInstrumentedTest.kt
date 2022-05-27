@@ -12,7 +12,7 @@ import org.fnives.test.showcase.testutils.idling.AsyncDiffUtilInstantTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
 import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
-import org.fnives.test.showcase.testutils.safeClose
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.junit.After
 import org.junit.Before
