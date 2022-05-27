@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.testutils.idling
+package org.fnives.test.showcase.android.testutil.synchronization.idlingresources
 
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource

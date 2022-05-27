@@ -6,11 +6,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
 import org.fnives.test.showcase.android.testutil.synchronization.runOnUIAwaitOnCurrent
 import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitIdlingResources
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainDispatcherTestRule : TestRule {

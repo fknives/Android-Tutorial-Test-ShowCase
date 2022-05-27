@@ -10,7 +10,7 @@ import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.DispatcherTestRule
-import org.fnives.test.showcase.testutils.idling.anyResourceIdling
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

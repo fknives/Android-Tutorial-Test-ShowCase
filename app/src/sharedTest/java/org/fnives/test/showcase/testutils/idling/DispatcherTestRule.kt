@@ -3,11 +3,13 @@ package org.fnives.test.showcase.testutils.idling
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
 import org.fnives.test.showcase.android.testutil.synchronization.runOnUIAwaitOnCurrent
 import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitIdlingResources
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DispatcherTestRule : TestRule {
