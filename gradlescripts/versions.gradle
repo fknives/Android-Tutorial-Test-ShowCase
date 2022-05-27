@@ -30,5 +30,5 @@ project.ext {
     testing_json_assert_version = "1.5.0"
     testing_junit4_version = "4.12"
     testing_robolectric_version = "4.7"
-    testing_espresso_version = "3.4.0"
+    espresso_version = "3.4.0"
 }

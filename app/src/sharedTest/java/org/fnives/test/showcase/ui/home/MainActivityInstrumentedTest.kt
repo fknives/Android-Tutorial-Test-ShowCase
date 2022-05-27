@@ -3,6 +3,7 @@ package org.fnives.test.showcase.ui.home
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
@@ -10,9 +11,7 @@ import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshToken
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.AsyncDiffUtilInstantTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
-import org.fnives.test.showcase.testutils.idling.loopMainThreadFor
-import org.fnives.test.showcase.testutils.idling.loopMainThreadUntilIdleWithIdlingResources
-import org.fnives.test.showcase.android.testutil.activity.safeClose
+import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.junit.After
 import org.junit.Before
@@ -175,9 +174,6 @@ class MainActivityInstrumentedTest : KoinTest {
 
         robot.swipeRefresh()
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        loopMainThreadUntilIdleWithIdlingResources()
-        mainDispatcherTestRule.advanceTimeBy(1000L)
-        loopMainThreadFor(1000)
 
         robot
             .assertContainsError()
