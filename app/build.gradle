@@ -110,6 +110,7 @@ dependencies {
     androidTestImplementation testFixtures(project(':core'))
     implementation project(':test-util-shared-robolectric')
     androidTestImplementation project(':test-util-shared-android')
-
+    implementation project(':test-util-android')
+    androidTestImplementation project(':test-util-android')
 }
 

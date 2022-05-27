@@ -5,7 +5,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.listener
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import org.fnives.test.showcase.testutils.runOnUIAwaitOnCurrent
+import org.fnives.test.showcase.android.testutil.synchronization.runOnUIAwaitOnCurrent
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.Description
