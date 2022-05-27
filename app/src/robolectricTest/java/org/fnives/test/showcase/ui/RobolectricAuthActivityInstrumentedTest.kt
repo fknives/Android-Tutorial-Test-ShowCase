@@ -19,7 +19,7 @@ import org.fnives.test.showcase.android.testutil.synchronization.idlingresources
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
-import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule.Companion.advanceUntilIdleWithIdlingResources
+import org.fnives.test.showcase.testutils.idling.DatabaseDispatcherTestRule.Companion.advanceUntilIdleWithIdlingResources
 import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
