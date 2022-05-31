@@ -5,6 +5,7 @@ import androidx.test.espresso.intent.Intents.intended
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
+@Suppress("SwallowedException")
 fun notIntended(matcher: Matcher<Intent>) {
     try {
         intended(matcher)

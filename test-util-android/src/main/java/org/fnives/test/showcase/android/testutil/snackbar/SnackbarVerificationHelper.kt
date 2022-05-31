@@ -9,10 +9,10 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
-import com.google.android.material.R as MaterialR
 import com.google.android.material.snackbar.Snackbar
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import com.google.android.material.R as MaterialR
 
 object SnackbarVerificationHelper {
 

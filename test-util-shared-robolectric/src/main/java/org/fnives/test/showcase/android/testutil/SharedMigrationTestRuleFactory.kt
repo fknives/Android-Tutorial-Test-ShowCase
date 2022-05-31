@@ -6,8 +6,8 @@ import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import org.fnives.test.showcase.android.testutil.robolectric.RobolectricMigrationTestRule
 
-inline fun <reified Database: RoomDatabase> SharedMigrationTestRule(
-    instrumentation: Instrumentation
+inline fun <reified Database : RoomDatabase> SharedMigrationTestRule(
+    instrumentation: Instrumentation,
 ): SharedMigrationTestRule =
     createAndroidClassOrRobolectric(
         androidClassFactory = { androidClass ->
@@ -22,9 +22,9 @@ inline fun <reified Database: RoomDatabase> SharedMigrationTestRule(
         }
     )
 
-inline fun <reified Database: RoomDatabase> SharedMigrationTestRule(
+inline fun <reified Database : RoomDatabase> SharedMigrationTestRule(
     instrumentation: Instrumentation,
-    specs: List<AutoMigrationSpec>
+    specs: List<AutoMigrationSpec>,
 ): SharedMigrationTestRule =
     createAndroidClassOrRobolectric(
         androidClassFactory = { androidClass ->
@@ -40,10 +40,10 @@ inline fun <reified Database: RoomDatabase> SharedMigrationTestRule(
         }
     )
 
-inline fun <reified Database: RoomDatabase> SharedMigrationTestRule(
+inline fun <reified Database : RoomDatabase> SharedMigrationTestRule(
     instrumentation: Instrumentation,
     specs: List<AutoMigrationSpec>,
-    openFactory: SupportSQLiteOpenHelper.Factory
+    openFactory: SupportSQLiteOpenHelper.Factory,
 ): SharedMigrationTestRule =
     createAndroidClassOrRobolectric(
         androidClassFactory = { androidClass ->
@@ -62,7 +62,7 @@ inline fun <reified Database: RoomDatabase> SharedMigrationTestRule(
 
 fun createAndroidClassOrRobolectric(
     androidClassFactory: (Class<*>) -> Any,
-    robolectricFactory: () -> SharedMigrationTestRule
+    robolectricFactory: () -> SharedMigrationTestRule,
 ): SharedMigrationTestRule {
     val androidClass = getAndroidClass()
     return if (androidClass == null) {
@@ -72,6 +72,7 @@ fun createAndroidClassOrRobolectric(
     }
 }
 
+@Suppress("SwallowedException")
 private fun getAndroidClass() = try {
     Class.forName("org.fnives.test.showcase.android.testutil.AndroidMigrationTestRule")
 } catch (classNotFoundException: ClassNotFoundException) {

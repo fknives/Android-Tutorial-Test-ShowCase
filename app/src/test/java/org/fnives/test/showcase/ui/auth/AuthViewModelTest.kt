@@ -44,6 +44,11 @@ internal class AuthViewModelTest {
     @DisplayName("GIVEN initialized viewModel WHEN observed THEN loading false other fields are empty")
     @Test
     fun initialSetup() {
+        var a = ""
+        repeat(1200 / 2) {
+            a += "a "
+        }
+        System.err.println(a+"b")
         val usernameTestObserver = sut.username.test()
         val passwordTestObserver = sut.password.test()
         val loadingTestObserver = sut.loading.test()

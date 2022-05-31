@@ -4,10 +4,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.runner.intent.IntentStubberRegistry
+import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
-import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.fnives.test.showcase.ui.home.HomeRobot
 import org.fnives.test.showcase.ui.home.MainActivity
@@ -19,7 +19,7 @@ object SetupAuthenticationState : KoinTest {
     fun setupLogin(
         mainDispatcherTestRule: MainDispatcherTestRule,
         mockServerScenarioSetup: MockServerScenarioSetup,
-        resetIntents: Boolean = true
+        resetIntents: Boolean = true,
     ) {
         resetIntentsIfNeeded(resetIntents) {
             mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "a", password = "b"))
@@ -40,7 +40,7 @@ object SetupAuthenticationState : KoinTest {
 
     fun setupLogout(
         mainDispatcherTestRule: MainDispatcherTestRule,
-        resetIntents: Boolean = true
+        resetIntents: Boolean = true,
     ) {
         resetIntentsIfNeeded(resetIntents) {
             val activityScenario = ActivityScenario.launch(MainActivity::class.java)

@@ -8,9 +8,9 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import org.fnives.test.showcase.R
+import org.fnives.test.showcase.android.testutil.intent.notIntended
 import org.fnives.test.showcase.android.testutil.snackbar.SnackbarVerificationHelper.assertSnackBarIsNotShown
 import org.fnives.test.showcase.android.testutil.snackbar.SnackbarVerificationHelper.assertSnackBarIsShownWithText
-import org.fnives.test.showcase.android.testutil.intent.notIntended
 import org.fnives.test.showcase.ui.home.MainActivity
 import org.hamcrest.core.IsNot
 
