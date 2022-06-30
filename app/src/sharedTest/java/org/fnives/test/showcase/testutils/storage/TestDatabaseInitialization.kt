@@ -11,6 +11,9 @@ import org.koin.dsl.module
 
 /**
  * Reloads the Database Koin module, so it uses the inMemory database with the switched out Executors.
+ *
+ * This is needed so in AndroidTests not a real File based device is used.
+ * This speeds tests up, and isolates them better, there will be no junk in the Database file from previous tests.
  */
 object TestDatabaseInitialization {
 
