@@ -132,7 +132,7 @@ This is great if you want to have End-to-End tests that follow each other, but s
 We will check if koin is initialized, if it isn't then we simply initialize it:
 ```kotlin
 ...
-TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
+Intents.init()
 if (GlobalContext.getOrNull() == null) {
     val application = ApplicationProvider.getApplicationContext<TestShowcaseApplication>()
     val baseUrl = BaseUrl(BuildConfig.BASE_URL)
@@ -140,7 +140,8 @@ if (GlobalContext.getOrNull() == null) {
         androidContext(application)
         modules(createAppModules(baseUrl))
     }
-}
+} // needs to be before the Database overwriting
+val dispatcher = StandardTestDispatcher()
 ...
 ```
 
