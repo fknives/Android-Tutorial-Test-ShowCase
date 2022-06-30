@@ -12,7 +12,7 @@ In this testing instruction set you will learn how to write simple tests running
 - We will use RuleChains to order our Test Rules.
 
 ## Login UI Test
-Instead of writing new tests from scratch, we will modify our existing Robolectric tests so they can be run on a Real Android device as well.
+Instead of writing new tests from scratch, we will modify our existing Robolectric tests so they can be run on a Real Android device as well.N
 For this we already have a `sharedTest` package.
 
 Our classes will be `CodeKataAuthActivitySharedTest` and `CodeKataSharedRobotTest`.
@@ -132,7 +132,7 @@ This is great if you want to have End-to-End tests that follow each other, but s
 We will check if koin is initialized, if it isn't then we simply initialize it:
 ```kotlin
 ...
-TestDatabaseInitialization.overwriteDatabaseInitialization(dispatcher)
+Intents.init()
 if (GlobalContext.getOrNull() == null) {
     val application = ApplicationProvider.getApplicationContext<TestShowcaseApplication>()
     val baseUrl = BaseUrl(BuildConfig.BASE_URL)
@@ -140,7 +140,8 @@ if (GlobalContext.getOrNull() == null) {
         androidContext(application)
         modules(createAppModules(baseUrl))
     }
-}
+} // needs to be before the Database overwriting
+val dispatcher = StandardTestDispatcher()
 ...
 ```
 
@@ -345,6 +346,10 @@ You might be thinking, then why did we go through how to do these stuff manually
 - Some actions might be too specific, and you have to manually adjust the espresso test for it to work.
 
 All in all, it is a good tool to get started on your test, but you probably still need to do manual modifications on it. So personally I would suggest them for bigger tests, which would take too much time manually, and then do the adjustments while running the tests.
+
+> **Note: If you try it now, it will state that it is not compatible with Compose Projects.**
+> So first switch to branch `TEST-HERE-Record-Espresso-Test` or commit `694d1bf0e71e40e80de849a3a6bb5e8a3430e348`.
+> This is the last commit that still had no compose in it.
 
 Okay, but how do we do it? As it's written on the site, we select `Run > Record Espresso Test`.
 This will start the application on your device and you can do interactions with it. Such as writing into a text input.
