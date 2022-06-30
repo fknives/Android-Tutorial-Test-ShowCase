@@ -303,28 +303,66 @@ private val testDispatcher: TestDispatcher get() = mainDispatcherRule.testDispat
 ```
 >Notice we are using get function! so we don't access the dispatcher before our tests are run!
 
-Not all we need to do is remove our previous dispatcher setups.
+Now all we need to do is remove our previous dispatcher setups.
+
+##### MockNetwork and Koin reset Rule
+
+For setting up the MockServer and reseting the Koin, there is already a rule prepared for us: `org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule`.
+
+We will use this also to decluter our `setup` and `tearDown` function.
+
+First let's remove what's no longer necessary:
+```kotlin
+@Before
+fun setup() {
+    robot = CodeKataSharedRobotTest()
+    activityScenario = ActivityScenario.launch(AuthActivity::class.java)
+    activityScenario.moveToState(Lifecycle.State.RESUMED)
+}
+
+@After
+fun tearDown() {
+    activityScenario.safeClose()
+}
+```
+
+And apply our rule:
+```kotlin
+@Rule
+@JvmField
+val mockServerAndKoinRule = MockServerScenarioSetupResetingTestRule()
+private val mockServerScenarioSetup: MockServerScenarioSetup get() = mockServerAndKoinRule.mockServerScenarioSetup
+```
 
 ##### Rule order
 
-What order our Rules are applied? Well, frankly I have no idea, that's because we can be explicit about our Rule's order, via RuleChain, so I always use that.
+What order our Rules are applied? Well, frankly I have no idea, that's because we can be explicit about our Rule's order, via RuleChain, so I always use that instead.
+> Note our rule order is important, because Database and MockServer should happen after Koin reset.
+
 I recommend doing this, so it's easier to read your test classes and being explicit what happens in what order.
 
 So how would that look like:
 ```kotlin
+private lateinit var activityScenario: ActivityScenario<AuthActivity>
+private lateinit var robot: CodeKataSharedRobotTest
+
+// rules
 private val intentRule = CodeKataIntentInitRule()
 private val mainDispatcherRule = CodeKataMainDispatcherRule()
 private val testDispatcher: TestDispatcher get() = mainDispatcherRule.testDispatcher
+private val mockServerAndKoinRule = MockServerScenarioSetupResetingTestRule()
+private val mockServerScenarioSetup: MockServerScenarioSetup get() = mockServerAndKoinRule.mockServerScenarioSetup
 
 @Rule
 @JvmField
 val ruleOrder: RuleChain = RuleChain.outerRule(intentRule)
+    .around(mockServerAndKoinRule)
     .around(mainDispatcherRule)
 ```
 
-> Notice: we removed the Rule annotations, and only have one Rule, the RuleChain.
+> Notice: we removed the Rule annotations from the others, and only have one Rule, the RuleChain.
 
-The Rule chain starts our `intentRule` first, then the `mainDispatcherRule`, when cleaning up, first `mainDispatcherRule` will clean up then `intentRule`. That's because of the Statements, since one statement calls the other's evaluation. So the `IntentRule` received now the `mainDispatcherRule`'s statement and it calls evaluate on it.
+The Rule chain starts our `intentRule` first, then the `mockServerAndKoinRule` and `mainDispatcherRule`, when cleaning up, first `mainDispatcherRule` will clean up, then the `mockServerAndKoinRule` and lastly then `intentRule`. That's because of the Statements, since one statement calls the other's evaluation. So the `IntentRule` received now the `mockServerAndKoinRule`'s statement, and the `mockServerAndKoinRule` received the `mainDispatcherRule`'s statement and they call evaluate on it.
 
 *TLDR: The rules are applied in the order in which they are added to the RuleChain*
 
