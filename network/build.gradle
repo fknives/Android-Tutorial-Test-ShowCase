@@ -27,6 +27,6 @@ dependencies {
     applyNetworkTestDependenciesTo(this)
 
     testFixturesApi project(':mockserver')
-    testFixturesApi "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    testFixturesApi "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
     testFixturesApi "io.insert-koin:koin-test-junit5:$koin_version"
 }

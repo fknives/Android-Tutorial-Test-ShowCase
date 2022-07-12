@@ -26,7 +26,7 @@ project.ext {
     arch_core_version = "2.1.0"
     testing_livedata_version = "1.2.0"
     testing_kotlin_mockito_version = "4.0.0"
-    testing_junit5_version = "5.7.0"
+    junit5_version = "5.7.0"
     testing_json_assert_version = "1.5.0"
     testing_junit4_version = "4.12"
     testing_robolectric_version = "4.7"

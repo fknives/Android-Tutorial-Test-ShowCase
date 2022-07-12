@@ -3,11 +3,11 @@ package org.fnives.test.showcase.ui.auth
 import com.jraska.livedata.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
 import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.shared.Answer
-import org.fnives.test.showcase.testutils.InstantExecutorExtension
 import org.fnives.test.showcase.testutils.TestMainDispatcher
 import org.fnives.test.showcase.ui.shared.Event
 import org.junit.jupiter.api.BeforeEach

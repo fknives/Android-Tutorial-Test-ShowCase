@@ -107,10 +107,11 @@ dependencies {
     androidTestImplementation project(':mockserver')
 
     testImplementation testFixtures(project(':core'))
+    testImplementation project(':test-util-junit5-android')
     androidTestImplementation testFixtures(project(':core'))
-    implementation project(':test-util-shared-robolectric')
+    testImplementation project(':test-util-shared-robolectric')
     androidTestImplementation project(':test-util-shared-android')
-    implementation project(':test-util-android')
+    testImplementation project(':test-util-android')
     androidTestImplementation project(':test-util-android')
 }
 
