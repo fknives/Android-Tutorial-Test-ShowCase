@@ -106,17 +106,13 @@ dependencies {
 
     androidTestImplementation project(':mockserver')
 
+    testImplementation project(':test-util-junit5-android')
+    testImplementation project(':test-util-shared-robolectric')
+    testImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-shared-android')
+
     testImplementation testFixtures(project(':core'))
-//    testImplementation project(':test-util-junit5-android')
-    testImplementation "org.fnives.android.testutil:android-unit-junit5:1.0.0"
     androidTestImplementation testFixtures(project(':core'))
-//    testImplementation project(':test-util-shared-robolectric')
-    testImplementation "org.fnives.android.testutil:shared-robolectric:1.0.0"
-//    androidTestImplementation project(':test-util-shared-android')
-    androidTestImplementation "org.fnives.android.testutil:shared-android:1.0.0"
-//    testImplementation project(':test-util-android')
-    testImplementation "org.fnives.android.testutil:android:1.0.0"
-//    androidTestImplementation project(':test-util-android')
-    androidTestImplementation "org.fnives.android.testutil:android:1.0.0"
 }
 
