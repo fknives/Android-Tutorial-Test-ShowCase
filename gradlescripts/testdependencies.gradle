@@ -28,8 +28,8 @@ project.ext {
      */
 
     def propertyOrNull = { key ->
-        if (hasProperty(key)) {
-            return property(key)
+        if (extensions.extraProperties.has(key)) {
+            return extensions.extraProperties.get(key)
         } else {
             return null
         }
@@ -37,22 +37,22 @@ project.ext {
 
     // ------------------VERSIONS------------------
     def testing_junit5_version = propertyOrNull('junit5_version') ?: "5.7.0"
-    def testing_junit4_version = propertyOrNull('juni4_version') ?: "4.13.2"
+    def testing_junit4_version = propertyOrNull('junit4_version') ?: "4.13.2"
     def testing_robolectric_version = propertyOrNull('robolectric_version') ?: "4.7"
     def testing_androidx_code_version = propertyOrNull('androidx_test_version') ?: "1.4.0"
     def testing_androidx_junit_version = propertyOrNull('androidx_junit_version') ?: "1.1.3"
     def testing_espresso_version = propertyOrNull('espresso_version') ?: "3.4.0"
     def testing_androidx_arch_core_version = propertyOrNull('arch_core_version') ?: "2.1.0"
     def test_coroutines_version = propertyOrNull('coroutines_version') ?: "1.6.0"
-    def testing_kotlin_mockito_version = propertyOrNull('mockito_version') ?: "3.1.0"
+    def testing_kotlin_mockito_version = propertyOrNull('mockito_version') ?: "4.0.0"
     def testing_koin_version = propertyOrNull('koin_version') ?: "3.1.2"
     def testing_json_assert_version = propertyOrNull('json_assert_version') ?: "1.5.0"
     def testing_okhttp3 = propertyOrNull('okhttp_version') ?: "4.9.3"
     def testing_turbine_version = propertyOrNull('turbine_version') ?: "0.7.0"
     def testing_androidx_room_version = propertyOrNull('room_version') ?: "2.4.2"
     def testing_livedata_version = propertyOrNull('testing_livedata_version') ?: "1.2.0"
-    def testing_compose_version = propertyOrNull('compose_version') ?: "1.1.0"
-    def testing_hamcrest_version = propertyOrNull('hamcrest_version')?: "2.2"
+    def testing_compose_version = propertyOrNull('androidx_compose_version') ?: "1.1.0"
+    def testing_hamcrest_version = propertyOrNull('hamcrest_version') ?: "2.2"
 
     // ------------------PRIVATE------------------
     // JUni4 + Espresso + Room

@@ -14,21 +14,24 @@ project.ext {
     androidx_compose_constraintlayout_version = "1.0.0"
 
     coroutines_version = "1.6.0"
-    turbine_version = "0.7.0"
     koin_version = "3.1.2"
     coil_version = "1.4.0"
     retrofit_version = "2.9.0"
     okhttp_version = "4.9.3"
     moshi_version = "1.13.0"
 
+    // testing versions
+    turbine_version = "0.7.0"
     androidx_test_version = "1.4.0"
-    testing_androidx_junit_version = "1.1.3"
+    androidx_junit_version = "1.1.3"
     arch_core_version = "2.1.0"
     testing_livedata_version = "1.2.0"
-    testing_kotlin_mockito_version = "4.0.0"
+    mockito_version = "4.0.0"
+    println("MYLOG versions set")
     junit5_version = "5.7.0"
-    testing_json_assert_version = "1.5.0"
-    testing_junit4_version = "4.13.2"
-    testing_robolectric_version = "4.7"
+    json_assert_version = "1.5.0"
+    junit4_version = "4.13.2"
+    robolectric_version = "4.7"
     espresso_version = "3.4.0"
+    hamcrest_version = "2.2"
 }
