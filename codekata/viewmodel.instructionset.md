@@ -25,12 +25,12 @@ Our test class is `org.fnives.test.showcase.ui.splash.CodeKataSplashViewModelTes
 
 To properly test LiveData we need to make them instant, meaning as soon as the value is set the observers are updated. To Do this we can use a `InstantExecutorExtension`.
 
-Also We need to set MainDispatcher as TestDispatcher, for this we can use the `TestMainDispatcher` Extension.
+Also We need to set MainDispatcher as TestDispatcher, for this we can use the `StandardTestMainDispatcher` Extension.
 
 To add this to our TestClass we need to do the following:
 
 ```kotlin
-@ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@ExtendWith(InstantExecutorExtension::class, StandardTestMainDispatcher::class)
 class CodeKataSplashViewModelTest {
 ```
 
@@ -41,7 +41,7 @@ Next let's set up our System Under Test as usual:
 ```kotlin
 private lateinit var mockIsUserLoggedInUseCase: IsUserLoggedInUseCase
 private lateinit var sut: SplashViewModel
-private val testScheduler get() = TestMainDispatcher.testDispatcher.scheduler // just a shortcut
+private val testScheduler get() = StandardTestMainDispatcher.testDispatcher.scheduler // just a shortcut
 
 @BeforeEach
 fun setUp() {
@@ -69,7 +69,7 @@ val navigateToTestObserver = sut.navigateTo.test()
 
 Since the action takes place in the ViewModel constructor, instead of additional calls, we need to simulate that time has elapsed.
 
-Note: the `TestMainDispatcher` Extension we are using sets `StandardTestDispatcher` as the dispatcher for `Dispatcher.Main`, that's why our test is linear and not shaky.
+Note: the `StandardTestMainDispatcher` Extension we are using sets `StandardTestDispatcher` as the dispatcher for `Dispatcher.Main`, that's why our test is linear and not shaky.
 
 ```kotlin
 testScheduler.advanceTimeBy(501)

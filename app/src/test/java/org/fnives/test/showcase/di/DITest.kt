@@ -2,7 +2,7 @@ package org.fnives.test.showcase.di
 
 import android.content.Context
 import org.fnives.test.showcase.model.network.BaseUrl
-import org.fnives.test.showcase.testutils.TestMainDispatcher
+import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.fnives.test.showcase.ui.auth.AuthViewModel
 import org.fnives.test.showcase.ui.home.MainViewModel
 import org.fnives.test.showcase.ui.splash.SplashViewModel
@@ -20,7 +20,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@ExtendWith(TestMainDispatcher::class)
+@ExtendWith(StandardTestMainDispatcher::class)
 class DITest : KoinTest {
 
     private val authViewModel by inject<AuthViewModel>()

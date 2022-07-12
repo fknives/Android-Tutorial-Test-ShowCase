@@ -8,7 +8,7 @@ import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.shared.Answer
-import org.fnives.test.showcase.testutils.TestMainDispatcher
+import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.fnives.test.showcase.ui.shared.Event
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -27,13 +27,13 @@ import org.mockito.kotlin.whenever
 import java.util.stream.Stream
 
 @Suppress("TestFunctionName")
-@ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@ExtendWith(InstantExecutorExtension::class, StandardTestMainDispatcher::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class AuthViewModelTest {
 
     private lateinit var sut: AuthViewModel
     private lateinit var mockLoginUseCase: LoginUseCase
-    private val testScheduler get() = TestMainDispatcher.testDispatcher.scheduler
+    private val testScheduler get() = StandardTestMainDispatcher.testDispatcher.scheduler
 
     @BeforeEach
     fun setUp() {

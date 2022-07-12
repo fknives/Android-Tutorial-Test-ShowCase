@@ -3,20 +3,20 @@ package org.fnives.test.showcase.ui.auth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
 import org.fnives.test.showcase.core.login.LoginUseCase
-import org.fnives.test.showcase.testutils.TestMainDispatcher
+import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.mock
 
-@ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@ExtendWith(InstantExecutorExtension::class, StandardTestMainDispatcher::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class CodeKataAuthViewModel {
 
     private lateinit var sut: AuthViewModel
     private lateinit var mockLoginUseCase: LoginUseCase
-    private val testScheduler get() = TestMainDispatcher.testDispatcher.scheduler
+    private val testScheduler get() = StandardTestMainDispatcher.testDispatcher.scheduler
 
     @BeforeEach
     fun setUp() {
