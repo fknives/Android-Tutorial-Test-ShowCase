@@ -170,5 +170,59 @@ Open the [shared tests instruction set](./codekata/sharedtests.instructionset.md
 In this section we will see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
 We will also see how to write AndroidTest End to End Tests.
 
+
+## Util classes
+
+Additional modules have been added prefixed with test-util.
+
+These contain all the reusable Test Util classes used in the showcase.
+
+The Testing setup is extracted into a separate gradle script, which with some modifications, you should be able to easily add to your own project.
+
+To use the TestUtil classes, you will need to add the GitHub Repository as a source for dependencies:
+
+```groovy
+// top level build.gradle
+allprojects {
+    repositories {
+        // ...
+        maven {
+            url "https://maven.pkg.github.com/fknives/AndroidTest-ShowCase"
+            credentials {
+                username = project.findProperty("GITHUB_USERNAME") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("GITHUB_TOKEN") ?: System.getenv("GITHUB_TOKEN")
+            }
+            // https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
+        }
+    }
+}
+// OR
+// top level build.gradle.kts
+allprojects {
+    repositories {
+        // ...
+        maven {
+            url = uri("https://maven.pkg.github.com/fknives/AndroidTest-ShowCase")
+            credentials {
+                username = extra.properties["GITHUB_USERNAME"] as String? ?: System.getenv("GITHUB_USERNAME")
+                password = extra.properties["GITHUB_TOKEN"] as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+            // https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
+        }
+    }
+}
+```
+
+*Latest version:*![Latest release](https://img.shields.io/github/v/release/fknives/AndroidTest-ShowCase)
+
+and then you can use the following dependencies:
+```groovy
+testImplementation "org.fnives.android.testutil:android-unit-junit5:<latestVersion>"   // test-util-junit5-android
+testImplementation "org.fnives.android.testutil:shared-robolectric:<latestVersion>"    // test-util-shared-robolectric
+testImplementation "org.fnives.android.testutil:android:<latestVersion>"               // test-util-android
+androidTestImplementation "org.fnives.android.testutil:android:<latestVersion>"        // test-util-android
+androidTestImplementation "org.fnives.android.testutil:shared-android:<latestVersion>" // test-util-shared-android
+```
+
 ## License
 [License file](./LICENSE)

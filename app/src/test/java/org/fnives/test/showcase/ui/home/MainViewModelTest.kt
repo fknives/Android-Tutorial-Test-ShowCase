@@ -4,6 +4,8 @@ import com.jraska.livedata.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
+import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.FetchContentUseCase
 import org.fnives.test.showcase.core.content.GetAllContentUseCase
@@ -14,22 +16,20 @@ import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.model.content.ImageUrl
 import org.fnives.test.showcase.model.shared.Resource
-import org.fnives.test.showcase.testutils.InstantExecutorExtension
-import org.fnives.test.showcase.testutils.TestMainDispatcher
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("TestFunctionName")
-@ExtendWith(InstantExecutorExtension::class, TestMainDispatcher::class)
+@ExtendWith(InstantExecutorExtension::class, StandardTestMainDispatcher::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MainViewModelTest {
 
@@ -39,7 +39,7 @@ internal class MainViewModelTest {
     private lateinit var mockFetchContentUseCase: FetchContentUseCase
     private lateinit var mockAddContentToFavouriteUseCase: AddContentToFavouriteUseCase
     private lateinit var mockRemoveContentFromFavouritesUseCase: RemoveContentFromFavouritesUseCase
-    private val testScheduler get() = TestMainDispatcher.testDispatcher.scheduler
+    private val testScheduler get() = StandardTestMainDispatcher.testDispatcher.scheduler
 
     @BeforeEach
     fun setUp() {

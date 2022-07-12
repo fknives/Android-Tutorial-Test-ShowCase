@@ -4,13 +4,13 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
 import org.fnives.test.showcase.compose.screen.AppNavigation
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
-import org.fnives.test.showcase.testutils.idling.DispatcherTestRule
-import org.fnives.test.showcase.testutils.idling.anyResourceIdling
+import org.fnives.test.showcase.testutils.idling.DatabaseDispatcherTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +27,7 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
-    private val dispatcherTestRule = DispatcherTestRule()
+    private val dispatcherTestRule = DatabaseDispatcherTestRule()
     private lateinit var robot: ComposeLoginRobot
     private lateinit var navigationRobot: ComposeNavigationRobot
 

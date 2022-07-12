@@ -1,0 +1,44 @@
+apply plugin: "maven-publish"
+
+def testUtilVersion = "1.0.1"
+if (!extensions.extraProperties.has("artifactId")) {
+    throw IllegalStateException("ext.artifactId is not set while applying deploy script")
+}
+def testUtilGroupId = "org.fnives.android.testutil"
+def testUtilArtifactId = extensions.extraProperties.get("artifactId")
+
+task publishToGitHub(dependsOn: "publishMavenAarPublicationToGitHubPackagesRepository") {
+    group = "Publishing"
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            mavenAar(MavenPublication) {
+                from components.release
+
+                groupId "$testUtilGroupId"
+                println("$testUtilArtifactId")
+                version "$testUtilVersion"
+                artifactId "$testUtilArtifactId"
+                artifact sourcesJar
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/fknives/AndroidTest-ShowCase")
+                credentials {
+                    username = System.getenv("GITHUB_USERNAME")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
+}

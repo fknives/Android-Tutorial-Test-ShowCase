@@ -14,7 +14,7 @@ dependencies {
     api "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     api "com.squareup.okhttp3:okhttp-tls:$okhttp_version"
 
-    implementation "org.skyscreamer:jsonassert:$testing_json_assert_version"
-    implementation "junit:junit:$testing_junit4_version"
+    implementation "org.skyscreamer:jsonassert:$json_assert_version"
+    implementation "junit:junit:$junit4_version"
 
 }

@@ -20,15 +20,7 @@ dependencies {
     api project(":model")
     implementation project(":network")
 
-    testImplementation "io.insert-koin:koin-test-junit5:$koin_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
-    testImplementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    testImplementation "app.cash.turbine:turbine:$turbine_version"
-
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$testing_junit5_version"
+    applyCoreTestDependenciesTo(this)
 
     testImplementation project(':mockserver')
     testFixturesApi testFixtures(project(':network'))

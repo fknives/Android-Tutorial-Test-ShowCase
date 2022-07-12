@@ -19,11 +19,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.fnives.test.showcase.R
+import org.fnives.test.showcase.android.testutil.intent.notIntended
+import org.fnives.test.showcase.android.testutil.viewaction.imageview.WithDrawable
+import org.fnives.test.showcase.android.testutil.viewaction.swiperefresh.PullToRefresh
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.FavouriteContent
-import org.fnives.test.showcase.testutils.viewactions.PullToRefresh
-import org.fnives.test.showcase.testutils.viewactions.WithDrawable
-import org.fnives.test.showcase.testutils.viewactions.notIntended
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.hamcrest.Matchers.allOf
 

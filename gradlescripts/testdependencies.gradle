@@ -1,0 +1,148 @@
+project.ext {
+
+    /*
+     ------------------USAGE------------------
+     add line in root build.gradle:
+     apply from: 'gradlescripts/testdependencies.gradle' (this file)
+     then in your modules you can use:
+
+     ------------------NETWORK(Java Module)------------------
+     dependencies {
+       applyNetworkTestDependenciesTo(this)
+     }
+
+     ------------------CORE(Java Module)------------------
+     dependencies {
+       applyCoreTestDependenciesTo(this)
+     }
+
+     ------------------APP(Android Module)------------------
+     dependencies {
+       applyAppTestDependenciesTo(this)
+       applyComposeTestDependenciesTo(this) // if you are using compose
+     }
+
+     ------------------VERSIONS------------------
+     versions try to get the global value, if not found they fall back to some defaults.
+     You can find them just below
+     */
+
+    def propertyOrNull = { key ->
+        if (extensions.extraProperties.has(key)) {
+            return extensions.extraProperties.get(key)
+        } else {
+            return null
+        }
+    }
+
+    // ------------------VERSIONS------------------
+    def testing_junit5_version = propertyOrNull('junit5_version') ?: "5.7.0"
+    def testing_junit4_version = propertyOrNull('junit4_version') ?: "4.13.2"
+    def testing_robolectric_version = propertyOrNull('robolectric_version') ?: "4.7"
+    def testing_androidx_code_version = propertyOrNull('androidx_test_version') ?: "1.4.0"
+    def testing_androidx_junit_version = propertyOrNull('androidx_junit_version') ?: "1.1.3"
+    def testing_espresso_version = propertyOrNull('espresso_version') ?: "3.4.0"
+    def testing_androidx_arch_core_version = propertyOrNull('arch_core_version') ?: "2.1.0"
+    def test_coroutines_version = propertyOrNull('coroutines_version') ?: "1.6.0"
+    def testing_kotlin_mockito_version = propertyOrNull('mockito_version') ?: "4.0.0"
+    def testing_koin_version = propertyOrNull('koin_version') ?: "3.1.2"
+    def testing_json_assert_version = propertyOrNull('json_assert_version') ?: "1.5.0"
+    def testing_okhttp3 = propertyOrNull('okhttp_version') ?: "4.9.3"
+    def testing_turbine_version = propertyOrNull('turbine_version') ?: "0.7.0"
+    def testing_androidx_room_version = propertyOrNull('room_version') ?: "2.4.2"
+    def testing_livedata_version = propertyOrNull('testing_livedata_version') ?: "1.2.0"
+    def testing_compose_version = propertyOrNull('androidx_compose_version') ?: "1.1.0"
+    def testing_hamcrest_version = propertyOrNull('hamcrest_version') ?: "2.2"
+
+    // ------------------PRIVATE------------------
+    // JUni4 + Espresso + Room
+    def androidSpecificTestDependencies = [
+            "junit:junit:$testing_junit4_version",
+
+            "androidx.room:room-testing:$testing_androidx_room_version",
+
+            "com.jraska.livedata:testing-ktx:$testing_livedata_version",
+
+            "androidx.test:core:$testing_androidx_code_version",
+            "androidx.test:runner:$testing_androidx_code_version",
+
+            "androidx.test.ext:junit:$testing_androidx_junit_version",
+
+            "androidx.test.espresso:espresso-core:$testing_espresso_version",
+            "androidx.test.espresso:espresso-intents:$testing_espresso_version",
+            "androidx.test.espresso:espresso-contrib:$testing_espresso_version",
+            "org.hamcrest:hamcrest:$testing_hamcrest_version",
+
+            "androidx.arch.core:core-testing:$testing_androidx_arch_core_version",
+    ]
+
+    // ------------------PRIVATE------------------
+    def applyStandardTestDependenciesTo = { module ->
+        module.dependencies {
+            // coroutine testing
+            testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
+
+            // mockito, mocking library
+            testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
+
+            testImplementation "io.insert-koin:koin-test-junit5:$testing_koin_version"
+            // junit5
+            testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+            testImplementation "org.junit.jupiter:junit-jupiter-params:$testing_junit5_version"
+            testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+        }
+    }
+
+    // ------------------NETWORK------------------
+    applyNetworkTestDependenciesTo = { module ->
+        applyStandardTestDependenciesTo(module)
+
+        module.dependencies {
+            testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+            // JSON Assert
+            testImplementation "org.skyscreamer:jsonassert:$testing_json_assert_version"
+
+            // mockwebserver + https support
+            testImplementation "com.squareup.okhttp3:mockwebserver:$testing_okhttp3"
+            testImplementation "com.squareup.okhttp3:okhttp-tls:$testing_okhttp3"
+        }
+    }
+
+    // ------------------CORE------------------
+    applyCoreTestDependenciesTo = { module ->
+        applyStandardTestDependenciesTo(module)
+
+        module.dependencies {
+            // turbine, flow testing
+            testImplementation "app.cash.turbine:turbine:$testing_turbine_version"
+        }
+    }
+
+    // ------------------APP------------------
+    applyAppTestDependenciesTo = { module ->
+        applyStandardTestDependenciesTo(module)
+
+        module.dependencies {
+            testImplementation "org.robolectric:robolectric:$testing_robolectric_version"
+            testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
+
+            androidSpecificTestDependencies.forEach { dependency ->
+                testImplementation dependency
+                androidTestImplementation dependency
+            }
+
+            androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
+            androidTestImplementation "io.insert-koin:koin-test-junit5:$testing_koin_version"
+            androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
+        }
+    }
+
+    // ------------------COMPOSE------------------
+    applyComposeTestDependenciesTo = { module ->
+        module.dependencies {
+            testImplementation "androidx.compose.ui:ui-test-junit4:$testing_compose_version"
+            androidTestImplementation "androidx.compose.ui:ui-test-junit4:$testing_compose_version"
+            debugImplementation "androidx.compose.ui:ui-test-manifest:$testing_compose_version"
+        }
+    }
+}

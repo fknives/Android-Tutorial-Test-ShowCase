@@ -3,6 +3,10 @@ package org.fnives.test.showcase.testutils.idling
 import androidx.annotation.CheckResult
 import androidx.test.espresso.IdlingResource
 import okhttp3.OkHttpClient
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.CompositeDisposable
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.Disposable
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.IdlingResourceDisposable
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.OkHttp3IdlingResource
 import org.fnives.test.showcase.network.testutil.NetworkTestConfigurationHelper
 import org.junit.rules.TestRule
 import org.junit.runner.Description

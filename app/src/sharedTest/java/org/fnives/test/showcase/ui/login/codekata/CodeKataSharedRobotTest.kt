@@ -8,14 +8,13 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import org.fnives.test.showcase.R
-import org.fnives.test.showcase.testutils.configuration.SnackbarVerificationHelper
-import org.fnives.test.showcase.testutils.viewactions.notIntended
+import org.fnives.test.showcase.android.testutil.intent.notIntended
+import org.fnives.test.showcase.android.testutil.snackbar.SnackbarVerificationHelper.assertSnackBarIsNotShown
+import org.fnives.test.showcase.android.testutil.snackbar.SnackbarVerificationHelper.assertSnackBarIsShownWithText
 import org.fnives.test.showcase.ui.home.MainActivity
 import org.hamcrest.core.IsNot
 
-class CodeKataSharedRobotTest(
-    private val snackbarVerificationHelper: SnackbarVerificationHelper = SnackbarVerificationHelper()
-) {
+class CodeKataSharedRobotTest {
 
     fun setUsername(username: String): CodeKataSharedRobotTest = apply {
         Espresso.onView(ViewMatchers.withId(R.id.user_edit_text))
@@ -53,11 +52,11 @@ class CodeKataSharedRobotTest(
     }
 
     fun assertErrorIsShown(@StringRes stringResID: Int): CodeKataSharedRobotTest = apply {
-        snackbarVerificationHelper.assertIsShownWithText(stringResID)
+        assertSnackBarIsShownWithText(stringResID)
     }
 
     fun assertErrorIsNotShown(): CodeKataSharedRobotTest = apply {
-        snackbarVerificationHelper.assertIsNotShown()
+        assertSnackBarIsNotShown()
     }
 
     fun assertNavigatedToHome(): CodeKataSharedRobotTest = apply {

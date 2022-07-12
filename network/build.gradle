@@ -24,12 +24,9 @@ dependencies {
 
     api project(":model")
 
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
-    testImplementation "org.skyscreamer:jsonassert:$testing_json_assert_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    applyNetworkTestDependenciesTo(this)
 
     testFixturesApi project(':mockserver')
-    testFixturesApi "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    testFixturesApi "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
     testFixturesApi "io.insert-koin:koin-test-junit5:$koin_version"
 }

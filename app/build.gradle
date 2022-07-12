@@ -92,55 +92,25 @@ dependencies {
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
-    implementation "androidx.room:room-runtime:$androidx_room_version"
-    kapt "androidx.room:room-compiler:$androidx_room_version"
-    implementation "androidx.room:room-ktx:$androidx_room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
 
     implementation "io.coil-kt:coil:$coil_version"
     implementation "io.coil-kt:coil-compose:$coil_version"
 
     implementation project(":core")
 
-    testImplementation "androidx.room:room-testing:$androidx_room_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$testing_junit5_version"
-    testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    testImplementation "com.jraska.livedata:testing-ktx:$testing_livedata_version"
-    testImplementation "io.insert-koin:koin-test-junit5:$koin_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
+    applyAppTestDependenciesTo(this)
+    applyComposeTestDependenciesTo(this)
 
-    // robolectric specific
-    testImplementation "junit:junit:$testing_junit4_version"
-    testImplementation "org.robolectric:robolectric:$testing_robolectric_version"
-    testImplementation "androidx.test:core:$testing_androidx_code_version"
-    testImplementation "androidx.test:runner:$testing_androidx_code_version"
-    testImplementation "androidx.test.ext:junit:$testing_androidx_junit_version"
-    testImplementation "androidx.test.espresso:espresso-core:$testing_espresso_version"
-    testImplementation "androidx.test.espresso:espresso-intents:$testing_espresso_version"
-    testImplementation "androidx.test.espresso:espresso-contrib:$testing_espresso_version"
-    testImplementation project(':mockserver')
-    testImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
-
-    androidTestImplementation "androidx.room:room-testing:$androidx_room_version"
-    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    androidTestImplementation "io.insert-koin:koin-test-junit4:$koin_version"
-    androidTestImplementation "junit:junit:$testing_junit4_version"
-    androidTestImplementation "androidx.test:core:$testing_androidx_code_version"
-    androidTestImplementation "androidx.test:runner:$testing_androidx_code_version"
-    androidTestImplementation "androidx.test.ext:junit:$testing_androidx_junit_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$testing_espresso_version"
-    androidTestImplementation "androidx.test.espresso:espresso-intents:$testing_espresso_version"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$testing_espresso_version"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose_version"
-    testImplementation "androidx.compose.ui:ui-test-junit4:$androidx_compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$androidx_compose_version"
     androidTestImplementation project(':mockserver')
-    androidTestImplementation "androidx.arch.core:core-testing:$testing_androidx_arch_core_version"
-    androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
 
-    implementation "io.reactivex.rxjava3:rxjava:3.1.4"
+    testImplementation project(':test-util-junit5-android')
+    testImplementation project(':test-util-shared-robolectric')
+    testImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-shared-android')
 
     testImplementation testFixtures(project(':core'))
     androidTestImplementation testFixtures(project(':core'))

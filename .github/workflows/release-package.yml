@@ -1,0 +1,27 @@
+name: Library Package Publishing
+
+on:
+  release:
+    types:
+      - created
+
+env:
+  GITHUB_USERNAME: "fknives"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  publish-library:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Publish Project
+        run: ./gradlew publishToGitHub
