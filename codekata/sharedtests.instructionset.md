@@ -8,7 +8,7 @@ In this testing instruction set you will learn how to write simple tests running
 - We will learn how to share classes between testing and AndroidTesting
 - Learn the differences between Robolectric and AndroidTests
 - Learn how to create End-To-End tests via Espresso Test Recorder
-- Our tests classess will be really similar to Robolectric since we are using the same components
+- Our tests classes will be really similar to Robolectric since we are using the same components
 - We will use RuleChains to order our Test Rules.
 
 ## Login UI Test
@@ -20,7 +20,7 @@ Our classes will be `CodeKataAuthActivitySharedTest` and `CodeKataSharedRobotTes
 ### Setup
 
 #### Phone setup
-First let's setup our phone.
+First let's set up our phone.
 With testing on phone it's important that animations are disabled from the `Developer options`, namely:
 `Window animation scale` Animation Off
 `Transition animation scale` Animation Off
@@ -34,7 +34,7 @@ Let's open `org.fnives.test.showcase.ui.login.codekata.CodeKataAuthActivityShare
 We can see it's identical as our original `org.fnives.test.showcase.ui.codekata.CodeKataAuthActivityInstrumentedTest`.
 So let's copy our existing code from the Robolectric test here. For that we can use the body of `org.fnives.test.showcase.ui.RobolectricAuthActivityInstrumentedTest`.
 
-You immediately notice that there are no import issues. That's becacuse sharedTest package is added to the test sources. You may check out the `app/build.gradle` to see how that's done.
+You immediately notice that there are no import issues. That's because sharedTest package is added to the test sources. You may check out the `app/build.gradle` to see how that's done.
 However we need to modify our robot:
 ```kotlin
 // Instead of this:
@@ -62,10 +62,10 @@ java.lang.IllegalStateException: Cannot invoke setValue on a background thread
         ...
 ```
 
-So that's bring us to the first difference: *while Robolectric uses the same thread running the tests as running the Main thread, in Android Tests these threads are different.*
+So that brings us to the first difference: *while Robolectric uses the same thread running the tests as running the Main thread, in Android Tests these threads are different.*
 
-So the issue is with this line: `testDispatcher.advanceUntilIdleWithIdlingResources()`. Since we are in the InstrumentedTest's thread, all our coroutines will run there as well, which don't play well with LiveData.
-One idea would be to use LiveData `ArchTaskExecutor.getInstance()` and ensure our LiveData don't care about the Thread they are set from, **But** then we would touch our Views from Non-Main Thread, which is still an issue.
+So the issue is with this line: `testDispatcher.advanceUntilIdleWithIdlingResources()`. Since we are in the InstrumentedTest's thread, all our coroutines will run there as well, which doesn't play well with LiveData.
+One idea would be to use LiveData `ArchTaskExecutor.getInstance()` and ensure our LiveData doesn't care about the Thread they are set from, **but** then we would touch our Views from Non-Main Thread, which is still an issue.
 **So Instead** What we need to do is run our coroutines on the actual mainThread. We have a handy `runOnUIAwaitOnCurrent` function for that, so let's use it in our `invalidCredentialsGivenShowsProperErrorMessage` test, wrap around our dispatcher call.
 
 The full function now will look like this:
@@ -107,7 +107,7 @@ at org.fnives.test.showcase.ui.login.codekata.CodeKataAuthActivitySharedTest.tea
 ...
 ```
 
-Now that's a weird one, it points to our tearDown. So our test crashes in the `tearDown`, because the `mockServerScenarioSetup` is not initalized?
+Now that's a weird one, it points to our tearDown. So our test crashes in the `tearDown`, because the `mockServerScenarioSetup` is not initialized?
 When you see similar crashes, that suggest you had an exception in your `setup` and it didn't finish, so the `tearDown` also fails, because not all the elements are initialized.
 
 If you select any other than the first that failed, and look for a root cause in the logs, you will see an issue along the lines of:
@@ -128,7 +128,7 @@ So that's because something went wrong in our first test. I am describing these 
 ```
 
 Now, here is a new difference between Robolectric and AndroidTest. In Robolectric, before every test, the Application class is initialized, however in AndroidTests, the Application class is only initialized once.
-This is great if you want to have End-to-End tests that follow each other, but since now we only want to tests some small subsection of the functionality, we have to restart Koin before every tests if it isn't yet started so our tests don't use the same instances.
+This is great if you want to have End-to-End tests that follow each other, but since now we only want to test some small subsection of the functionality, we have to restart Koin before every tests if it isn't yet started, so our tests don't use the same instances.
 We will check if koin is initialized, if it isn't then we simply initialize it:
 ```kotlin
 ...
@@ -150,8 +150,8 @@ With that now if you run the test class, all tests should succeed.
 ### 3. Animations
 
 One difference which may or may not happened on your phone is with loading indicators and animations. It happened on some of my devices and not on others (it can be different between Android API levels as well).
-If it happens to yours, the tests won't succeed they just hang. This happens because animations can add continous work to the MainThread thus never letting it become idle.
-The solution for this, to replace your Progress Bar or other infinetly animating element, with a simple view.
+If it happens to yours, the tests won't succeed they just hang. This happens because animations can add continuous work to the MainThread thus never letting it become idle.
+The solution for this, to replace your Progress Bar or other infinitely animating element, with a simple view.
 Some reference to this from stackoverflow [here](https://stackoverflow.com/questions/30469240/java-lang-runtimeexception-could-not-launch-intent-for-ui-with-indeterminate) and [here](https://stackoverflow.com/questions/35186902/testing-progress-bar-on-android-with-espresso).
 
 What I usually do is something like this in my Robot:
@@ -198,9 +198,9 @@ override fun apply(base: Statement, description: Description): Statement =
         }
     }
 ```
-Pretty simple, we simple wrap the given Statement into our own, and in evaluation first we `init` the `Intents` and at the end we make sure it's `released`.
+Pretty simple, we simply wrap the given Statement into our own, and in evaluation first we `init` the `Intents` and at the end we make sure it's `released`.
 
-> Note: TestRule documentation contains a couple of other Base classes extending TestRule. Usually it's better to use one of them which matches describes your need, that's because it might take care of additional things you wouldn't expect otherwise. Here we could have used ExternalResource, but I wanted the Intents.init() in the try as well.
+> Note: TestRule documentation contains a couple of other Base classes extending TestRule. Usually it's better to use one of them which matches your needs, that's because it might take care of additional things you wouldn't expect otherwise. Here we could have used ExternalResource, but I wanted the Intents.init() in the try as well.
 
 ##### Applying the Rule
 
@@ -271,7 +271,7 @@ val testDispatcher
     get() = _testDispatcher
         ?: throw IllegalStateException("TestDispatcher is accessed before it is initialized!")
 ```
-We create the modifyable private field and make it accessable publicly to our tests. However if we access before a test is running, then we throw to let the user know.
+We create the modifiable private field and make it accessible publicly to our tests. However if we access before a test is running, then we throw to let the user know.
 One addition is that it's probably better to also clear that dispatcher at the end, so:
 ```kotlin
 } finally {
@@ -362,7 +362,7 @@ val ruleOrder: RuleChain = RuleChain.outerRule(intentRule)
 
 > Notice: we removed the Rule annotations from the others, and only have one Rule, the RuleChain.
 
-The Rule chain starts our `intentRule` first, then the `mockServerAndKoinRule` and `mainDispatcherRule`, when cleaning up, first `mainDispatcherRule` will clean up, then the `mockServerAndKoinRule` and lastly then `intentRule`. That's because of the Statements, since one statement calls the other's evaluation. So the `IntentRule` received now the `mockServerAndKoinRule`'s statement, and the `mockServerAndKoinRule` received the `mainDispatcherRule`'s statement and they call evaluate on it.
+The Rule chain starts our `intentRule` first, then the `mockServerAndKoinRule` and `mainDispatcherRule`, when cleaning up, first `mainDispatcherRule` will clean up, then `mockServerAndKoinRule` and lastly `intentRule`. That's because of the Statements, since one statement calls the other's evaluation. So the `IntentRule` received now the `mockServerAndKoinRule`'s statement, and the `mockServerAndKoinRule` received the `mainDispatcherRule`'s statement and they call evaluate on it.
 
 *TLDR: The rules are applied in the order in which they are added to the RuleChain*
 
@@ -380,7 +380,7 @@ An Android developer writing with more detail, is [here](https://developer.andro
 So basically you can use this Test Recorder tool to create Espresso tests.
 You might be thinking, then why did we go through how to do these stuff manually?! Well, there are a couple of reasons:
 - the generated tests, at least for me, still use deprecated ActivityTestRule instead of ActivityScenario
-- the generated tests, might still have issues in them, like syncronization with Okhttp and such.
+- the generated tests, might still have issues in them, like synchronisation with Okhttp and such.
 - Some actions might be too specific, and you have to manually adjust the espresso test for it to work.
 
 All in all, it is a good tool to get started on your test, but you probably still need to do manual modifications on it. So personally I would suggest them for bigger tests, which would take too much time manually, and then do the adjustments while running the tests.
@@ -432,7 +432,7 @@ And name your tests with an alphabetic order, like starting with numbers or some
 
 ### 6. Some notes on other differences you may face between Robolectric and AndroidTests
 #### 1. Hilt
-Since currently only Koin is available in this repo, for updates follow this [issue](https://github.com/fknives/AndroidTest-ShowCase/issues/41), I thought to mentionen some issues with Hilt you may face:
+Since currently only Koin is available in this repo, for updates follow this [issue](https://github.com/fknives/AndroidTest-ShowCase/issues/41), I thought to mentioned some issues with Hilt you may face:
 
 ##### Hilt requires a `HiltTestApplication` or something similar to test with.
 You can replace the test application by creating a `AndroidJUnitRunner` and return your Custom Application class.
@@ -455,7 +455,7 @@ To resolve this fast, a possible way is like this:
 ```runBlocking { withContext(Dispatcher.IO) { mockwebserver.url("/") } }```
 
 #### 3. Unnecessary initializations in Application class
-An other issue can be that Crashlytics or similar services is enabled in your tests. This can be resolved by the same principle as the HiltTestApplication issue, aka custom `AndroidJunitRunner`. Your custom TestClass will initialize only what it needs to.
+Another issue can be that Crashlytics or similar services is enabled in your tests. This can be resolved by the same principle as the HiltTestApplication issue, aka custom `AndroidJunitRunner`. Your custom TestClass will initialize only what it needs to.
 
 #### 4. Dialogs
 Dialogs cannot be tested properly via Robolectric without usage of Shadows, but they can be on Real Device. So what I usually do is setup a function which does one thing in one sourceset while does something else in another. You can see such example like `SpecificTestConfigurationsFactory`. To ease the usage I usually put a function in the sharedTest which uses the object `SpecificTestConfigurationsFactory`.
@@ -469,7 +469,7 @@ The only real difference is that our tests are larger, maybe touching multiple s
 
 **Some personal thoughts**
 With all this described you should be able to start experimenting with testing.
-Personally I would suggest to start with bug reports. When you get an simple bug ticket, write a test first which will fail if the bug is still present, then fix the bug.
+Personally I would suggest to start with bug reports. When you get a simple bug ticket, write a test first which will fail if the bug is still present, then fix the bug.
 This both helps the project ensuring that behaviour will never happen again, and you are able to experiment with Testing.
 When you are more confident, you may start writing your features also together with small tests. These to me were started, when I had to work with timezones, dates or do similar calculations. These are great point to write tests, since it's a lot easier to see that your code works through examples then figuring out the whole thing at once.
 Instrumentation and UI Tests I would suggest only on features that are not likely to change a lot, since these are a bit more expensive to maintain, but these tests also ensure when you do changes you are not contradicting some previous requirements.
