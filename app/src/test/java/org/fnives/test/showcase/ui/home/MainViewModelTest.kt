@@ -5,6 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
+import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.FetchContentUseCase
 import org.fnives.test.showcase.core.content.GetAllContentUseCase
@@ -15,7 +16,6 @@ import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.model.content.ImageUrl
 import org.fnives.test.showcase.model.shared.Resource
-import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

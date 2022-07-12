@@ -12,7 +12,8 @@ import org.junit.jupiter.api.extension.ExtensionContext
  *
  * reference: https://developer.android.com/reference/androidx/arch/core/executor/testing/InstantTaskExecutorRule
  *
- * A JUnit5 Extensions that swaps the background executor used by the Architecture Components with a different one which executes each task synchronously.
+ * A JUnit5 Extensions that swaps the background executor used by the Architecture Components with a different
+ * one which executes each task synchronously.
  * You can use this extension for your host side tests that use Architecture Components.
  */
 @SuppressLint("RestrictedApi")

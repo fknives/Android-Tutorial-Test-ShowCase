@@ -1,8 +1,8 @@
 package org.fnives.test.showcase.di
 
 import android.content.Context
-import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
+import org.fnives.test.showcase.model.network.BaseUrl
 import org.fnives.test.showcase.ui.auth.AuthViewModel
 import org.fnives.test.showcase.ui.home.MainViewModel
 import org.fnives.test.showcase.ui.splash.SplashViewModel

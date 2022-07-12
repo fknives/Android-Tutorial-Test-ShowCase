@@ -2,8 +2,8 @@ package org.fnives.test.showcase.ui.auth
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
-import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
+import org.fnives.test.showcase.core.login.LoginUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

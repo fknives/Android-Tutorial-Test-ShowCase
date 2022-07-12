@@ -3,8 +3,8 @@ package org.fnives.test.showcase.ui.splash
 import com.jraska.livedata.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
-import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
+import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.ui.shared.Event
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

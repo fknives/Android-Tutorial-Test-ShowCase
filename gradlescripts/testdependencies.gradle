@@ -37,7 +37,7 @@ project.ext {
 
     // ------------------VERSIONS------------------
     def testing_junit5_version = propertyOrNull('junit5_version') ?: "5.7.0"
-    def testing_junit4_version = propertyOrNull('juni4_version') ?: "4.12"
+    def testing_junit4_version = propertyOrNull('juni4_version') ?: "4.13.2"
     def testing_robolectric_version = propertyOrNull('robolectric_version') ?: "4.7"
     def testing_androidx_code_version = propertyOrNull('androidx_test_version') ?: "1.4.0"
     def testing_androidx_junit_version = propertyOrNull('androidx_junit_version') ?: "1.1.3"

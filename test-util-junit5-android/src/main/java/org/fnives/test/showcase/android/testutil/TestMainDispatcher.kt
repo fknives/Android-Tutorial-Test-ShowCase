@@ -17,7 +17,7 @@ abstract class TestMainDispatcher : BeforeEachCallback, AfterEachCallback {
 
     protected abstract var createdTestDispatcher: TestDispatcher?
 
-    abstract fun createDispatcher() : TestDispatcher
+    abstract fun createDispatcher(): TestDispatcher
 
     final override fun beforeEach(context: ExtensionContext?) {
         val testDispatcher = createDispatcher()

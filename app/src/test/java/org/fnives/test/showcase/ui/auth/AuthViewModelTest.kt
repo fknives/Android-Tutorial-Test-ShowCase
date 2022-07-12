@@ -4,11 +4,11 @@ import com.jraska.livedata.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.fnives.test.showcase.android.testutil.InstantExecutorExtension
+import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.fnives.test.showcase.core.login.LoginUseCase
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.auth.LoginStatus
 import org.fnives.test.showcase.model.shared.Answer
-import org.fnives.test.showcase.android.testutil.StandardTestMainDispatcher
 import org.fnives.test.showcase.ui.shared.Event
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -44,11 +44,6 @@ internal class AuthViewModelTest {
     @DisplayName("GIVEN initialized viewModel WHEN observed THEN loading false other fields are empty")
     @Test
     fun initialSetup() {
-        var a = ""
-        repeat(1200 / 2) {
-            a += "a "
-        }
-        System.err.println(a+"b")
         val usernameTestObserver = sut.username.test()
         val passwordTestObserver = sut.password.test()
         val loadingTestObserver = sut.loading.test()
@@ -174,7 +169,7 @@ internal class AuthViewModelTest {
     @ParameterizedTest(name = "GIVEN answer success loginStatus {0} WHEN login called THEN error {1} is shown")
     fun invalidStatusResultsInErrorState(
         loginStatus: LoginStatus,
-        errorType: AuthViewModel.ErrorType
+        errorType: AuthViewModel.ErrorType,
     ) {
         runBlocking {
             whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Success(loginStatus))
