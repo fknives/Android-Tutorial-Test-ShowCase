@@ -170,7 +170,7 @@ fun withoutSessionTheUserIsNotLoggedIn() = runTest {
 
 Let's test that given good credentials and success response, our user can log in.
 
-First we setup our mock server and the expected session:
+First we set up our mock server and the expected session:
 ```kotlin
 mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "usr", password = "sEc"), validateArguments = true) // validate arguments just verifies the request path, body, headers etc.
 val expectedSession = ContentData.loginSuccessResponse
@@ -194,7 +194,7 @@ With this, looks like our Integration works correctly. Requests are called, prop
 
 ### 3. `localInputError`
 We have two expected errors, that are returned even before running requests, if the username or password is empty.
-This two tests would be really similar, so let's do Parametrized tests.
+These two tests would be really similar, so let's do Parametrized tests.
 
 First we modify our method signature:
 ```kotlin
@@ -311,7 +311,7 @@ verifyNoInteractions(mockSessionExpirationListener)
 ### 7. `logoutReleasesContent`
 At last, let's verify that when the user logs out, their cache is released and the request is no longer authenticated.
 
-To do this, first we setup our MockServer and login the user:
+To do this, first we set up our MockServer and login the user:
 ```kotlin
 mockServerScenarioSetup.setScenario(AuthScenario.Success(username = "usr", password = "sEc"), validateArguments = true)
     .setScenario(ContentScenario.Success(usingRefreshedToken = false), validateArguments = true)
@@ -335,11 +335,11 @@ So what we want to verify, is that `valuesBeforeLogout` is a success, and the `v
 Assertions.assertTrue(valuesBeforeLogout is Resource.Success, "Before we expect a cached Success")
 Assertions.assertTrue(valuesAfterLogout is Resource.Error, "After we expect an error, since our request no longer is authenticated")
 ```
-If it would be cached, the test would be stuck, cause Loading wouldn't be emitted, or if the request would be authenticated success would be returned as we setup Success response.
+If it would be cached, the test would be stuck, cause Loading wouldn't be emitted, or if the request would be authenticated success would be returned as we set up Success response.
 
 ## Conclusions
 With that we wrote our Integration tests.
-There is no point of going over other integration test's in the core module, since the idea is captured, and nothing new could be shown.
+There is no point of going over other integration tests in the core module, since the idea is captured, and nothing new could be shown.
 If you want to give it a go, feel free, however consider using turbine for flow tests, cause it can be a bit tricky.
 
 What we have learned:

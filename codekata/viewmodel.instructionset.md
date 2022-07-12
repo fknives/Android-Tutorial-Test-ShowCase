@@ -36,7 +36,7 @@ class CodeKataSplashViewModelTest {
 
 Note: you can use `@RegisterExtension` to register an extension as a field and make it easier to reference.
 
-Next let's setup our System Under Test as usual:
+Next let's set up our System Under Test as usual:
 
 ```kotlin
 private lateinit var mockIsUserLoggedInUseCase: IsUserLoggedInUseCase
@@ -53,13 +53,13 @@ fun setUp() {
 ### 1. `loggedOutUserGoesToAuthentication`
 
 We want to test that if the user is not logged in then we are navigated to the Authentication screen.
-So we need to setup the mock's response:
+So we need to set up the mock's response:
 
 ```kotlin
 whenever(mockIsUserLoggedInUseCase.invoke()).doReturn(false)
 ```
 
-Next up we want to setup our TestObserver for LiveData. This enables us to verify the values sent into a LiveData.
+Next up we want to set up our TestObserver for LiveData. This enables us to verify the values sent into a LiveData.
 If a LiveData is not observed, its value may not be updated (like a LiveData that maps) so it's important to have a proper TestObserver set.
 
 
@@ -133,7 +133,7 @@ The setup is already done because it's almost the same as mentioned in CodeKataS
 
 As always we start with the easiest test. This usually gives us motivation and helps us get ideas for the next tests.
 
-First we setup the observers:
+First, we set up the observers:
 ```kotlin
 val usernameTestObserver = sut.username.test()
 val passwordTestObserver = sut.password.test()
@@ -221,7 +221,7 @@ navigateToHomeTestObserver.assertNoValue()
 Now let's test some actual logic:
 If we didn't give username and password to the ViewModel when login is clicked we should see loading, and empty string passed to the UseCase
 
-Let's setup to login:
+Let's set up to login:
 
 ```kotlin
 val loadingTestObserver = sut.loading.test()
@@ -250,7 +250,7 @@ verifyNoMoreInteractions(mockLoginUseCase)
 
 Clicking the button once works as expected. But what if the user clicks the button multiple times before the request finishes? Let's make sure we only do actual actions once in such case.
 
-We just setup the UseCase:
+We just set up the UseCase:
 ```kotlin
 runBlocking { whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable())) }
 ```
@@ -271,7 +271,7 @@ verifyNoMoreInteractions(mockLoginUseCase)
 ### 6. `argumentsArePassedProperlyToLoginUseCase`
 
 Okay, now let's verify the UseCase receives the proper data.
-We setup the UseCase response and update the username and password:
+We set up the UseCase response and update the username and password:
 ```kotlin
 runBlocking {
     whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Error(Throwable()))
@@ -325,7 +325,7 @@ navigateToHomeTestObserver.assertNoValue()
 ### 8. `invalidStatusResultsInErrorState`
 
 Time to test Errors.
-First we setup our UseCase and the TestObservers:
+First we set up our UseCase and the TestObservers:
 ```kotlin
 runBlocking {
     whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Success(LoginStatus.INVALID_CREDENTIALS))
@@ -390,7 +390,7 @@ Great, this is how we can reduce duplication in tests, without losing readabilit
 
 And finally let's test the happy flow as well.
 
-We setup the observers and the UseCase:
+We set up the observers and the UseCase:
 ```kotlin
 runBlocking {
     whenever(mockLoginUseCase.invoke(anyOrNull())).doReturn(Answer.Success(LoginStatus.SUCCESS))

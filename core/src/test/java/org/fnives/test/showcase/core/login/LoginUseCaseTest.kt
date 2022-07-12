@@ -89,7 +89,7 @@ internal class LoginUseCaseTest {
         verifyNoMoreInteractions(mockUserDataLocalStorage)
     }
 
-    @DisplayName("GIVEN error resposne WHEN trying to login THEN session is not touched and error is returned")
+    @DisplayName("GIVEN error response WHEN trying to login THEN session is not touched and error is returned")
     @Test
     fun invalidResponseResultsInErrorReturned() = runTest {
         val exception = RuntimeException()

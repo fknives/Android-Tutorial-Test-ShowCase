@@ -14,7 +14,7 @@ Our System Under Test will be `org.fnives.test.showcase.network.auth.LoginRemote
 
 The login function sends out a retrofit request and parses a response for us, this is what we intend to test.
 
-Let's setup our testClass: `org.fnives.test.showcase.network.auth.CodeKataLoginRemoteSourceTest`
+Let's set up our testClass: `org.fnives.test.showcase.network.auth.CodeKataLoginRemoteSourceTest`
 
 ### Setup
 First since we are using Koin as Service Locator, we should extend [KoinTest](https://insert-koin.io/docs/reference/koin-test/testing/), thus giving us an easier way to access koin functions.
@@ -25,7 +25,7 @@ class CodeKataLoginRemoteSourceTest : KoinTest {
 }
 ```
 
-Next we need to inject our System Under Test, setup koin and setup our [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver). However we also need to tearDown our setup after every test. Let's take it step by step.
+Next we need to inject our System Under Test, set up koin and set up our [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver). However we also need to tearDown our setup after every test. Let's take it step by step.
 
 First we declare our required fields:
 ```kotlin
@@ -47,7 +47,7 @@ fun tearDown() {
 }
 ```
 
-Now we need to setup our Koin:
+Now we need to set up our Koin:
 ```kotlin
 @BeforeEach
 fun setUp() {
@@ -110,7 +110,7 @@ fun tearDown() {
 
 Notice we are starting with `runBlocking` instead of `runTest`. That's because we do not have any concurrency, and also don't care about the Threads used by OkHttp, we just want to be sure to get the responses in sync.
 
-First we need to setup mockwebserver to respond to our request and the expected value:
+First we need to set up mockwebserver to respond to our request and the expected value:
 
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(readResourceFile("success_response_login.json")))
@@ -138,7 +138,7 @@ Now, running this test, you will see logs by OkHttpLoggingInterceptor and see wh
 
 So far we verified how to parse a response, but what about the validity of the request send out. This is what we will test next:
 
-First we setup the mockwebserver just like before, however we no longer care about the returned value:
+First we set up the mockwebserver just like before, however we no longer care about the returned value:
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(readResourceFile("success_response_login.json")))
 ```
@@ -182,7 +182,7 @@ With this we can be sure our request contains exactly what we want it to contain
 
 Now we take a look at an expected error test:
 
-First we setup our mockwebserver to return 400. This should mean our credentials were invalid.
+First we set up our mockwebserver to return 400. This should mean our credentials were invalid.
 
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(400).setBody(""))
@@ -278,7 +278,7 @@ The setup is already done since it's equivalent to our LoginRemoteSource tests e
 
 ### 1. `successRefreshResultsInRequestRetry`
 
-First we need to setup our mockwebserver with the expected requests:
+First we need to set up our mockwebserver with the expected requests:
 - 401 content request
 - success refresh token response
 - success content request with the new token
@@ -312,7 +312,7 @@ val contentRequestAfterRefreshed = mockWebServer.takeRequest()
 ```
 
 Next we need to verify
-- the refresh request was properly setup
+- the refresh request was properly set up
 - the new content request used the updated access token
 - no session expiration event was sent and token was saved
 
@@ -335,7 +335,7 @@ verifyNoInteractions(mockNetworkSessionExpirationListener)
 
 Now we need to test what if the refresh request fails.
 
-First setup for failure:
+First, setup for failure:
 ```kotlin
 mockWebServer.enqueue(MockResponse().setResponseCode(401))
 mockWebServer.enqueue(MockResponse().setResponseCode(400))

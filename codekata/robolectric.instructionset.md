@@ -1,6 +1,6 @@
 # 5. Starting of Robolectric testing
 
-So we are finally here, so far we didn't had to touch any kind of context or resources, activities, fragments or anything Android. This is where we have to get back to reality and actually deal with Android.
+So we are finally here, so far we didn't have to touch any kind of context or resources, activities, fragments or anything Android. This is where we have to get back to reality and actually deal with Android.
 
 In this testing instruction set you will learn how to write simple tests using Robolectric.
 
@@ -18,7 +18,7 @@ But we only test their interface functions.
 
 We don't add anything Robolectric just yet, let's try to do this without it first.
 
-Let's setup or System Under Test as usual:
+Let's set up or System Under Test as usual:
 ```kotlin
 private lateinit var sut: UserDataLocalStorage
 
@@ -213,11 +213,11 @@ The line `TestDatabaseInitialization.overwriteDatabaseInitialization(testDispatc
 
 > Above min API 24
 > DatabaseInitialization could be overwritten in Test module, by declaring the same class in the same package with the same methods. This is an easy way to switch out an implementation.
-> That might not look the cleanest, so the presented way of switch out the koin-module creating the database is preferred. In other dependency injection / service locator frameworks this should also be possible.
+> That might not look the cleanest, so the presented way of switching out the koin-module creating the database is preferred. In other dependency injection / service locator frameworks this should also be possible.
 
 ### 1. `atTheStartOurDatabaseIsEmpty`
 
-Our test is as simple as it gets. We get the observable and it's first element. Then we assert that it is an empty list.
+Our test is as simple as it gets. We get the observable and its first element. Then we assert that it is an empty list.
 
 ```kotlin
 @Test
@@ -275,7 +275,7 @@ So we can delete as well.
 ### 4. `addingFavouriteUpdatesExistingObservers`
 Until now we just verified that afterwards we get the correct data, but what if we already subscribed? Do we still get the correct updates?
 
-So we setup our expectations and our observer:
+So we set up our expectations and our observer:
 ```kotlin
 val expected = listOf(listOf(), listOf(ContentId("observe")))
 val actual = async(coroutineContext) { sut.observeFavourites().take(2).toList() }
@@ -300,7 +300,7 @@ Assert.assertEquals(expected, actual.getCompleted())
 
 Okay, this should be really similar to `addingFavouriteUpdatesExistingObservers` just with a hint of `contentIdAddedThenRemovedCanNoLongerBeReadOut` so try to write it on your own.
 
-However for completness sake:
+However for completeness sake:
 ```kotlin
 val expected = listOf(listOf(ContentId("a")), listOf())
 sut.markAsFavourite(ContentId("a"))
@@ -462,7 +462,7 @@ fun assertErrorIsNotShown() = apply {
 }
 ```
 
-With that our Robot is done, we can almost start Testing. We still need setup in our Test class.
+With that our Robot is done, we can almost start Testing. We still need set up in our Test class.
 
 #### Test class setup
 
@@ -516,7 +516,7 @@ fun tearDown() {
 }
 ```
 
-> Idling Resources comes from Espresso. The idea is that anytime we want to interact with the UI via Espresso, it will await any Idling Resource beforehand. This is handy, since our Network component, (OkHttp) uses it's own thread pool, and we would like to have a way to await the responses.
+> Idling Resources comes from Espresso. The idea is that anytime we want to interact with the UI via Espresso, it will await any Idling Resource beforehand. This is handy, since our Network component, (OkHttp) uses its own thread pool, and we would like to have a way to await the responses.
 > Disposable is just a syntactic-sugar to remove the OkHttpIdling resource from Espresso when we no longer need it.
 > Idling Resources also make it easy for us, to coordinate coroutines with our network responses, since we can await the IdlingResource and advance the Coroutines afterwards.
 
@@ -634,7 +634,7 @@ robot.assertErrorIsShown(R.string.username_is_invalid)
 
 ### 4. `invalidCredentialsGivenShowsProperErrorMessage`
 
-Now we verify network errors. First let's setup the response:
+Now we verify network errors. First let's set up the response:
 ```kotlin
 mockServerScenarioSetup.setScenario(
     AuthScenario.InvalidCredentials(username = "alma", password = "banan"),
