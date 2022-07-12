@@ -297,7 +297,7 @@ verifyNoInteractions(mockUserDataLocalStorage)
 Together:
 
 ```kotlin
-@DisplayName("GIVEN error resposne WHEN trying to login THEN session is not touched and error is returned")
+@DisplayName("GIVEN error response WHEN trying to login THEN session is not touched and error is returned")
 @Test
 fun invalidResponseResultsInErrorReturned() = runTest {
     val exception = RuntimeException()
@@ -328,7 +328,7 @@ It has two methods:
 - getContents: that returns a Flow, which emits loading, error and content data
 - fetch: which suppose to clear cache and if the flow is observed then start loading
 
-The content data come from a RemoteSource class.
+The content data comes from a RemoteSource class.
 Additionally the Content is cached. So observing again should not yield loading.
 
 The inner workings of the class shouldn't matter, just the public apis, since that's what we want to test, always.
@@ -353,7 +353,7 @@ fun setUp() {
 
 ### 1. `fetchingIsLazy`
 
-As usual we are staring with the easiest test. We verify that the request is not called until the flow is not touched.
+As usual we are starting with the easiest test. We verify that the request is not called until the flow is not touched.
 
 So just verify the request is not called yet:
 
@@ -367,7 +367,7 @@ fun fetchingIsLazy() {
 
 ### 2. `happyFlow`
 
-Next logical step is to verify the Happy flow. We setup the request to succeed and expect a Loading and Success state to be returned.
+Next logical step is to verify the Happy flow. We set up the request to succeed and expect a Loading and Success state to be returned.
 
 ```kotlin
 val expected = listOf(
@@ -592,7 +592,7 @@ Let's break down what changed with `UnconfinedTestDispatcher`
 Lastly so far we always assumed that we are getting the exact number of values take(4), take(2). However it's possible our flow may send out additional unexpected data.
 So we also need to test that this assumption is correct.
 
-I think the best place to start from is our most complicated test `whenFetchingRequestIsCalledAgain` since this is the one most likely add additional unexpected values.
+I think the best place to start from is our most complicated test `whenFetchingRequestIsCalledAgain` since this is the one most likely to add additional unexpected values.
 
 Luckily `async.isCompleted` is helpful here: We can check if the async actually finished, aka if it still suspended or complete.
 Alternatively when checking with values, we may use `async.getCompleted()` as well, since if a coroutine didn't finish properly it will throw an `IllegalStateException("This job has not completed yet")`.
@@ -607,7 +607,7 @@ So our method looks similar to `whenFetchingRequestIsCalledAgain` except:
 - And requesting 5 elements instead of 4.
 - And cancel the async since we no longer need it
 
-Note: if it confuses you why we need the additional `advanceUntilIdle` refer to the execution order descried above. The async got their 3rd and 4th values because we were using await.
+Note: if it confuses you why we need the additional `advanceUntilIdle` refer to the execution order described above. The async got their 3rd and 4th values because we were using await.
 ```kotlin
 @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
 @Test
