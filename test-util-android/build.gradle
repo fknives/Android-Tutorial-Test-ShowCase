@@ -45,3 +45,6 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefreshlayout_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"
 }
+
+ext.artifactId = "android"
+apply from: "../gradlescripts/deploy.aar.gradle"

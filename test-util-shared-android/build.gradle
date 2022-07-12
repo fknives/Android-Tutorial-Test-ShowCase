@@ -35,5 +35,7 @@ android {
 dependencies {
     implementation "androidx.room:room-testing:$room_version"
     api project(':test-util-shared-robolectric')
-
 }
+
+ext.artifactId = "shared-android"
+apply from: "../gradlescripts/deploy.aar.gradle"

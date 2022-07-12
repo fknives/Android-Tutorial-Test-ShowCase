@@ -38,3 +38,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 }
+
+ext.artifactId = "android-unit-junit5"
+apply from: "../gradlescripts/deploy.aar.gradle"

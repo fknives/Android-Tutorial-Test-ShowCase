@@ -27,7 +27,6 @@ project.ext {
     arch_core_version = "2.1.0"
     testing_livedata_version = "1.2.0"
     mockito_version = "4.0.0"
-    println("MYLOG versions set")
     junit5_version = "5.7.0"
     json_assert_version = "1.5.0"
     junit4_version = "4.13.2"

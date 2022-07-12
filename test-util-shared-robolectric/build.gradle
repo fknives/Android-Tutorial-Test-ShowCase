@@ -36,3 +36,6 @@ dependencies {
     implementation "androidx.room:room-testing:$room_version"
     implementation "androidx.arch.core:core-testing:$arch_core_version"
 }
+
+ext.artifactId = "shared-robolectric"
+apply from: "../gradlescripts/deploy.aar.gradle"
