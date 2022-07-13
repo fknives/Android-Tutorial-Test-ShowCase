@@ -81,8 +81,17 @@ task removeLocalScreenshots(type: Delete) {
     delete files("$savePath")
 }
 
+task showLogcat(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Show Logcat'
+
+    //adb logcat -d
+    commandLine "$adb", 'logcat', '-d'
+}
+
 afterEvaluate {
-    connectedDebugAndroidTest.finalizedBy pullScreenshots
+    connectedDebugAndroidTest.finalizedBy showLogcat
+    showLogcat.finalizedBy pullScreenshots
     pullScreenshots.finalizedBy removeScreenshotsFromDevice
     clean.dependsOn(removeLocalScreenshots)
 }
