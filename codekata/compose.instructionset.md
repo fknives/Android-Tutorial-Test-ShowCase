@@ -159,7 +159,7 @@ private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mock
 Coroutine setup is the same, except for `Dispatchers.setMain(dispatcher)`, which we don't need. 
 
 ```kotlin
-private val dispatcherTestRule = DispatcherTestRule()
+private val dispatcherTestRule = DatabaseDispatcherTestRule()
 ```
 
 Setting the rules:
@@ -182,12 +182,10 @@ mockServerScenarioSetup.setScenario(
 )
 ```
 
-Then we wait for the idling resources, more precisely for the app to navigate us correctly to AuthScreen since we're not logged in:
+Then we wait a bit, more precisely we wait for the app to navigate us correctly to AuthScreen since we're not logged in:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.advanceTimeBy(510L)
 ```
-
-> Note: Considering what the docs say this shouldn't be necessarily if the idling resources are setup in Espresso, since the compose test rule is aware of espresso and it waits for idle before every finder. In practice it only works with the line above. Could be a bug somewhere.  
 
 We assert that we are indeed on the correct screen
 ```kotlin
@@ -216,9 +214,12 @@ composeTestRule.mainClock.autoAdvance = true // Let clock auto advance again
 
 Lastly we check the navigation was correct, meaning we should be on the home screen:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() } // wait for login network call
+composeTestRule.mainClock.awaitIdlingResources() // wait for login network call idling resource
 navigationRobot.assertHomeScreen()
 ```
+
+> `awaitIdlingResources` is an extension function to await all idling resources.
+> Note: Considering what the docs say this shouldn't be necessarily if the idling resources are setup in Espresso, since the compose test rule is aware of espresso and it waits for idle before every finder. In practice it only works with the line above. Could be a bug somewhere.
 
 ### 2. `emptyPasswordShowsProperErrorMessage`
 
@@ -226,7 +227,7 @@ Next up we verify what happens if the user doesn't set their password. We don't 
 
 First we check that we are in the write place:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.advanceTimeBy(510L)
 navigationRobot.assertAuthScreen()
 ```
 
@@ -239,7 +240,7 @@ robot.setUsername("banan")
 
 Finally we let coroutines go and verify the error is shown and we have not navigated:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.password_is_invalid)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -251,7 +252,7 @@ This will be really similar as the previous test, so try to do it on your own. T
 
 Still, here is the complete code:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.advanceTimeBy(510L)
 navigationRobot.assertAuthScreen()
 
 robot
@@ -259,7 +260,7 @@ robot
     .assertPassword("banan")
     .clickOnLogin()
 
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.username_is_invalid)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -276,7 +277,7 @@ mockServerScenarioSetup.setScenario(
 
 Now input the credentials and fire the event:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.advanceTimeBy(510L)
 navigationRobot.assertAuthScreen()
 robot.setUsername("alma")
     .setPassword("banan")
@@ -292,7 +293,7 @@ composeTestRule.mainClock.autoAdvance = true
 
 Now at the end verify the error is shown properly:
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.credentials_invalid)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -309,7 +310,7 @@ mockServerScenarioSetup.setScenario(
     AuthScenario.GenericError(username = "alma", password = "banan")
 )
 
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.advanceTimeBy(510L)
 navigationRobot.assertAuthScreen()
 robot.setUsername("alma")
     .setPassword("banan")
@@ -322,7 +323,7 @@ composeTestRule.mainClock.advanceTimeByFrame()
 robot.assertLoading()
 composeTestRule.mainClock.autoAdvance = true
 
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.something_went_wrong)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -342,7 +343,7 @@ Then in `setup()`, we need to `setContent` on `stateRestorationTester` instead o
 Now for the actual test, we first setup the content then we trigger restoration by calling `stateRestorationTester.emulateSavedInstanceStateRestore()`, afterwards we can verify that the content is recreated in the correct way:
 
 ```kotlin
-composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+composeTestRule.mainClock.advanceTimeBy(510L)
 navigationRobot.assertAuthScreen()
 robot.setUsername("alma")
     .setPassword("banan")

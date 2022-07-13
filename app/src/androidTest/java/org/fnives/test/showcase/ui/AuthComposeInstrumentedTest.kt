@@ -1,11 +1,16 @@
 package org.fnives.test.showcase.ui
 
+import androidx.compose.ui.test.MainTestClock
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
-import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceNotIdle
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitUntilIdle
+import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
 import org.fnives.test.showcase.compose.screen.AppNavigation
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
@@ -18,6 +23,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.koin.test.KoinTest
+import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
 class AuthComposeInstrumentedTest : KoinTest {
@@ -53,8 +59,8 @@ class AuthComposeInstrumentedTest : KoinTest {
         mockServerScenarioSetup.setScenario(
             AuthScenario.Success(password = "alma", username = "banan")
         )
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
         robot.setPassword("alma")
             .setUsername("banan")
@@ -67,21 +73,21 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.awaitIdlingResources()
         navigationRobot.assertHomeScreen()
     }
 
     /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
     fun emptyPasswordShowsProperErrorMessage() {
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
         navigationRobot.assertAuthScreen()
 
         robot.setUsername("banan")
             .assertUsername("banan")
             .clickOnLogin()
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -90,7 +96,7 @@ class AuthComposeInstrumentedTest : KoinTest {
     /** GIVEN password and empty username WHEN signIn THEN error username is shown */
     @Test
     fun emptyUserNameShowsProperErrorMessage() {
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
         navigationRobot.assertAuthScreen()
 
         robot
@@ -98,7 +104,7 @@ class AuthComposeInstrumentedTest : KoinTest {
             .assertPassword("banan")
             .clickOnLogin()
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -111,7 +117,7 @@ class AuthComposeInstrumentedTest : KoinTest {
             AuthScenario.InvalidCredentials(password = "alma", username = "banan")
         )
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
         navigationRobot.assertAuthScreen()
         robot.setUsername("alma")
             .setPassword("banan")
@@ -124,7 +130,7 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.credentials_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -137,7 +143,7 @@ class AuthComposeInstrumentedTest : KoinTest {
             AuthScenario.GenericError(username = "alma", password = "banan")
         )
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
         navigationRobot.assertAuthScreen()
         robot.setUsername("alma")
             .setPassword("banan")
@@ -150,7 +156,7 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -159,7 +165,7 @@ class AuthComposeInstrumentedTest : KoinTest {
     /** GIVEN username and password WHEN restoring THEN username and password fields contain the same text */
     @Test
     fun restoringContentShowPreviousCredentials() {
-        composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
         navigationRobot.assertAuthScreen()
         robot.setUsername("alma")
             .setPassword("banan")
@@ -171,5 +177,37 @@ class AuthComposeInstrumentedTest : KoinTest {
         navigationRobot.assertAuthScreen()
         robot.assertUsername("alma")
             .assertPassword("banan")
+    }
+
+    companion object {
+        private const val SPLASH_DELAY = 600L
+
+        // workaround, issue with idlingResources is tracked here https://github.com/robolectric/robolectric/issues/4807
+        /**
+         * Await the idling resource on a different thread while looping main.
+         */
+        fun MainTestClock.awaitIdlingResources() {
+            val idlingRegistry = IdlingRegistry.getInstance()
+            if (!anyResourceNotIdle()) return
+
+            val executor = Executors.newSingleThreadExecutor()
+            var isIdle = false
+            executor.submit {
+                do {
+                    idlingRegistry.resources
+                        .filterNot(IdlingResource::isIdleNow)
+                        .forEach { idlingResource ->
+                            idlingResource.awaitUntilIdle()
+                        }
+                } while (!idlingRegistry.resources.all(IdlingResource::isIdleNow))
+                isIdle = true
+            }
+            while (!isIdle) {
+                loopMainThreadFor(200L)
+            }
+            executor.shutdown()
+
+            advanceTimeByFrame()
+        }
     }
 }
