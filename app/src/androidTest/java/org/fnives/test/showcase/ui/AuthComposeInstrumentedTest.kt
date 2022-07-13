@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
+import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
 import org.fnives.test.showcase.compose.screen.AppNavigation
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
@@ -21,8 +22,7 @@ import org.koin.test.KoinTest
 @RunWith(AndroidJUnit4::class)
 class AuthComposeInstrumentedTest : KoinTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+    private val composeTestRule = createComposeRule()
     private val stateRestorationTester = StateRestorationTester(composeTestRule)
 
     private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
@@ -35,6 +35,8 @@ class AuthComposeInstrumentedTest : KoinTest {
     @JvmField
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(dispatcherTestRule)
+        .around(composeTestRule)
+        .around(ScreenshotRule("test-showcase-compose"))
 
     @Before
     fun setup() {

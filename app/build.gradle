@@ -116,3 +116,4 @@ dependencies {
     androidTestImplementation testFixtures(project(':core'))
 }
 
+apply from: '../gradlescripts/pull-screenshots.gradle'

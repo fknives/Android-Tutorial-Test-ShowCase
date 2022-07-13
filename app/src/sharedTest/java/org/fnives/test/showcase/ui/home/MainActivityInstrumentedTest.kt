@@ -3,7 +3,9 @@ package org.fnives.test.showcase.ui.home
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
 import org.fnives.test.showcase.android.testutil.activity.safeClose
+import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.network.mockserver.ContentData
@@ -38,6 +40,8 @@ class MainActivityInstrumentedTest : KoinTest {
     val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
         .around(AsyncDiffUtilInstantTestRule())
+        .around(SafeCloseActivityRule { activityScenario })
+        .around(ScreenshotRule("test-showcase"))
 
     @Before
     fun setup() {
@@ -48,7 +52,6 @@ class MainActivityInstrumentedTest : KoinTest {
 
     @After
     fun tearDown() {
-        activityScenario.safeClose()
         Intents.release()
     }
 
