@@ -20,7 +20,7 @@ def findAdbFromLocal = {
         def sdkDir = properties.getProperty('sdk.dir')
         return "$sdkDir/platform-tools/adb"
     } else {
-        System.err.println("WARNING: SDK dir not found by local properties, returning static: $System.env.HOME/Library/Android/sdk/platform-tools/adb")
+        println("WARNING: SDK dir not found by local properties, returning static: $System.env.HOME/Library/Android/sdk/platform-tools/adb")
         return "$System.env.HOME/Library/Android/sdk/platform-tools/adb"
     }
 }

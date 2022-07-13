@@ -1,5 +1,6 @@
 package org.fnives.test.showcase.android.testutil.screenshot
 
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
@@ -20,21 +21,16 @@ fun basicScreenCaptureProcessor(subDir: String = "test-screenshots"): ScreenCapt
  * see example issue: https://github.com/android/android-test/issues/818
  */
 @Suppress("DEPRECATION")
-fun getTestPicturesDir(): File? {
-    val packageName = InstrumentationRegistry.getInstrumentation().targetContext.packageName
-    val environmentFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-    val externalFolder = File(environmentFolder, packageName)
-    if (externalFolder.canWrite()) {
-        Log.d(ScreenshotRule.TAG, "external folder")
-        return externalFolder
-    }
-
-    val internalFolder = InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    if (internalFolder?.canWrite() == true) {
+fun getTestPicturesDir(): File? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
         Log.d(ScreenshotRule.TAG, "internal folder")
-        return internalFolder
-    }
-    Log.d(ScreenshotRule.TAG, "cant find directory the screenshots could be saved into")
 
-    return null
-}
+        InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    } else {
+        val packageName = InstrumentationRegistry.getInstrumentation().targetContext.packageName
+        val environmentFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val externalFolder = File(environmentFolder, packageName)
+        Log.d(ScreenshotRule.TAG, "external folder")
+
+        externalFolder
+    }
