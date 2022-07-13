@@ -25,41 +25,58 @@ def findAdbFromLocal = {
     }
 }
 
-task pullScreenshots(type: Exec) {
-    group = 'Test'
-    description = 'Pull screenshots'
+def packageName = propertyOrNull("screenshotsPackageName") ?: "$android.defaultConfig.applicationId"
+def screenshotDirectory = propertyOrNull("screenshotsDirectory") ?: "test-screenshots"
+def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
+def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
+def internalFullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
+def deprecatedFullPath = "/sdcard/Pictures/$packageName/$screenshotDirectory/"
 
-    def packageName = propertyOrNull("screenshotsPackageName") ?: "$android.defaultConfig.applicationId"
-    def screenshotDirectory = propertyOrNull("screenshotsDirectory") ?: "test-screenshots"
-    def fullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
-    def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
-    def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
+task pullScreenshotsInternal(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Pull screenshots From internal Storage'
 
-    try {
-        commandLine "$adb", 'pull', "$fullPath", "$savePath/"
-    } catch (Throwable throwable) {
-        throwable.printStackTrace()
-    }
+    ignoreExitValue(true)
+    commandLine "$adb", 'pull', "$internalFullPath", "$savePath/"
 }
 
-task removeScreenshotsFromDevice(type: Exec) {
-    group = 'Test'
-    description = 'Delete screenshots From Device'
+task pullScreenshotsDeprecated(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Pull screenshots From deprecated External Storage'
 
-    def packageName = propertyOrNull("screenshotsPackageName") ?: "$android.defaultConfig.applicationId"
-    def screenshotDirectory = propertyOrNull("screenshotsDirectory") ?: "test-screenshots"
-    def fullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
-    def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
+    ignoreExitValue(true)
+    commandLine "$adb", 'pull', "$deprecatedFullPath", "$savePath/"
+}
 
-    try {
-        commandLine "$adb", 'shell', 'rm', '-r', "$fullPath"
-    } catch (Throwable throwable) {
-        throwable.printStackTrace()
-    }
+task pullScreenshots(dependsOn: [pullScreenshotsInternal, pullScreenshotsDeprecated]) {
+    group = 'Test-Screenshots'
+    description = 'Pull screenshots From Device'
+}
+
+task removeScreenshotsFromDeviceInternal(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Remove screenshots From internal Storage'
+
+    ignoreExitValue(true)
+    commandLine "$adb", 'shell', 'rm', '-r', "$internalFullPath"
+}
+
+task removeScreenshotsFromDeviceDeprecated(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Remove screenshots From deprecated External Storage'
+
+    ignoreExitValue(true)
+    commandLine "$adb", 'shell', 'rm', '-r', "$deprecatedFullPath"
+}
+
+task removeScreenshotsFromDevice(dependsOn: [removeScreenshotsFromDeviceInternal, removeScreenshotsFromDeviceDeprecated]) {
+    group = 'Test-Screenshots'
+    description = 'Remove screenshots From Device'
 }
 
 task removeLocalScreenshots(type: Delete) {
-    def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
+    group = 'Test-Screenshots'
+    description = 'Remove screenshots From Local Machine'
 
     delete files("$savePath")
 }
