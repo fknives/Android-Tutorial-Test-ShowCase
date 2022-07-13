@@ -10,7 +10,7 @@ import java.io.File
 
 fun basicScreenCaptureProcessor(subDir: String = "test-screenshots"): ScreenCaptureProcessor {
     val directory = File(getTestPicturesDir(), subDir)
-    Log.d(ScreenshotRule.TAG, "directory to save screenshots = $directory")
+    Log.d(ScreenshotRule.TAG, "directory to save screenshots = ${directory.absolutePath}")
     return basicScreenCaptureProcessor(File(getTestPicturesDir(), subDir))
 }
 
@@ -22,15 +22,19 @@ fun basicScreenCaptureProcessor(subDir: String = "test-screenshots"): ScreenCapt
  */
 @Suppress("DEPRECATION")
 fun getTestPicturesDir(): File? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-        Log.d(ScreenshotRule.TAG, "internal folder")
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        Log.d(ScreenshotRule.TAG, "context.internal folder")
 
-        InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    } else {
+        InstrumentationRegistry.getInstrumentation().targetContext.filesDir
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         val packageName = InstrumentationRegistry.getInstrumentation().targetContext.packageName
         val environmentFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         val externalFolder = File(environmentFolder, packageName)
-        Log.d(ScreenshotRule.TAG, "external folder")
+        Log.d(ScreenshotRule.TAG, "environment.external folder")
 
         externalFolder
+    } else {
+        Log.d(ScreenshotRule.TAG, "context.external folder")
+
+        InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
     }

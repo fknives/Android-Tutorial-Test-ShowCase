@@ -54,6 +54,7 @@ class ScreenshotRule(
         capture.format = Bitmap.CompressFormat.JPEG
         try {
             capture.process(setOf(processor))
+            Log.d(TAG, "Saved image: $filename")
         } catch (e: IOException) {
             Log.d(TAG, "Couldn't save image: $e")
             e.printStackTrace()

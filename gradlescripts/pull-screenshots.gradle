@@ -29,47 +29,64 @@ def packageName = propertyOrNull("screenshotsPackageName") ?: "$android.defaultC
 def screenshotDirectory = propertyOrNull("screenshotsDirectory") ?: "test-screenshots"
 def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
 def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
-def internalFullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
-def deprecatedFullPath = "/sdcard/Pictures/$packageName/$screenshotDirectory/"
+def contextInternalFullPath = "/data/data/$packageName/files/$screenshotDirectory/"
+def contextExternalFullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
+def environmentExternalFullPath = "/sdcard/Pictures/$packageName/$screenshotDirectory/"
 
-task pullScreenshotsInternal(type: Exec) {
+task pullScreenshotsContextInternal(type: Exec) {
     group = 'Test-Screenshots'
-    description = 'Pull screenshots From internal Storage'
+    description = 'Pull screenshots From context.external Storage'
 
     ignoreExitValue(true)
-    commandLine "$adb", 'pull', "$internalFullPath", "$savePath/"
+    commandLine "$adb", 'pull', "$contextInternalFullPath", "$savePath/"
 }
 
-task pullScreenshotsDeprecated(type: Exec) {
+task pullScreenshotsContextExternal(type: Exec) {
     group = 'Test-Screenshots'
-    description = 'Pull screenshots From deprecated External Storage'
+    description = 'Pull screenshots From context.external Storage'
 
     ignoreExitValue(true)
-    commandLine "$adb", 'pull', "$deprecatedFullPath", "$savePath/"
+    commandLine "$adb", 'pull', "$contextExternalFullPath", "$savePath/"
 }
 
-task pullScreenshots(dependsOn: [pullScreenshotsInternal, pullScreenshotsDeprecated]) {
+task pullScreenshotsEnvironmentExternal(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Pull screenshots From environment.external Storage'
+
+    ignoreExitValue(true)
+    commandLine "$adb", 'pull', "$environmentExternalFullPath", "$savePath/"
+}
+
+task pullScreenshots(dependsOn: [pullScreenshotsContextInternal, pullScreenshotsContextExternal, pullScreenshotsEnvironmentExternal]) {
     group = 'Test-Screenshots'
     description = 'Pull screenshots From Device'
 }
 
-task removeScreenshotsFromDeviceInternal(type: Exec) {
+task removeScreenshotsFromDeviceContextInternal(type: Exec) {
     group = 'Test-Screenshots'
-    description = 'Remove screenshots From internal Storage'
+    description = 'Remove screenshots From context.internal Storage'
 
     ignoreExitValue(true)
-    commandLine "$adb", 'shell', 'rm', '-r', "$internalFullPath"
+    commandLine "$adb", 'shell', 'rm', '-r', "$contextInternalFullPath"
 }
 
-task removeScreenshotsFromDeviceDeprecated(type: Exec) {
+task removeScreenshotsFromDeviceContextExternal(type: Exec) {
     group = 'Test-Screenshots'
-    description = 'Remove screenshots From deprecated External Storage'
+    description = 'Remove screenshots From context.external Storage'
 
     ignoreExitValue(true)
-    commandLine "$adb", 'shell', 'rm', '-r', "$deprecatedFullPath"
+    commandLine "$adb", 'shell', 'rm', '-r', "$contextExternalFullPath"
 }
 
-task removeScreenshotsFromDevice(dependsOn: [removeScreenshotsFromDeviceInternal, removeScreenshotsFromDeviceDeprecated]) {
+task removeScreenshotsFromDeviceEnvironmentExternal(type: Exec) {
+    group = 'Test-Screenshots'
+    description = 'Remove screenshots From environment.external Storage'
+
+    ignoreExitValue(true)
+    commandLine "$adb", 'shell', 'rm', '-r', "$environmentExternalFullPath"
+}
+
+task removeScreenshotsFromDevice(dependsOn: [removeScreenshotsFromDeviceContextInternal, removeScreenshotsFromDeviceContextExternal, removeScreenshotsFromDeviceEnvironmentExternal]) {
     group = 'Test-Screenshots'
     description = 'Remove screenshots From Device'
 }
@@ -89,9 +106,12 @@ task showLogcat(type: Exec) {
     commandLine "$adb", 'logcat', '-d'
 }
 
+task hasScreenshots(type: Exec) {
+    commandLine "sh", "./verifyfiles.sh", "$savePath"
+}
+
 afterEvaluate {
     connectedDebugAndroidTest.finalizedBy showLogcat
     showLogcat.finalizedBy pullScreenshots
-    pullScreenshots.finalizedBy removeScreenshotsFromDevice
     clean.dependsOn(removeLocalScreenshots)
 }
