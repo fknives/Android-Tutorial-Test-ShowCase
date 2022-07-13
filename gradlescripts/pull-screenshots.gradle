@@ -20,8 +20,8 @@ def findAdbFromLocal = {
         def sdkDir = properties.getProperty('sdk.dir')
         return "$sdkDir/platform-tools/adb"
     } else {
-        System.err.println("WARNING: SDK dir not found by local properties!")
-        return null
+        System.err.println("WARNING: SDK dir not found by local properties, returning static: $System.env.HOME/Library/Android/sdk/platform-tools/adb")
+        return "$System.env.HOME/Library/Android/sdk/platform-tools/adb"
     }
 }
 
@@ -35,7 +35,11 @@ task pullScreenshots(type: Exec) {
     def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
     def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
 
-    commandLine "$adb", 'pull', "$fullPath", "$savePath/"
+    try {
+        commandLine "$adb", 'pull', "$fullPath", "$savePath/"
+    } catch (Throwable throwable) {
+        throwable.printStackTrace()
+    }
 }
 
 task removeScreenshotsFromDevice(type: Exec) {
@@ -47,7 +51,11 @@ task removeScreenshotsFromDevice(type: Exec) {
     def fullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
     def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
 
-    commandLine "$adb", 'shell', 'rm', '-r', "$fullPath"
+    try {
+        commandLine "$adb", 'shell', 'rm', '-r', "$fullPath"
+    } catch (Throwable throwable) {
+        throwable.printStackTrace()
+    }
 }
 
 task removeLocalScreenshots(type: Delete) {
