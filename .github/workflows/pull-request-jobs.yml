@@ -124,3 +124,10 @@ jobs:
           name: Emulator-Test-Results-${{ matrix.api-level }}
           path: ./**/build/reports/androidTests/**/*.html
           retention-days: 1
+      - name: Upload Test Screenshots
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Emulator-Test-Results-${{ matrix.api-level }}
+          path: ./**/build/testscreenshots/*
+          retention-days: 1

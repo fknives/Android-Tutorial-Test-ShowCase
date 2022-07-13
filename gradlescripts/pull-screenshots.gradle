@@ -1,0 +1,63 @@
+// Variables:
+// ext.screenshotsPackageName => the package name to pull from
+// ext.screenshotsDirectory   => the directory on the device to pull from inside the Pictures folder
+// ext.screenshotsSavePath    => where to pull the images
+// ext.adbPath                => Give adb path, if the script cant find it by itself from localProperties
+
+def propertyOrNull = { key ->
+    if (extensions.extraProperties.has(key)) {
+        return extensions.extraProperties.get(key)
+    } else {
+        return null
+    }
+}
+
+def findAdbFromLocal = {
+    def localProperties = new File(rootDir, "local.properties")
+    if (localProperties.exists()) {
+        Properties properties = new Properties()
+        localProperties.withInputStream { instr -> properties.load(instr) }
+        def sdkDir = properties.getProperty('sdk.dir')
+        return "$sdkDir/platform-tools/adb"
+    } else {
+        System.err.println("WARNING: SDK dir not found by local properties!")
+        return null
+    }
+}
+
+task pullScreenshots(type: Exec) {
+    group = 'Test'
+    description = 'Pull screenshots'
+
+    def packageName = propertyOrNull("screenshotsPackageName") ?: "$android.defaultConfig.applicationId"
+    def screenshotDirectory = propertyOrNull("screenshotsDirectory") ?: "test-screenshots"
+    def fullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
+    def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
+    def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
+
+    commandLine "$adb", 'pull', "$fullPath", "$savePath/"
+}
+
+task removeScreenshotsFromDevice(type: Exec) {
+    group = 'Test'
+    description = 'Delete screenshots From Device'
+
+    def packageName = propertyOrNull("screenshotsPackageName") ?: "$android.defaultConfig.applicationId"
+    def screenshotDirectory = propertyOrNull("screenshotsDirectory") ?: "test-screenshots"
+    def fullPath = "/sdcard/Android/data/$packageName/files/Pictures/$screenshotDirectory/"
+    def adb = propertyOrNull("adbPath") ?: findAdbFromLocal()
+
+    commandLine "$adb", 'shell', 'rm', '-r', "$fullPath"
+}
+
+task removeLocalScreenshots(type: Delete) {
+    def savePath = propertyOrNull("screenshotsSavePath") ?: "build/testscreenshots/"
+
+    delete files("$savePath")
+}
+
+afterEvaluate {
+    connectedDebugAndroidTest.finalizedBy pullScreenshots
+    pullScreenshots.finalizedBy removeScreenshotsFromDevice
+    clean.dependsOn(removeLocalScreenshots)
+}
