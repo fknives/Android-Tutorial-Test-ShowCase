@@ -57,7 +57,7 @@ class AuthComposeInstrumentedTest : KoinTest {
         composeTestRule.mainClock.advanceTimeUntil { anyResourceIdling() }
         navigationRobot.assertAuthScreen()
         robot.setPassword("alma")
-            .setUsername("banaxn")
+            .setUsername("banan")
             .assertUsername("banan")
             .assertPassword("alma")
 

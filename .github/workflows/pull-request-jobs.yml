@@ -74,60 +74,60 @@ jobs:
           path: ./**/build/reports/tests/**/index.html
           retention-days: 1
 
-#  run-tests-on-emulator:
-#    runs-on: macos-latest
-#    strategy:
-#      matrix:
-#        api-level: [ 21, 30 ]
-#      fail-fast: false
-#    steps:
-#      - name: checkout
-#        uses: actions/checkout@v3
-#      - name: Setup Java
-#        uses: actions/setup-java@v2
-#        with:
-#          distribution: 'adopt'
-#          java-version: '11'
-#      - name: Gradle cache
-#        uses: gradle/gradle-build-action@v2
-#      - name: AVD cache
-#        uses: actions/cache@v3
-#        id: avd-cache
-#        with:
-#          path: |
-#            ~/.android/avd/*
-#            ~/.android/adb*
-#          key: avd-${{ matrix.api-level }}
-#      - name: create AVD and generate snapshot for caching
-#        if: steps.avd-cache.outputs.cache-hit != 'true'
-#        uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          arch: 'x86_64'
-#          api-level: ${{ matrix.api-level }}
-#          force-avd-creation: false
-#          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-#          disable-animations: false
-#          script: echo "Generated AVD snapshot for caching."
-#      - name: Run Android Tests
-#        uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          arch: 'x86_64'
-#          api-level: ${{ matrix.api-level }}
-#          force-avd-creation: false
-#          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-#          disable-animations: true
-#          script: ./gradlew connectedDebugAndroidTest
-#      - name: Upload Test Results
-#        uses: actions/upload-artifact@v2
-#        if: always()
-#        with:
-#          name: Emulator-Test-Results-${{ matrix.api-level }}
-#          path: ./**/build/reports/androidTests/**/*.html
-#          retention-days: 1
-#      - name: Upload Test Screenshots
-#        uses: actions/upload-artifact@v2
-#        if: always()
-#        with:
-#          name: Emulator-Test-Results-${{ matrix.api-level }}
-#          path: ./**/build/testscreenshots/*
-#          retention-days: 1
+  run-tests-on-emulator:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [ 21, 30 ]
+      fail-fast: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          arch: 'x86_64'
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+      - name: Run Android Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          arch: 'x86_64'
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Emulator-Test-Results-${{ matrix.api-level }}
+          path: ./**/build/reports/androidTests/**/*.html
+          retention-days: 1
+      - name: Upload Test Screenshots
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Emulator-Test-Results-${{ matrix.api-level }}
+          path: ./**/build/testscreenshots/*
+          retention-days: 1

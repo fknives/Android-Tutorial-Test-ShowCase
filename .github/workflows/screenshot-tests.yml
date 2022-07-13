@@ -1,9 +1,8 @@
 name: Verify Screenshots can be created and pulled
 
 on:
-  pull_request:
-    branches:
-      - develop
+  workflow_dispatch:
+
 
 env:
   GITHUB_USERNAME: "fknives"
