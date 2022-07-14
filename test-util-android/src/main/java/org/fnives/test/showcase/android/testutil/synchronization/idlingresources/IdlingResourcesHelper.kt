@@ -6,7 +6,7 @@ import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadF
 import java.util.concurrent.Executors
 
 // workaround, issue with idlingResources is tracked here https://github.com/robolectric/robolectric/issues/4807
-fun anyResourceIdling(): Boolean = !IdlingRegistry.getInstance().resources.all(IdlingResource::isIdleNow)
+fun anyResourceNotIdle(): Boolean = (!IdlingRegistry.getInstance().resources.all(IdlingResource::isIdleNow))
 
 fun awaitIdlingResources() {
     val idlingRegistry = IdlingRegistry.getInstance()
@@ -30,7 +30,7 @@ fun awaitIdlingResources() {
     executor.shutdown()
 }
 
-private fun IdlingResource.awaitUntilIdle() {
+fun IdlingResource.awaitUntilIdle() {
     // using loop because some times, registerIdleTransitionCallback wasn't called
     while (true) {
         if (isIdleNow) return

@@ -7,7 +7,7 @@ import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceNotIdle
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitIdlingResources
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -54,7 +54,7 @@ open class MainDispatcherTestRule(private val useStandard: Boolean = true) : Tes
     companion object {
         fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
             scheduler.advanceUntilIdle() // advance until a request is sent
-            while (anyResourceIdling()) { // check if any request is in progress
+            while (anyResourceNotIdle()) { // check if any request is in progress
                 awaitIdlingResources() // complete all requests and other idling resources
                 scheduler.advanceUntilIdle() // run coroutines after request is finished
             }

@@ -3,7 +3,7 @@ package org.fnives.test.showcase.testutils.idling
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
-import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceIdling
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceNotIdle
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitIdlingResources
 import org.fnives.test.showcase.android.testutil.synchronization.runOnUIAwaitOnCurrent
 import org.fnives.test.showcase.testutils.storage.TestDatabaseInitialization
@@ -42,7 +42,7 @@ class DatabaseDispatcherTestRule : TestRule {
     companion object {
         fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
             scheduler.advanceUntilIdle() // advance until a request is sent
-            while (anyResourceIdling()) { // check if any request is in progress
+            while (anyResourceNotIdle()) { // check if any request is in progress
                 awaitIdlingResources() // complete all requests and other idling resources
                 scheduler.advanceUntilIdle() // run coroutines after request is finished
             }
