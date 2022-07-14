@@ -4,7 +4,7 @@ These are notes to myself what the project has currently and how to do verificat
 ## Pull Request
 
 Each pull request must be go though the automated CI checks, which are:
-- Static Code Analyisis (detekt, ktlint, lint)
+- Static Code Analysis (detekt, ktlint, lint)
 - JVM Tests (unit tests + Robolectric Tests)
 - Android Tests on Emulators
 
