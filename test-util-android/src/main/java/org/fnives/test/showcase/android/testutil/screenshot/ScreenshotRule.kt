@@ -1,6 +1,7 @@
 package org.fnives.test.showcase.android.testutil.screenshot
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.test.runner.screenshot.ScreenCapture
 import androidx.test.runner.screenshot.ScreenCaptureProcessor
 import androidx.test.runner.screenshot.Screenshot
@@ -38,28 +39,30 @@ class ScreenshotRule(
         }
     }
 
-    fun takeScreenshot(prefix: String = this.prefix, baseName: String) {
+    fun takeScreenshot(prefix: String = this.prefix, baseName: String, capture: ScreenCapture = Screenshot.capture()) {
         val fileName = if (timestampSuffix) {
             "$prefix-$baseName-${System.currentTimeMillis()}"
         } else {
             "$prefix-$baseName"
         }
-        takeScreenshot(filename = fileName)
+        takeScreenshot(filename = fileName, capture = capture)
     }
 
     @Suppress("PrintStackTrace")
-    private fun takeScreenshot(filename: String) {
-        val capture: ScreenCapture = Screenshot.capture()
+    private fun takeScreenshot(filename: String, capture: ScreenCapture) {
         capture.name = filename
         capture.format = Bitmap.CompressFormat.JPEG
         try {
             capture.process(setOf(processor))
+            Log.d(TAG, "Saved image: $filename")
         } catch (e: IOException) {
+            Log.d(TAG, "Couldn't save image: $e")
             e.printStackTrace()
         }
     }
 
     companion object {
+        const val TAG = "Screenshot Rule"
         val Description.testScreenshotName get() = "${testClass.simpleName}-$methodName"
         val Description.beforeTestScreenshotName get() = "$testScreenshotName-BEFORE"
         val Description.successTestScreenshotName get() = "$testScreenshotName-SUCCESS"

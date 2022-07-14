@@ -23,7 +23,6 @@ afterEvaluate {
                 from components.release
 
                 groupId "$testUtilGroupId"
-                println("$testUtilArtifactId")
                 version "$testUtilVersion"
                 artifactId "$testUtilArtifactId"
                 artifact sourcesJar
