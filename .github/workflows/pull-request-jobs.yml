@@ -131,3 +131,10 @@ jobs:
           name: Emulator-Test-Results-${{ matrix.api-level }}
           path: ./**/build/testscreenshots/*
           retention-days: 1
+      - name: Upload Logcat Logs
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Emulator-Logcat-Logs-${{ matrix.api-level }}
+          path: ./**/build/logcat.txt
+          retention-days: 1
