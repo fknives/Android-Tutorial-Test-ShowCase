@@ -18,6 +18,7 @@ import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.statesetup.SetupAuthenticationState.setupLogin
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -26,6 +27,7 @@ import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
 @RunWith(AndroidJUnit4::class)
+@Ignore("verifying compose")
 class MainActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<MainActivity>
