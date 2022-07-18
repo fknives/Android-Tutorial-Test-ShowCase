@@ -5,6 +5,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
 import org.fnives.test.showcase.android.testutil.activity.safeClose
+import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
 import org.fnives.test.showcase.model.content.FavouriteContent
@@ -37,7 +38,8 @@ class MainActivityInstrumentedTest : KoinTest {
 
     @Rule
     @JvmField
-    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
+    val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
+        .around(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
         .around(AsyncDiffUtilInstantTestRule())
         .around(SafeCloseActivityRule { activityScenario })
