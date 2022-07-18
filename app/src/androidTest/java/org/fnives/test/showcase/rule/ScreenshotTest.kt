@@ -4,6 +4,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
+import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.android.testutil.synchronization.MainDispatcherTestRule
 import org.fnives.test.showcase.testutils.ReloadKoinModulesIfNecessaryTestRule
@@ -24,7 +25,8 @@ class ScreenshotTest : KoinTest {
 
     @Rule
     @JvmField
-    val ruleOrder: RuleChain = RuleChain.outerRule(mainDispatcherTestRule)
+    val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
+        .around(mainDispatcherTestRule)
         .around(ReloadKoinModulesIfNecessaryTestRule())
         .around(SafeCloseActivityRule { activityScenario })
         .around(ScreenshotRule(prefix = "screenshot-rule", takeOnSuccess = true))

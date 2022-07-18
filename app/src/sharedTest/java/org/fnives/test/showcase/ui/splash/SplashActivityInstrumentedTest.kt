@@ -5,6 +5,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
+import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
@@ -31,7 +32,8 @@ class SplashActivityInstrumentedTest : KoinTest {
 
     @Rule
     @JvmField
-    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
+    val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
+        .around(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
         .around(SafeCloseActivityRule { activityScenario })
         .around(ScreenshotRule("test-showcase"))

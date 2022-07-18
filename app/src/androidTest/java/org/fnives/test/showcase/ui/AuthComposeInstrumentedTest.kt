@@ -7,6 +7,7 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
+import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceNotIdle
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitUntilIdle
@@ -39,7 +40,8 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     @Rule
     @JvmField
-    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
+    val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
+        .around(mockServerScenarioSetupTestRule)
         .around(dispatcherTestRule)
         .around(composeTestRule)
         .around(ScreenshotRule("test-showcase-compose"))

@@ -5,6 +5,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
+import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
@@ -31,7 +32,8 @@ class AuthActivityInstrumentedTest : KoinTest {
 
     @Rule
     @JvmField
-    val ruleOrder: RuleChain = RuleChain.outerRule(mockServerScenarioSetupTestRule)
+    val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
+        .around(mockServerScenarioSetupTestRule)
         .around(mainDispatcherTestRule)
         .around(SafeCloseActivityRule { activityScenario })
         .around(ScreenshotRule("test-showcase"))

@@ -33,4 +33,5 @@ project.ext {
     robolectric_version = "4.7"
     espresso_version = "3.4.0"
     hamcrest_version = "2.2"
+    ui_animator_version = "2.2.0"
 }
