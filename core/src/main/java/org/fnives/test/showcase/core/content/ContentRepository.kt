@@ -20,12 +20,15 @@ internal class ContentRepository(
 
     private val mutableContentFlow = MutableStateFlow(Optional<List<Content>>(null))
     private val requestFlow: Flow<Resource<List<Content>>> = flow {
+        System.err.println("emit loading")
         emit(Resource.Loading())
+        System.err.println("calling request")
         val response = wrapIntoAnswer { contentRemoteSource.get() }.mapIntoResource()
         if (response is Resource.Success) {
             System.err.println("updated flow")
             mutableContentFlow.value = Optional(response.data)
         }
+        System.err.println("emit response")
         emit(response)
     }
 
