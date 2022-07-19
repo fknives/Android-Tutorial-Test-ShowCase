@@ -54,11 +54,15 @@ open class MainDispatcherTestRule(private val useStandard: Boolean = true) : Tes
     companion object {
         fun TestDispatcher.advanceUntilIdleWithIdlingResources() {
             scheduler.advanceUntilIdle() // advance until a request is sent
+            System.err.println("test - advanced1")
             while (anyResourceNotIdle()) { // check if any request is in progress
                 awaitIdlingResources() // complete all requests and other idling resources
+                System.err.println("test - awaited idling")
                 scheduler.advanceUntilIdle() // run coroutines after request is finished
+                System.err.println("test - advanced 2")
             }
             scheduler.advanceUntilIdle()
+            System.err.println("test - advanced last")
         }
     }
 }

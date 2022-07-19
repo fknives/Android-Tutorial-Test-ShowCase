@@ -23,6 +23,7 @@ internal class ContentRepository(
         emit(Resource.Loading())
         val response = wrapIntoAnswer { contentRemoteSource.get() }.mapIntoResource()
         if (response is Resource.Success) {
+            System.err.println("updated flow")
             mutableContentFlow.value = Optional(response.data)
         }
         emit(response)
