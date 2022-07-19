@@ -15,6 +15,7 @@ internal suspend fun <T> wrapIntoAnswer(callback: suspend () -> T): Answer<T> =
     } catch (parsingException: ParsingException) {
         Answer.Error(parsingException)
     } catch (cancellationException: CancellationException) {
+        System.err.println("wrapIntoAnswer cancellation exception ${cancellationException.stackTrace}")
         throw cancellationException
     } catch (throwable: Throwable) {
         Answer.Error(UnexpectedException(throwable))

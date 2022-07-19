@@ -13,6 +13,7 @@ import org.fnives.test.showcase.core.shared.wrapIntoAnswer
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.network.content.ContentRemoteSource
+import kotlin.coroutines.cancellation.CancellationException
 
 internal class ContentRepository(
     private val contentRemoteSource: ContentRemoteSource
@@ -20,17 +21,23 @@ internal class ContentRepository(
 
     private val mutableContentFlow = MutableStateFlow(Optional<List<Content>>(null))
     private val requestFlow: Flow<Resource<List<Content>>> = flow {
-        System.err.println("emit loading")
-        emit(Resource.Loading())
-        System.err.println("calling request")
-        val response = wrapIntoAnswer { contentRemoteSource.get() }.mapIntoResource()
-        System.err.println("got response: $response")
-        if (response is Resource.Success) {
-            System.err.println("updated flow")
-            mutableContentFlow.value = Optional(response.data)
+        try {
+            System.err.println("emit loading")
+            emit(Resource.Loading())
+            System.err.println("calling request")
+            val response = wrapIntoAnswer { contentRemoteSource.get() }.mapIntoResource()
+            System.err.println("got response: $response")
+            if (response is Resource.Success) {
+                mutableContentFlow.value = Optional(response.data)
+                System.err.println("updated flow")
+            } else {
+                System.err.println("emit response")
+                emit(response)
+            }
+        } catch(throwable: Throwable) {
+            System.err.println("exception in flow{} $throwable = ${throwable.stackTrace}")
+            if (throwable is CancellationException) throw throwable
         }
-        System.err.println("emit response")
-        emit(response)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
