@@ -13,6 +13,7 @@ import org.fnives.test.showcase.testutils.idling.MainDispatcherTestRule
 import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -21,6 +22,7 @@ import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
 @RunWith(AndroidJUnit4::class)
+@Ignore("a")
 class AuthActivityInstrumentedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>

@@ -19,6 +19,7 @@ import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.DatabaseDispatcherTestRule
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -27,6 +28,7 @@ import org.koin.test.KoinTest
 import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
+@Ignore("a")
 class AuthComposeInstrumentedTest : KoinTest {
 
     private val composeTestRule = createComposeRule()
