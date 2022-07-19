@@ -71,7 +71,7 @@ jobs:
         if: always()
         with:
           name: JVM Test Results
-          path: ./**/build/reports/tests/**/index.html
+          path: ./**/build/reports/tests/**/*.html
           retention-days: 1
 
   run-tests-on-emulator:
