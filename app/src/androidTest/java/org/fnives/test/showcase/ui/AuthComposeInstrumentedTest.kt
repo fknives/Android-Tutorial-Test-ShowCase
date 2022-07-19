@@ -175,6 +175,7 @@ class AuthComposeInstrumentedTest : KoinTest {
             .assertPassword("banan")
 
         stateRestorationTester.emulateSavedInstanceStateRestore()
+        composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY) // ensure all time based operation run
 
         navigationRobot.assertAuthScreen()
         robot.assertUsername("alma")

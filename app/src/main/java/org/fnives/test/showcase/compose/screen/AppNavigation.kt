@@ -24,9 +24,11 @@ fun AppNavigation(isUserLogeInUseCase: IsUserLoggedInUseCase = get()) {
     val navController = rememberNavController()
 
     LaunchedEffect(isUserLogeInUseCase) {
+        val loginStateRoute = if (isUserLogeInUseCase.invoke()) RouteTag.HOME else RouteTag.AUTH
+        if (navController.currentDestination?.route == loginStateRoute) return@LaunchedEffect
         delay(500)
         navController.navigate(
-            route = if (isUserLogeInUseCase.invoke()) RouteTag.HOME else RouteTag.AUTH,
+            route = loginStateRoute,
             navOptions = NavOptions.Builder().setPopUpTo(route = RouteTag.SPLASH, inclusive = true).build()
         )
     }

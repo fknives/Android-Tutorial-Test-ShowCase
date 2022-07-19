@@ -184,7 +184,7 @@ mockServerScenarioSetup.setScenario(
 
 Then we wait a bit, more precisely we wait for the app to navigate us correctly to AuthScreen since we're not logged in:
 ```kotlin
-composeTestRule.mainClock.advanceTimeBy(510L)
+composeTestRule.mainClock.advanceTimeBy(600L)
 ```
 
 We assert that we are indeed on the correct screen
@@ -227,7 +227,7 @@ Next up we verify what happens if the user doesn't set their password. We don't 
 
 First we check that we are in the write place:
 ```kotlin
-composeTestRule.mainClock.advanceTimeBy(510L)
+composeTestRule.mainClock.advanceTimeBy(600L)
 navigationRobot.assertAuthScreen()
 ```
 
@@ -252,7 +252,7 @@ This will be really similar as the previous test, so try to do it on your own. T
 
 Still, here is the complete code:
 ```kotlin
-composeTestRule.mainClock.advanceTimeBy(510L)
+composeTestRule.mainClock.advanceTimeBy(600L)
 navigationRobot.assertAuthScreen()
 
 robot
@@ -277,7 +277,7 @@ mockServerScenarioSetup.setScenario(
 
 Now input the credentials and fire the event:
 ```kotlin
-composeTestRule.mainClock.advanceTimeBy(510L)
+composeTestRule.mainClock.advanceTimeBy(600L)
 navigationRobot.assertAuthScreen()
 robot.setUsername("alma")
     .setPassword("banan")
@@ -310,7 +310,7 @@ mockServerScenarioSetup.setScenario(
     AuthScenario.GenericError(username = "alma", password = "banan")
 )
 
-composeTestRule.mainClock.advanceTimeBy(510L)
+composeTestRule.mainClock.advanceTimeBy(600L)
 navigationRobot.assertAuthScreen()
 robot.setUsername("alma")
     .setPassword("banan")
@@ -342,8 +342,10 @@ Then in `setup()`, we need to `setContent` on `stateRestorationTester` instead o
 
 Now for the actual test, we first setup the content then we trigger restoration by calling `stateRestorationTester.emulateSavedInstanceStateRestore()`, afterwards we can verify that the content is recreated in the correct way:
 
+> Note: We also add the time advancement, to ensure no time based effect messes up anything!
+
 ```kotlin
-composeTestRule.mainClock.advanceTimeBy(510L)
+composeTestRule.mainClock.advanceTimeBy(600L)
 navigationRobot.assertAuthScreen()
 robot.setUsername("alma")
     .setPassword("banan")
@@ -351,6 +353,7 @@ robot.setUsername("alma")
     .assertPassword("banan")
 
 stateRestorationTester.emulateSavedInstanceStateRestore()
+composeTestRule.mainClock.advanceTimeBy(600L)
 
 navigationRobot.assertAuthScreen()
 robot.assertUsername("alma")
