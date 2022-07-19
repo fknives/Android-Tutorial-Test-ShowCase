@@ -180,6 +180,7 @@ class MainActivityInstrumentedTest : KoinTest {
     /** GIVEN success then error WHEN retried THEN error is shown */
     @Test
     fun errorIsShownIfTheDataIsFetchedAndErrorIsReceived0() {
+        System.err.println("test start")
         mockServerScenarioSetup.setScenario(
             ContentScenario.Success(usingRefreshedToken = false)
                 .then(ContentScenario.Error(usingRefreshedToken = false))
