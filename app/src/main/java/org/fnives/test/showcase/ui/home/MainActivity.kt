@@ -41,6 +41,7 @@ open class MainActivity : AppCompatActivity() {
             adapter.submitList(it.orEmpty())
         }
         viewModel.errorMessage.observe(this) {
+            System.err.println("error message visibility = $it")
             binding.errorMessage.isVisible = it == true
         }
         viewModel.navigateToAuth.observe(this) {

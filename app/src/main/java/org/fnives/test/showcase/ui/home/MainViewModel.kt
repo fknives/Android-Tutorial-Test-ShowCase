@@ -29,6 +29,7 @@ class MainViewModel(
     val loading: LiveData<Boolean> = _loading
     private val _content: LiveData<List<FavouriteContent>> = liveData {
         getAllContentUseCase.get().collect {
+            System.err.println("collect: $it")
             when (it) {
                 is Resource.Error -> {
                     _errorMessage.value = true
@@ -61,9 +62,11 @@ class MainViewModel(
     }
 
     fun onRefresh() {
+        System.err.println("onRefresh, loading = ${_loading.value}")
         if (_loading.value == true) return
         _loading.value = true
         viewModelScope.launch {
+            System.err.println("onRefresh fetching")
             fetchContentUseCase.invoke()
         }
     }

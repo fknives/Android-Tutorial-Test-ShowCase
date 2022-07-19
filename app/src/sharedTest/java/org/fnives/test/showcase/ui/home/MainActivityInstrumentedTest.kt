@@ -7,7 +7,6 @@ import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
 import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
-import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.network.mockserver.ContentData
 import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
@@ -165,9 +164,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
-        loopMainThreadFor(2000L)
+        System.err.println("test - advanced")
 
         ContentData.contentSuccess.forEachIndexed { index, content ->
             robot.assertContainsItem(index, FavouriteContent(content, false))
@@ -186,8 +187,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -205,8 +209,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -224,8 +231,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -243,8 +253,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -262,8 +275,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -281,8 +297,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -300,8 +319,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -319,8 +341,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -338,8 +363,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -357,8 +385,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -378,8 +409,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -397,8 +431,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -416,8 +453,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -435,8 +475,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -454,8 +497,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -473,8 +519,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -492,8 +541,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -511,8 +563,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -530,8 +585,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -549,8 +607,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -570,8 +631,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -589,8 +653,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -608,8 +675,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -627,8 +697,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -646,8 +719,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -665,8 +741,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -684,8 +763,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -703,8 +785,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -722,8 +807,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -741,8 +829,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -762,8 +853,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -781,8 +875,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -800,8 +897,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -819,8 +919,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -838,8 +941,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -857,8 +963,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -876,8 +985,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -895,8 +1007,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -914,8 +1029,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -933,8 +1051,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -954,8 +1075,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -973,8 +1097,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -992,8 +1119,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1011,8 +1141,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1030,8 +1163,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1049,8 +1185,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1068,8 +1207,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1087,8 +1229,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1106,8 +1251,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()
@@ -1125,8 +1273,11 @@ class MainActivityInstrumentedTest : KoinTest {
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
 
+        System.err.println("test - before refresh")
         robot.swipeRefresh()
+        System.err.println("test - after refresh")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - advanced")
 
         robot
             .assertContainsError()

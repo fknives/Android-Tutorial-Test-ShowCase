@@ -42,7 +42,7 @@ android {
 
     sourceSets {
         androidTest {
-            java.srcDirs += "src/sharedTest/java"
+//            java.srcDirs += "src/sharedTest/java"
             assets.srcDirs += files("$projectDir/schemas".toString())
         }
         test {
