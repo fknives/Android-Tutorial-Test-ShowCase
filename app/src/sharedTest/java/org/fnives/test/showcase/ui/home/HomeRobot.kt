@@ -21,6 +21,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.android.testutil.intent.notIntended
 import org.fnives.test.showcase.android.testutil.viewaction.imageview.WithDrawable
+import org.fnives.test.showcase.android.testutil.viewaction.recycler.RemoveItemAnimations
 import org.fnives.test.showcase.android.testutil.viewaction.swiperefresh.PullToRefresh
 import org.fnives.test.showcase.model.content.Content
 import org.fnives.test.showcase.model.content.FavouriteContent
@@ -28,6 +29,16 @@ import org.fnives.test.showcase.ui.auth.AuthActivity
 import org.hamcrest.Matchers.allOf
 
 class HomeRobot {
+
+    /**
+     * Needed because Espresso idling sometimes not in sync with RecyclerView's animation.
+     * So we simply remove the item animations, the animations should be disabled anyway for test.
+     *
+     * Reference: https://github.com/android/android-test/issues/223
+     */
+    fun removeItemAnimations() = apply {
+        Espresso.onView(withId(R.id.recycler)).perform(RemoveItemAnimations())
+    }
 
     fun setupIntentResults() {
         Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
@@ -50,6 +61,7 @@ class HomeRobot {
     }
 
     fun assertContainsItem(index: Int, item: FavouriteContent) = apply {
+        removeItemAnimations()
         val isFavouriteResourceId = if (item.isFavourite) {
             R.drawable.favorite_24
         } else {
@@ -69,6 +81,7 @@ class HomeRobot {
     }
 
     fun clickOnContentItem(index: Int, item: Content) = apply {
+        removeItemAnimations()
         Espresso.onView(withId(R.id.recycler))
             .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(index))
 
@@ -91,6 +104,7 @@ class HomeRobot {
     }
 
     fun assertContainsNoItems() = apply {
+        removeItemAnimations()
         Espresso.onView(withId(R.id.recycler))
             .check(matches(hasChildCount(0)))
     }
