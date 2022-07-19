@@ -24,6 +24,7 @@ internal class ContentRepository(
         emit(Resource.Loading())
         System.err.println("calling request")
         val response = wrapIntoAnswer { contentRemoteSource.get() }.mapIntoResource()
+        System.err.println("got response: $response")
         if (response is Resource.Success) {
             System.err.println("updated flow")
             mutableContentFlow.value = Optional(response.data)
@@ -34,6 +35,7 @@ internal class ContentRepository(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val contents: Flow<Resource<List<Content>>> = mutableContentFlow.flatMapLatest {
+        System.err.println("calling flatmap: ${it.item}")
         if (it.item != null) flowOf(Resource.Success(it.item)) else requestFlow
     }
         .distinctUntilChanged()

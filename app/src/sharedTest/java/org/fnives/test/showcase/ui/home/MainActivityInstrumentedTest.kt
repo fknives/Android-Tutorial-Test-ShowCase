@@ -63,7 +63,9 @@ class MainActivityInstrumentedTest : KoinTest {
     fun signOutClickedResultsInNavigation() {
         mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         robot.clickSignOut()
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
@@ -116,7 +118,9 @@ class MainActivityInstrumentedTest : KoinTest {
 
         activityScenario.safeClose()
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         robot.assertContainsItem(0, expectedItem)
             .assertDidNotNavigateToAuth()
@@ -146,7 +150,9 @@ class MainActivityInstrumentedTest : KoinTest {
     fun networkErrorResultsInUIErrorStateShown() {
         mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false))
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         robot.assertContainsNoItems()
             .assertContainsError()
@@ -162,7 +168,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Success(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -186,7 +194,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -208,7 +218,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -230,7 +242,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -252,7 +266,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -274,7 +290,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -296,7 +314,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -318,7 +338,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -340,7 +362,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -362,7 +386,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -384,7 +410,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -408,7 +436,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -430,7 +460,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -452,7 +484,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -474,7 +508,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -496,7 +532,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -518,7 +556,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -540,7 +580,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -562,7 +604,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -584,7 +628,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -606,7 +652,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -630,7 +678,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -652,7 +702,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -674,7 +726,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -696,7 +750,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -718,7 +774,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -740,7 +798,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -762,7 +822,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -784,7 +846,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -806,7 +870,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -828,7 +894,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -852,7 +920,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -874,7 +944,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -896,7 +968,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -918,7 +992,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -940,7 +1016,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -962,7 +1040,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -984,7 +1064,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1006,7 +1088,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1028,7 +1112,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1050,7 +1136,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1074,7 +1162,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1096,7 +1186,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1118,7 +1210,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1140,7 +1234,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1162,7 +1258,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1184,7 +1282,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1206,7 +1306,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1228,7 +1330,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1250,7 +1354,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1272,7 +1378,9 @@ class MainActivityInstrumentedTest : KoinTest {
                 .then(ContentScenario.Error(usingRefreshedToken = false))
         )
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         System.err.println("test - before refresh")
         robot.swipeRefresh()
@@ -1298,7 +1406,9 @@ class MainActivityInstrumentedTest : KoinTest {
             .setScenario(RefreshTokenScenario.Success)
 
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         ContentData.contentSuccess.forEachIndexed { index, content ->
             robot.assertContainsItem(index, FavouriteContent(content, false))
@@ -1314,7 +1424,9 @@ class MainActivityInstrumentedTest : KoinTest {
             .setScenario(RefreshTokenScenario.Error)
 
         activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        System.err.println("test - calling first advanceUntilIdleWithIdlingResources")
         mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        System.err.println("test - finished first advanceUntilIdleWithIdlingResources")
 
         robot.assertNavigatedToAuth()
     }
