@@ -6,6 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.fnives.test.showcase.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.core.content.FetchContentUseCase
@@ -16,6 +22,7 @@ import org.fnives.test.showcase.model.content.ContentId
 import org.fnives.test.showcase.model.content.FavouriteContent
 import org.fnives.test.showcase.model.shared.Resource
 import org.fnives.test.showcase.ui.shared.Event
+import kotlin.coroutines.CoroutineContext
 
 class MainViewModel(
     private val getAllContentUseCase: GetAllContentUseCase,
@@ -25,9 +32,29 @@ class MainViewModel(
     private val removeContentFromFavouritesUseCase: RemoveContentFromFavouritesUseCase
 ) : ViewModel() {
 
+    @OptIn(InternalCoroutinesApi::class)
+    class LogingDispatcher(val delegate: CoroutineDispatcher): CoroutineDispatcher() {
+        override fun dispatch(context: CoroutineContext, block: Runnable) {
+            System.err.println("Log: dispatch")
+            delegate.dispatch(context, block)
+        }
+
+        override fun isDispatchNeeded(context: CoroutineContext): Boolean = delegate.isDispatchNeeded(context)
+
+        override fun limitedParallelism(parallelism: Int): CoroutineDispatcher = delegate.limitedParallelism(parallelism)
+
+        override fun dispatchYield(context: CoroutineContext, block: Runnable) {
+            System.err.println("Log: dispatchYield")
+            delegate.dispatchYield(context, block)
+        }
+    }
+
+    val dispatcher = LogingDispatcher(Dispatchers.Main.immediate)
+    val scope = CoroutineScope(SupervisorJob() + dispatcher)
+
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
-    private val _content: LiveData<List<FavouriteContent>> = liveData {
+    private val _content: LiveData<List<FavouriteContent>> = liveData(dispatcher) {
         getAllContentUseCase.get().collect {
             System.err.println("collect: $it")
             when (it) {
@@ -65,7 +92,7 @@ class MainViewModel(
         System.err.println("onRefresh, loading = ${_loading.value}")
         if (_loading.value == true) return
         _loading.value = true
-        viewModelScope.launch {
+        scope.launch {
             System.err.println("onRefresh fetching")
             fetchContentUseCase.invoke()
         }
@@ -80,5 +107,10 @@ class MainViewModel(
                 addContentToFavouriteUseCase.invoke(contentId)
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        scope.cancel()
     }
 }

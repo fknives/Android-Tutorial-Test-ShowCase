@@ -59,6 +59,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+
         fun getStartIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
 
         private fun MainViewModel.mapToAdapterListener(): FavouriteContentAdapter.OnFavouriteItemClicked =
