@@ -132,6 +132,14 @@ internal class ContentRepositoryTest {
         Assertions.assertEquals(expected, actual.getCompleted())
     }
 
+    @Test
+    fun a() {
+        repeat(10000) {
+            setUp()
+            whenFetchingRequestIsCalledAgain()
+        }
+    }
+
     @DisplayName("GIVEN content response THEN error WHEN fetched THEN only 4 items are emitted")
     @Test
     fun noAdditionalItemsEmitted() = runTest {

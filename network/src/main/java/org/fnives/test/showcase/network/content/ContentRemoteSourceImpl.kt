@@ -11,7 +11,10 @@ internal class ContentRemoteSourceImpl(
 
     override suspend fun get(): List<Content> =
         ExceptionWrapper.wrap {
-            contentService.getContent().mapNotNull(::mapResponse)
+            System.err.println("before request")
+            contentService.getContent().also {
+                System.err.println("git response $it")
+            }.mapNotNull(::mapResponse)
         }
 
     companion object {

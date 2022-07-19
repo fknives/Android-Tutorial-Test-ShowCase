@@ -8,5 +8,12 @@ class PlatformInterceptor : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response =
-        chain.proceed(chain.request().newBuilder().header("Platform", "Android").build())
+        try {
+            chain.proceed(chain.request().newBuilder().header("Platform", "Android").build())
+        } catch(throwable: Throwable) {
+            System.err.println("got throwable in interceptor: $throwable")
+            throw throwable
+        } finally {
+            System.err.println("finished interception")
+        }
 }
