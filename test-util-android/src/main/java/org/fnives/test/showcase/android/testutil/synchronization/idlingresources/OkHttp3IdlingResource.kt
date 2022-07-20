@@ -29,13 +29,7 @@ class OkHttp3IdlingResource private constructor(
 
     override fun getName(): String = name
 
-    override fun isIdleNow(): Boolean {
-        val isIdle = dispatcher.runningCallsCount() == 0
-        if (isIdle) {
-            sleepForDispatcherDefaultCallInRetrofitErrorState()
-        }
-        return isIdle
-    }
+    override fun isIdleNow(): Boolean = dispatcher.runningCallsCount() == 0
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         this.callback = callback
@@ -65,7 +59,7 @@ class OkHttp3IdlingResource private constructor(
          *
          * This brings us to this sleep for now.
          */
-        private fun sleepForDispatcherDefaultCallInRetrofitErrorState() {
+        fun sleepForDispatcherDefaultCallInRetrofitErrorState() {
             Thread.sleep(200L)
         }
     }
