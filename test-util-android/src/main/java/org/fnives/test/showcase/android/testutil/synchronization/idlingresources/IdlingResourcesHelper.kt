@@ -6,11 +6,18 @@ import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadF
 import java.util.concurrent.Executors
 
 // workaround, issue with idlingResources is tracked here https://github.com/robolectric/robolectric/issues/4807
-fun anyResourceNotIdle(): Boolean = (!IdlingRegistry.getInstance().resources.all(IdlingResource::isIdleNow))
+fun anyResourceNotIdle(): Boolean {
+    val anyResourceNotIdle = (!IdlingRegistry.getInstance().resources.all(IdlingResource::isIdleNow))
+    if (!anyResourceNotIdle) {
+        // once it's idle we wait the Idling resource's time
+        OkHttp3IdlingResource.sleepForDispatcherDefaultCallInRetrofitErrorState()
+    }
+    return anyResourceNotIdle
+}
 
 fun awaitIdlingResources() {
+    if (!anyResourceNotIdle()) return
     val idlingRegistry = IdlingRegistry.getInstance()
-    if (idlingRegistry.resources.all(IdlingResource::isIdleNow)) return
 
     val executor = Executors.newSingleThreadExecutor()
     var isIdle = false
@@ -22,6 +29,7 @@ fun awaitIdlingResources() {
                     idlingResource.awaitUntilIdle()
                 }
         } while (!idlingRegistry.resources.all(IdlingResource::isIdleNow))
+        OkHttp3IdlingResource.sleepForDispatcherDefaultCallInRetrofitErrorState()
         isIdle = true
     }
     while (!isIdle) {

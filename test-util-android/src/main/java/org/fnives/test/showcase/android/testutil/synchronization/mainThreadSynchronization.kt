@@ -28,7 +28,7 @@ fun runOnUIAwaitOnCurrent(action: () -> Unit) {
 
 fun loopMainThreadFor(delay: Long) {
     if (Looper.getMainLooper().thread == Thread.currentThread()) {
-        Thread.sleep(200L)
+        Thread.sleep(delay)
     } else {
         Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(delay))
     }

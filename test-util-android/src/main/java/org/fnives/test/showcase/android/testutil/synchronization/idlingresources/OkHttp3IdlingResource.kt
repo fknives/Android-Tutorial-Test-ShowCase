@@ -21,6 +21,7 @@ class OkHttp3IdlingResource private constructor(
     init {
         val currentCallback = dispatcher.idleCallback
         dispatcher.idleCallback = Runnable {
+            sleepForDispatcherDefaultCallInRetrofitErrorState()
             callback?.onTransitionToIdle()
             currentCallback?.run()
         }
@@ -45,6 +46,21 @@ class OkHttp3IdlingResource private constructor(
             if (name == null) throw NullPointerException("name == null")
             if (client == null) throw NullPointerException("client == null")
             return OkHttp3IdlingResource(name, client.dispatcher)
+        }
+
+        /**
+         * This is required, because in case of Errors Retrofit uses Dispatcher.Default to suspendThrow
+         * see: retrofit2.KotlinExtensions.kt Exception.suspendAndThrow
+         * Relevant code issue: https://github.com/square/retrofit/blob/6cd6f7d8287f73909614cb7300fcde05f5719750/retrofit/src/main/java/retrofit2/KotlinExtensions.kt#L121
+         * This is the current suggested approach to their problem with Unchecked Exceptions
+         *
+         * Sadly Dispatcher.Default cannot be replaced yet, so we can't swap it out in tests:
+         * https://github.com/Kotlin/kotlinx.coroutines/issues/1365
+         *
+         * This brings us to this sleep for now.
+         */
+        fun sleepForDispatcherDefaultCallInRetrofitErrorState() {
+            Thread.sleep(200L)
         }
     }
 }
