@@ -1,6 +1,6 @@
 apply plugin: "maven-publish"
 
-def testUtilVersion = "1.0.1"
+def testUtilVersion = "1.1.0"
 if (!extensions.extraProperties.has("artifactId")) {
     throw IllegalStateException("ext.artifactId is not set while applying deploy script")
 }
