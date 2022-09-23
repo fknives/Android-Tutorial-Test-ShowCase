@@ -1,4 +1,4 @@
-task jvmTests(dependsOn: ["app:testDebugUnitTest", "core:test", "network:test"]) {
+task jvmTests(dependsOn: ["app:testDebugUnitTest", "core:test", "network:test", "examplecase:example-navcontroller:testDebugUnitTest"]) {
     group = 'Tests'
     description = 'Run all JVM tests'
 }
@@ -10,7 +10,7 @@ task robolectricTests(type: Exec) {
     commandLine 'sh', './gradlew', 'testDebugUnitTest', '--tests', 'org.fnives.test.*InstrumentedTest'
 }
 
-task androidTests(dependsOn: ["app:connectedDebugAndroidTest"]) {
+task androidTests(dependsOn: ["app:connectedDebugAndroidTest", "examplecase:example-navcontroller:connectedDebugAndroidTest"]) {
     group = 'Tests'
     description = 'Run Android tests'
 }
