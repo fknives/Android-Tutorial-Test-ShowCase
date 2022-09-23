@@ -21,6 +21,7 @@ The application is separated into different modules each module is tested differ
 - [core](#core)
 - [network](#networking)
 - [mockserver](#mock-server)
+- [examplecase](#example-case)
 
 #### Model
 Self explanatory, contains all shared data classes (POJOs) and Exceptions used by the other modules.
@@ -103,6 +104,10 @@ It contains a way to setup responses to requests in a unified way. Contains all 
 [JsonAssert](https://github.com/skyscreamer/JSONassert) is used to compare JSON models.
 [OkHttp-TLS](https://github.com/square/okhttp/tree/master/okhttp-tls) is used to have HTTPS requests on Android Tests.
 
+#### Example Case
+
+This folder contains examples of specific cases such as NavController testing.
+
 ## Server
 The actual server when running the application is [mockapi.io](https://www.mockapi.io/) so don't expect actual functionalities in the application.
 
@@ -163,6 +168,7 @@ We will also see how to test a specific Activity (same concept can be applied to
 
 Bonus:
 * Testing Compose UI: Open the [compose instruction set](./codekata/compose.instructionset.md)
+* Testing First: Open the [test first instruction set](./codekata/testfirst.instructionset.md) To see how to start writing your test first.
 
 #### Robolectric and Android Tests.
 Open the [shared tests instruction set](./codekata/sharedtests.instructionset.md).

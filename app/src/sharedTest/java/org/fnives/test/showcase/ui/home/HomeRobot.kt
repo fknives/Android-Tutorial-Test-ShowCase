@@ -40,6 +40,11 @@ class HomeRobot {
         Espresso.onView(withId(R.id.recycler)).perform(RemoveItemAnimations())
     }
 
+    fun assertToolbarIsShown() = apply {
+        Espresso.onView(withId(R.id.toolbar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    }
+
     fun setupIntentResults() {
         Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()))
@@ -53,9 +58,11 @@ class HomeRobot {
         notIntended(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
     }
 
-    fun clickSignOut() = apply {
-        Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
-            .respondWith(Instrumentation.ActivityResult(0, null))
+    fun clickSignOut(setupIntentResults: Boolean = true) = apply {
+        if (setupIntentResults) {
+            Intents.intending(IntentMatchers.hasComponent(AuthActivity::class.java.canonicalName))
+                .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()))
+        }
 
         Espresso.onView(withId(R.id.logout_cta)).perform(click())
     }
