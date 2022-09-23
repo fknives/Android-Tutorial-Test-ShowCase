@@ -6,7 +6,7 @@ subprojects { module ->
                 warningsAsErrors true
                 abortOnError true
                 textReport true
-                ignore 'Overdraw'
+                ignore 'Overdraw', 'NewerVersionAvailable', 'GradleDependency'
                 textOutput "stdout"
             }
         }
@@ -17,7 +17,7 @@ subprojects { module ->
             warningsAsErrors true
             abortOnError true
             textReport true
-            ignore 'Overdraw'
+            ignore 'Overdraw', 'NewerVersionAvailable', 'GradleDependency'
             textOutput "stdout"
         }
     }
@@ -27,7 +27,7 @@ subprojects { module ->
             warningsAsErrors true
             abortOnError true
             textReport true
-            ignore 'Overdraw'
+            ignore 'Overdraw', 'NewerVersionAvailable', 'GradleDependency'
             textOutput "stdout"
         }
     }

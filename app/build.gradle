@@ -114,6 +114,9 @@ dependencies {
 
     testImplementation testFixtures(project(':core'))
     androidTestImplementation testFixtures(project(':core'))
+
+    // case specific
+    implementation project(":examplecase:example-navcontroller")
 }
 
 apply from: '../gradlescripts/pull-screenshots.gradle'

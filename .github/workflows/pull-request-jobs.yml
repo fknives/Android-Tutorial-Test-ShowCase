@@ -40,7 +40,9 @@ jobs:
         if: always()
         with:
           name: ktLint Results
-          path: ./**/build/reports/ktlint/**/*ktlint*Check.txt
+          path: |
+            ./**/build/reports/ktlint/**/*ktlint*Check.txt
+            ./**/**/build/reports/ktlint/**/*ktlint*Check.txt
           retention-days: 1
       - name: Run Lint
         run: ./gradlew lint
@@ -49,7 +51,9 @@ jobs:
         if: always()
         with:
           name: Lint Results
-          path: ./**/build/reports/*lint-results*.html
+          path: |
+            ./**/build/reports/*lint-results*.html
+            ./**/**/build/reports/*lint-results*.html
           retention-days: 1
 
   run-tests:

@@ -1,0 +1,67 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 31
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    sourceSets {
+        androidTest {
+            java.srcDirs += "src/sharedTest/java"
+            assets.srcDirs += files("$projectDir/schemas".toString())
+        }
+        test {
+            java.srcDirs += "src/sharedTest/java"
+            java.srcDirs += "src/robolectricTest/java"
+            resources.srcDirs += files("$projectDir/schemas".toString())
+        }
+    }
+
+    // needed for androidTest
+    packagingOptions {
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:$androidx_core_version"
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    implementation "com.google.android.material:material:$androidx_material_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+
+    debugImplementation "androidx.fragment:fragment-testing:1.5.3"
+
+    applyAppTestDependenciesTo(this)
+
+    testImplementation "androidx.navigation:navigation-testing:$navigation_version"
+    testImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-android')
+    androidTestImplementation "androidx.navigation:navigation-testing:$navigation_version"
+}
