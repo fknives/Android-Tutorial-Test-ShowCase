@@ -4,8 +4,14 @@ detekt {
 
     def projectPaths = subprojects.collect {
         def projectName = it.name
-        "$projectDir/$projectName/src/main/java"
-    }
+        if (it.subprojects.isEmpty()) {
+            "$projectDir/$projectName/src/main/java"
+        } else {
+            it.subprojects.collect { sub ->
+                "$sub.projectDir//src/main/java"
+            }
+        }
+    }.flatten()
 
     source = files(*projectPaths)
     config = files("$projectDir/detekt/detekt.yml")
