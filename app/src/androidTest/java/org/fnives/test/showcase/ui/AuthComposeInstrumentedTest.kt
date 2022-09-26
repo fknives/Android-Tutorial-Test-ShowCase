@@ -3,15 +3,13 @@ package org.fnives.test.showcase.ui
 import androidx.compose.ui.test.MainTestClock
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
-import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.anyResourceNotIdle
-import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.awaitUntilIdle
-import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
+import org.fnives.test.showcase.android.testutil.viewaction.LoopMainThreadFor
 import org.fnives.test.showcase.compose.screen.AppNavigation
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
@@ -24,7 +22,6 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.koin.test.KoinTest
-import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
 class AuthComposeInstrumentedTest : KoinTest {
@@ -190,25 +187,7 @@ class AuthComposeInstrumentedTest : KoinTest {
          * Await the idling resource on a different thread while looping main.
          */
         fun MainTestClock.awaitIdlingResources() {
-            val idlingRegistry = IdlingRegistry.getInstance()
-            if (!anyResourceNotIdle()) return
-
-            val executor = Executors.newSingleThreadExecutor()
-            var isIdle = false
-            executor.submit {
-                do {
-                    idlingRegistry.resources
-                        .filterNot(IdlingResource::isIdleNow)
-                        .forEach { idlingResource ->
-                            idlingResource.awaitUntilIdle()
-                        }
-                } while (!idlingRegistry.resources.all(IdlingResource::isIdleNow))
-                isIdle = true
-            }
-            while (!isIdle) {
-                loopMainThreadFor(200L)
-            }
-            executor.shutdown()
+            Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(100L))
 
             advanceTimeByFrame()
         }
