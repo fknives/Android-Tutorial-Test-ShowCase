@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
  * For more info check out https://developer.android.com/guide/navigation/navigation-testing
  */
 @RunWith(AndroidJUnit4::class)
-class HomeNavigationTest {
+open class HomeNavigationSharedTest {
 
     private lateinit var fragmentScenario: FragmentScenario<HomeFragment>
     private lateinit var testNavController: TestNavHostController
@@ -80,7 +80,8 @@ class HomeNavigationTest {
             .perform(ViewActions.click())
 
         Assert.assertEquals(R.id.detailFragment, testNavController.currentDestination?.id)
-        Assert.assertEquals(listOf(R.id.nav_example_xml, R.id.homeFragment, R.id.detailFragment), testNavController.backStack.map { it.destination.id })
+        val expectedBackstack = listOf(R.id.nav_example_xml, R.id.homeFragment, R.id.detailFragment)
+        Assert.assertEquals(expectedBackstack, testNavController.backStack.map { it.destination.id })
         testNavController.backStack.map { it.arguments }
     }
 
@@ -95,7 +96,8 @@ class HomeNavigationTest {
         Espresso.onView(itemViewMatcher(position2)).perform(ViewActions.click())
 
         Assert.assertEquals(R.id.detailFragment, testNavController.currentDestination?.id)
-        Assert.assertEquals(listOf(R.id.nav_example_xml, R.id.homeFragment, R.id.detailFragment), testNavController.backStack.map { it.destination.id })
+        val expectedBackstack = listOf(R.id.nav_example_xml, R.id.homeFragment, R.id.detailFragment)
+        Assert.assertEquals(expectedBackstack, testNavController.backStack.map { it.destination.id })
         val actualArgs = DetailFragmentArgs.fromBundle(testNavController.backStack.last().arguments ?: Bundle())
         Assert.assertEquals(position1, actualArgs.position)
     }

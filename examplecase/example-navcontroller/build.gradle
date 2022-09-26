@@ -28,17 +28,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    sourceSets {
-        androidTest {
-            java.srcDirs += "src/sharedTest/java"
-            assets.srcDirs += files("$projectDir/schemas".toString())
-        }
-        test {
-            java.srcDirs += "src/sharedTest/java"
-            java.srcDirs += "src/robolectricTest/java"
-            resources.srcDirs += files("$projectDir/schemas".toString())
-        }
-    }
 
     // needed for androidTest
     packagingOptions {
@@ -56,12 +45,8 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
-    debugImplementation "androidx.fragment:fragment-testing:1.5.3"
-
     applyAppTestDependenciesTo(this)
-
-    testImplementation "androidx.navigation:navigation-testing:$navigation_version"
-    testImplementation project(':test-util-android')
-    androidTestImplementation project(':test-util-android')
-    androidTestImplementation "androidx.navigation:navigation-testing:$navigation_version"
+    debugImplementation "androidx.fragment:fragment-testing:1.5.3"
+    testImplementation project(":examplecase:example-navcontroller-shared-test")
+    androidTestImplementation project(":examplecase:example-navcontroller-shared-test")
 }
