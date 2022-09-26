@@ -1,0 +1,10 @@
+project.ext {
+    // helper function to disable Test Tasks in modules where there are no tests and so the Tests are not required.
+    disableTestTasks = { module ->
+        module.tasks.whenTaskAdded { task ->
+            if(task.name.contains("Test")) {
+                task.enabled = false
+            }
+        }
+    }
+}

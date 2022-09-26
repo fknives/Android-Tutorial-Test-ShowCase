@@ -21,6 +21,10 @@ project.ext {
        applyAppTestDependenciesTo(this)
        applyComposeTestDependenciesTo(this) // if you are using compose
      }
+     -------------APP-SHARED-TEST(Android Module-------------
+     dependencies {
+       applyAppSharedTestDependenciesTo(this)
+     }
 
      ------------------VERSIONS------------------
      versions try to get the global value, if not found they fall back to some defaults.
@@ -77,18 +81,24 @@ project.ext {
     ]
 
     // ------------------PRIVATE------------------
-    def applyStandardTestDependenciesTo = { module ->
-        module.dependencies {
+    def standardTestDependencies = [
             // coroutine testing
-            testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
+            "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version",
 
             // mockito, mocking library
-            testImplementation "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version"
+            "org.mockito.kotlin:mockito-kotlin:$testing_kotlin_mockito_version",
 
-            testImplementation "io.insert-koin:koin-test-junit5:$testing_koin_version"
+            "io.insert-koin:koin-test-junit5:$testing_koin_version",
             // junit5
-            testImplementation "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
-            testImplementation "org.junit.jupiter:junit-jupiter-params:$testing_junit5_version"
+            "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version",
+            "org.junit.jupiter:junit-jupiter-params:$testing_junit5_version",
+    ]
+
+    def applyStandardTestDependenciesTo = { module ->
+        module.dependencies {
+            standardTestDependencies.forEach { dependency ->
+                testImplementation dependency
+            }
             testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$testing_junit5_version"
         }
     }
@@ -134,6 +144,21 @@ project.ext {
             androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
             androidTestImplementation "io.insert-koin:koin-test-junit5:$testing_koin_version"
             androidTestRuntimeOnly "org.junit.vintage:junit-vintage-engine:$testing_junit5_version"
+        }
+    }
+
+    // ------------APP-SHARED-TEST------------
+    applyAppSharedTestDependenciesTo = { module ->
+
+        module.dependencies {
+            standardTestDependencies.forEach { dependency ->
+                implementation dependency
+            }
+            androidSpecificTestDependencies.forEach { dependency ->
+                implementation dependency
+            }
+            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
+            implementation "io.insert-koin:koin-test-junit5:$testing_koin_version"
         }
     }
 
