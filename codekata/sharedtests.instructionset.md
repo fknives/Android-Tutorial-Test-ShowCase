@@ -13,7 +13,12 @@ In this testing instruction set you will learn how to write simple tests running
 
 ## Login UI Test
 Instead of writing new tests from scratch, we will modify our existing Robolectric tests so they can be run on a Real Android device as well.N
-For this we already have a `sharedTest` package.
+For this we already have a ~~`sharedTest` package~~ a separate app-shared-test module.
+
+> Sharing sourceSets between unitTest and androidTest is no longer supported in Android Studio.
+> You may find a bunch of artiles referencing that way of sharing or even on Robolectric sites, but these are now outdated.
+> We are using the recommendation to that issue which is a shared-test module which depends on :app and it's tests depend on the module. testImplementation project(:shared-test) androidTestImplementation project(:shared-test).
+> This may seem circular at first, but it's not: shared-test depends on app's main, while app's Tests depend on shared-test.
 
 Our classes will be `CodeKataAuthActivitySharedTest` and `CodeKataSharedRobotTest`.
 
@@ -34,8 +39,8 @@ Let's open `org.fnives.test.showcase.ui.login.codekata.CodeKataAuthActivityShare
 We can see it's identical as our original `org.fnives.test.showcase.ui.codekata.CodeKataAuthActivityInstrumentedTest`.
 So let's copy our existing code from the Robolectric test here. For that we can use the body of `org.fnives.test.showcase.ui.RobolectricAuthActivityInstrumentedTest`.
 
-You immediately notice that there are no import issues. That's because sharedTest package is added to the test sources. You may check out the `app/build.gradle` to see how that's done.
-However we need to modify our robot:
+Of course keep the `open` and the `CodeKataAuthActivitySharedTest` class name and package.
+We need to modify our robot:
 ```kotlin
 // Instead of this:
 private lateinit var robot: RobolectricLoginRobot
@@ -51,11 +56,25 @@ robot = CodeKataSharedRobotTest()
 
 For our starting point, this is all the setup we need. What we now will do is modify this piece of class, so it not only runs via Robolectric, but it can run on Real Devices as well.
 
+Now, go to the classes that extend this and remove the `@Ignore("CodeKata")` annotation: `CodeKataAuthActivityTest` in both `unitTest` and `androidTest`.
+
+> This child classes run when testing so we are sharing a base class, but the child classess will run every Test of the Base class.
+
 ### 1. Threads
 
 So to discover the differences, let's handle them one by one, by Running our Test.
-In shared tests, at least for me, it defaults to Android Test when running the class. So make sure your device is connected, and run the `invalidCredentialsGivenShowsProperErrorMessage` Test. It should start on your device and shall crash.
-You will see something similar:
+Open `CodeKataAuthActivityTest` inside `androidTest` and overwrite `invalidCredentialsGivenShowsProperErrorMessage`:
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class CodeKataAuthActivityTest : CodeKataAuthActivitySharedTest() {
+// if invalidCredentialsGivenShowsProperErrorMessage is not open in base, open it
+    override fun invalidCredentialsGivenShowsProperErrorMessage() {
+        super.invalidCredentialsGivenShowsProperErrorMessage()
+    }
+}
+```
+Make sure your device (tested on API=30) is connected, and run the `invalidCredentialsGivenShowsProperErrorMessage` Test. It should start on your device and shall crash.
+You will see something similar in logcat:
 ```kotlin
 java.lang.IllegalStateException: Cannot invoke setValue on a background thread
         at androidx.lifecycle.LiveData.assertMainThread(LiveData.java:487)
@@ -66,7 +85,7 @@ So that brings us to the first difference: *while Robolectric uses the same thre
 
 So the issue is with this line: `testDispatcher.advanceUntilIdleWithIdlingResources()`. Since we are in the InstrumentedTest's thread, all our coroutines will run there as well, which doesn't play well with LiveData.
 One idea would be to use LiveData `ArchTaskExecutor.getInstance()` and ensure our LiveData doesn't care about the Thread they are set from, **but** then we would touch our Views from Non-Main Thread, which is still an issue.
-**So Instead** What we need to do is run our coroutines on the actual mainThread. We have a handy `runOnUIAwaitOnCurrent` function for that, so let's use it in our `invalidCredentialsGivenShowsProperErrorMessage` test, wrap around our dispatcher call.
+**So Instead** What we need to do is run our coroutines on the actual mainThread. We have a handy `runOnUIAwaitOnCurrent` function for that, so let's use it in our `invalidCredentialsGivenShowsProperErrorMessage` (inside the base class) test, wrap around our dispatcher call.
 
 The full function now will look like this:
 ```kotlin
@@ -458,7 +477,7 @@ To resolve this fast, a possible way is like this:
 Another issue can be that Crashlytics or similar services is enabled in your tests. This can be resolved by the same principle as the HiltTestApplication issue, aka custom `AndroidJunitRunner`. Your custom TestClass will initialize only what it needs to.
 
 #### 4. Dialogs
-Dialogs cannot be tested properly via Robolectric without usage of Shadows, but they can be on Real Device. So what I usually do is setup a function which does one thing in one sourceset while does something else in another. You can see such example like `SpecificTestConfigurationsFactory`. To ease the usage I usually put a function in the sharedTest which uses the object `SpecificTestConfigurationsFactory`.
+Dialogs cannot be tested properly via Robolectric without usage of Shadows, but they can be on Real Device. So what I usually do is setup a function which does one thing in one sourceset while does something else in another. So either you will have to test them only on real device, or you can create helper module which in AndroidTest uses actual Espresso calls, while if Robolectric is active it uses the Shadow. See how `SharedMigrationTestRule` is setup and extended.
 
 #### 5. Resource Access
 Accessing test Resource files can also be an issue, you might not able to access your same test/res folder in AndroidTests. A way to do this is to declare the same folder as androidTest/assets in build gradle and similar to dialogs, create a function which uses Assets in Android Tests and uses Resources in Robolectric tests.
