@@ -34,6 +34,9 @@ android {
     }
 }
 
+// since it itself contains the Test it doesn't have tests of it's own
+disableTestTasks(this)
+
 dependencies {
     applyAppSharedTestDependenciesTo(this)
     implementation project(":examplecase:example-navcontroller")
