@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Hilt Test ShowCase</string>
+    <string name="app_name_compose">Hilt Compose Test ShowCase</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="username_is_invalid">Username is not filled properly!</string>
+    <string name="password_is_invalid">Password is not filled properly!</string>
+    <string name="credentials_invalid">No User with given credentials!</string>
+    <string name="something_went_wrong">Something went wrong!</string>
+    <string name="login_title">Mock Login</string>
+    <string name="content">Content</string>
+    <string name="logout">Logout</string>
+</resources>

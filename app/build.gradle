@@ -41,12 +41,8 @@ android {
     }
 
     sourceSets {
-        androidTest {
-//            assets.srcDirs += files("$projectDir/schemas".toString())
-        }
         test {
             java.srcDirs += "src/robolectricTest/java"
-//            resources.srcDirs += files("$projectDir/schemas".toString())
         }
     }
 

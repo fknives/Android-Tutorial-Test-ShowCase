@@ -1,0 +1,214 @@
+package org.fnives.test.showcase.hilt.test.shared.ui.home
+
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.intent.Intents
+import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
+import org.fnives.test.showcase.android.testutil.activity.safeClose
+import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
+import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
+import org.fnives.test.showcase.android.testutil.synchronization.loopMainThreadFor
+import org.fnives.test.showcase.hilt.test.shared.testutils.MockServerScenarioSetupTestRule
+import org.fnives.test.showcase.hilt.test.shared.testutils.idling.AsyncDiffUtilInstantTestRule
+import org.fnives.test.showcase.hilt.test.shared.testutils.idling.MainDispatcherTestRule
+import org.fnives.test.showcase.hilt.test.shared.testutils.statesetup.SetupAuthenticationState.setupLogin
+import org.fnives.test.showcase.hilt.test.shared.ui.NetworkSynchronizedActivityTest
+import org.fnives.test.showcase.hilt.ui.home.MainActivity
+import org.fnives.test.showcase.model.content.FavouriteContent
+import org.fnives.test.showcase.network.mockserver.ContentData
+import org.fnives.test.showcase.network.mockserver.MockServerScenarioSetup
+import org.fnives.test.showcase.network.mockserver.scenario.content.ContentScenario
+import org.fnives.test.showcase.network.mockserver.scenario.refresh.RefreshTokenScenario
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.RuleChain
+
+@Suppress("TestFunctionName")
+open class MainActivityInstrumentedSharedTest : NetworkSynchronizedActivityTest() {
+
+    private lateinit var activityScenario: ActivityScenario<MainActivity>
+
+    private val mainDispatcherTestRule = MainDispatcherTestRule()
+    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupTestRule()
+    private val mockServerScenarioSetup: MockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
+    private lateinit var robot: HomeRobot
+
+    @Rule
+    @JvmField
+    val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
+        .around(mockServerScenarioSetupTestRule)
+        .around(mainDispatcherTestRule)
+        .around(AsyncDiffUtilInstantTestRule())
+        .around(SafeCloseActivityRule { activityScenario })
+        .around(ScreenshotRule("test-showcase"))
+
+    override fun setupAfterInjection() {
+        super.setupAfterInjection()
+        robot = HomeRobot()
+        setupLogin(mainDispatcherTestRule, mockServerScenarioSetup)
+        Intents.init()
+    }
+
+    override fun additionalTearDown() {
+        super.additionalTearDown()
+        Intents.release()
+    }
+
+    /** GIVEN initialized MainActivity WHEN signout is clicked THEN user is signed out */
+    @Test
+    fun signOutClickedResultsInNavigation() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false))
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.clickSignOut()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.assertNavigatedToAuth()
+    }
+
+    /** GIVEN success response WHEN data is returned THEN it is shown on the ui */
+    @Test
+    fun successfulDataLoadingShowsTheElementsOnTheUI() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        ContentData.contentSuccess.forEachIndexed { index, content ->
+            robot.assertContainsItem(index, FavouriteContent(content, false))
+        }
+        robot.assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN success response WHEN item is clicked THEN ui is updated */
+    @Test
+    fun clickingOnListElementUpdatesTheElementsFavouriteState() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
+        robot.assertContainsItem(0, expectedItem)
+            .assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN success response WHEN item is clicked THEN ui is updated even if activity is recreated */
+    @Test
+    fun elementFavouritedIsKeptEvenIfActivityIsRecreated() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), true)
+
+        activityScenario.safeClose()
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.assertContainsItem(0, expectedItem)
+            .assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN success response WHEN item is clicked then clicked again THEN ui is updated */
+    @Test
+    fun clickingAnElementMultipleTimesProperlyUpdatesIt() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Success(usingRefreshedToken = false))
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        robot.clickOnContentItem(0, ContentData.contentSuccess.first())
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        val expectedItem = FavouriteContent(ContentData.contentSuccess.first(), false)
+        robot.assertContainsItem(0, expectedItem)
+            .assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN error response WHEN loaded THEN error is Shown */
+    @Test
+    fun networkErrorResultsInUIErrorStateShown() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Error(usingRefreshedToken = false))
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.assertContainsNoItems()
+            .assertContainsError()
+            .assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN error response then success WHEN retried THEN success is shown */
+    @Test
+    fun retryingFromErrorStateAndSucceedingShowsTheData() {
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Error(usingRefreshedToken = false)
+                .then(ContentScenario.Success(usingRefreshedToken = false))
+        )
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.swipeRefresh()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+        loopMainThreadFor(2000L)
+
+        ContentData.contentSuccess.forEachIndexed { index, content ->
+            robot.assertContainsItem(index, FavouriteContent(content, false))
+        }
+        robot.assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN success then error WHEN retried THEN error is shown */
+    @Test
+    fun errorIsShownIfTheDataIsFetchedAndErrorIsReceived() {
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Success(usingRefreshedToken = false)
+                .then(ContentScenario.Error(usingRefreshedToken = false))
+        )
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.swipeRefresh()
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot
+            .assertContainsError()
+            .assertContainsNoItems()
+            .assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN unauthenticated then success WHEN loaded THEN success is shown */
+    @Test
+    fun authenticationIsHandledWithASingleLoading() {
+        mockServerScenarioSetup.setScenario(
+            ContentScenario.Unauthorized(usingRefreshedToken = false)
+                .then(ContentScenario.Success(usingRefreshedToken = true))
+        )
+            .setScenario(RefreshTokenScenario.Success)
+
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        ContentData.contentSuccess.forEachIndexed { index, content ->
+            robot.assertContainsItem(index, FavouriteContent(content, false))
+        }
+        robot.assertDidNotNavigateToAuth()
+    }
+
+    /** GIVEN unauthenticated then error WHEN loaded THEN navigated to auth */
+    @Test
+    fun sessionExpirationResultsInNavigation() {
+        mockServerScenarioSetup.setScenario(ContentScenario.Unauthorized(usingRefreshedToken = false))
+            .setScenario(RefreshTokenScenario.Error)
+
+        activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        mainDispatcherTestRule.advanceUntilIdleWithIdlingResources()
+
+        robot.assertNavigatedToAuth()
+    }
+}

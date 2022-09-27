@@ -1,0 +1,36 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'kotlin-kapt'
+    id 'java-test-fixtures'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    api project(":model")
+
+    applyNetworkTestDependenciesTo(this)
+
+    // hilt
+    implementation "com.google.dagger:hilt-core:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    kaptTest "com.google.dagger:dagger-compiler:$hilt_version"
+
+    testFixturesApi project(':mockserver')
+    testFixturesApi "com.squareup.retrofit2:retrofit:$retrofit_version"
+    testFixturesImplementation "com.google.dagger:hilt-core:$hilt_version"
+    testFixturesApi "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+}

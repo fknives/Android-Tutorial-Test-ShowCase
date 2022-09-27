@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'kotlin-kapt'
+    id 'java-test-fixtures'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+kapt {
+    correctErrorTypes = true
+}
+
+dependencies {
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
+    api project(":model")
+    implementation project(":hilt:hilt-network")
+
+    applyCoreTestDependenciesTo(this)
+
+    // hilt
+    implementation "com.google.dagger:hilt-core:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    def reloadable_module_version = "0.1.0"
+    implementation "org.fnives.library.reloadable.module:annotation:$reloadable_module_version"
+    kapt "org.fnives.library.reloadable.module:annotation-processor:$reloadable_module_version"
+
+    testImplementation project(':mockserver')
+    testFixturesApi testFixtures(project(":hilt:hilt-network"))
+    kaptTest "com.google.dagger:dagger-compiler:$hilt_version"
+}
