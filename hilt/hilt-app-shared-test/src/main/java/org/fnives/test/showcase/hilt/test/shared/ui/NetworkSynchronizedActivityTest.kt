@@ -7,7 +7,8 @@ import org.junit.Before
 import org.junit.Rule
 import javax.inject.Inject
 
-open class NetworkSynchronizedActivityTest {
+@Suppress("UnnecessaryAbstractClass")
+abstract class NetworkSynchronizedActivityTest {
 
     @Inject
     lateinit var networkSynchronizationHelper: NetworkSynchronizationHelper

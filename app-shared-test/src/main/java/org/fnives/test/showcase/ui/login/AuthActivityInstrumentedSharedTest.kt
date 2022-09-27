@@ -18,7 +18,7 @@ import org.junit.rules.RuleChain
 import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
-open class AuthActivityInstrumentedSharedTest : KoinTest {
+abstract class AuthActivityInstrumentedSharedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>
 

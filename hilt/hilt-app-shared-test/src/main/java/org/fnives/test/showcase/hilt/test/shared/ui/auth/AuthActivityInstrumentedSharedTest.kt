@@ -17,7 +17,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 
 @Suppress("TestFunctionName")
-open class AuthActivityInstrumentedSharedTest : NetworkSynchronizedActivityTest() {
+abstract class AuthActivityInstrumentedSharedTest : NetworkSynchronizedActivityTest() {
 
     private lateinit var activityScenario: ActivityScenario<AuthActivity>
 

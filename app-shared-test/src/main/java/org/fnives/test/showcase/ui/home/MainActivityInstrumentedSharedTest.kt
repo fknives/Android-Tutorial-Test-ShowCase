@@ -23,7 +23,7 @@ import org.junit.rules.RuleChain
 import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
-open class MainActivityInstrumentedSharedTest : KoinTest {
+abstract class MainActivityInstrumentedSharedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<MainActivity>
 

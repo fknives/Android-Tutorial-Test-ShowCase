@@ -23,7 +23,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 
 @Suppress("TestFunctionName")
-open class MainActivityInstrumentedSharedTest : NetworkSynchronizedActivityTest() {
+abstract class MainActivityInstrumentedSharedTest : NetworkSynchronizedActivityTest() {
 
     private lateinit var activityScenario: ActivityScenario<MainActivity>
 

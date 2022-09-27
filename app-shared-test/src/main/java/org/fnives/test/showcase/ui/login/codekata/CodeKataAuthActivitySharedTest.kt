@@ -14,7 +14,7 @@ import org.koin.test.KoinTest
 @OptIn(ExperimentalCoroutinesApi::class)
 @Ignore("CodeKata")
 @Suppress("EmptyFunctionBlock")
-open class CodeKataAuthActivitySharedTest : KoinTest {
+abstract class CodeKataAuthActivitySharedTest : KoinTest {
 
     @Before
     fun setup() {

@@ -21,7 +21,8 @@ import java.io.IOException
  * https://developer.android.com/training/data-storage/room/migrating-db-versions
  */
 @RunWith(AndroidJUnit4::class)
-open class MigrationToLatestInstrumentedSharedTest {
+@Suppress("UnnecessaryAbstractClass")
+abstract class MigrationToLatestInstrumentedSharedTest {
 
     @get:Rule
     val helper = SharedMigrationTestRule<LocalDatabase>(instrumentation = InstrumentationRegistry.getInstrumentation())

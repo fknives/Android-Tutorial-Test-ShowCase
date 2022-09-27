@@ -24,7 +24,7 @@ import java.io.IOException
  * https://developer.android.com/training/data-storage/room/migrating-db-versions
  */
 @RunWith(AndroidJUnit4::class)
-open class MigrationToLatestInstrumentedSharedTest : KoinTest {
+abstract class MigrationToLatestInstrumentedSharedTest : KoinTest {
 
     @get:Rule
     val helper = SharedMigrationTestRule<LocalDatabase>(instrumentation = InstrumentationRegistry.getInstrumentation())
