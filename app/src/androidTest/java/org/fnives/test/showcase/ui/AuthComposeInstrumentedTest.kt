@@ -71,7 +71,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.waitForIdle()
         navigationRobot.assertHomeScreen()
     }
 
@@ -85,7 +84,6 @@ class AuthComposeInstrumentedTest : KoinTest {
             .assertUsername("banan")
             .clickOnLogin()
 
-        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -102,7 +100,6 @@ class AuthComposeInstrumentedTest : KoinTest {
             .assertPassword("banan")
             .clickOnLogin()
 
-        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -128,7 +125,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.credentials_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -154,7 +150,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
