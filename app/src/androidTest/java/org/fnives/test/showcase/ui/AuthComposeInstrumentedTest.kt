@@ -1,21 +1,18 @@
 package org.fnives.test.showcase.ui
 
-import androidx.compose.ui.test.MainTestClock
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.R
 import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
-import org.fnives.test.showcase.android.testutil.viewaction.LoopMainThreadFor
 import org.fnives.test.showcase.compose.screen.AppNavigation
 import org.fnives.test.showcase.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.core.login.IsUserLoggedInUseCase
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
 import org.fnives.test.showcase.testutils.MockServerScenarioSetupResetingTestRule
 import org.fnives.test.showcase.testutils.idling.DatabaseDispatcherTestRule
+import org.fnives.test.showcase.ui.compose.idle.ComposeNetworkSynchronizationTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,7 +26,9 @@ class AuthComposeInstrumentedTest : KoinTest {
     private val composeTestRule = createComposeRule()
     private val stateRestorationTester = StateRestorationTester(composeTestRule)
 
-    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
+    private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule(
+        networkSynchronizationTestRule = ComposeNetworkSynchronizationTestRule(composeTestRule)
+    )
     private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
     private val dispatcherTestRule = DatabaseDispatcherTestRule()
     private lateinit var robot: ComposeLoginRobot
@@ -72,7 +71,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.awaitIdlingResources()
         navigationRobot.assertHomeScreen()
     }
 
@@ -86,7 +84,6 @@ class AuthComposeInstrumentedTest : KoinTest {
             .assertUsername("banan")
             .clickOnLogin()
 
-        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -103,7 +100,6 @@ class AuthComposeInstrumentedTest : KoinTest {
             .assertPassword("banan")
             .clickOnLogin()
 
-        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -129,7 +125,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.credentials_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -155,7 +150,6 @@ class AuthComposeInstrumentedTest : KoinTest {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.awaitIdlingResources()
         robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -181,15 +175,5 @@ class AuthComposeInstrumentedTest : KoinTest {
 
     companion object {
         private const val SPLASH_DELAY = 600L
-
-        // workaround, issue with idlingResources is tracked here https://github.com/robolectric/robolectric/issues/4807
-        /**
-         * Await the idling resource on a different thread while looping main.
-         */
-        fun MainTestClock.awaitIdlingResources() {
-            Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(100L))
-
-            advanceTimeByFrame()
-        }
     }
 }

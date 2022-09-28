@@ -22,8 +22,8 @@ Here is a list of actions we want to do:
 
 ```kotlin
 class ComposeLoginRobot(
-    composeTestRule: ComposeTestRule,
-) : ComposeTestRule by composeTestRule {
+    semanticsNodeInteractionsProvider: SemanticsNodeInteractionsProvider,
+) : SemanticsNodeInteractionsProvider by semanticsNodeInteractionsProvider {
 
     fun setUsername(username: String): ComposeLoginRobot = apply {
         onNodeWithTag(AuthScreenTag.UsernameInput).performTextInput(username)
@@ -60,11 +60,13 @@ class ComposeLoginRobot(
 }
 ```
 
-While in the View system we're using Espresso to interact with views, 
-in Compose we need a reference to the `ComposeTestRule` that contains our UI, 
+While in the View system we're using Espresso to interact with views,
+in Compose we need a reference to the `SemanticsNodeInteractionsProvider` that contains our UI,
 which we will pass as a constructor parameter to the robot.
 
-To create a `ComposeTestRule` you simply need to: 
+> SemanticsNodeInteractionsProvider gives access to `onNode` actions. ComposeTestRule extends it.
+
+To create a `ComposeTestRule` you simply need to:
 
 ```kotlin
     @get:Rule
@@ -80,12 +82,12 @@ To add a tag to a composable use the `testTag` modifier in your UI, for example:
     Modifier.testTag(AuthScreenTag.UsernameInput)
 ```
 
-Once we have a node we can take actions such as `performClick()` or check assertions such as `assertTextContains`. 
+Once we have a node we can take actions such as `performClick()` or check assertions such as `assertTextContains`.
 For a list of finder, actions and assertions see the docs: https://developer.android.com/jetpack/compose/testing#testing-apis
 
 ##### Next up, we need to verify if we navigated:
 
-If the navigation is also in compose we don't have an intent to check if we navigated. 
+If the navigation is also in compose we don't have an intent to check if we navigated.
 So instead, we're simply searching for regular composables that represent our destinations.
 
 This means that we could write a robot for our navigation which will simply check whether the root Composable for destination exists:
@@ -102,7 +104,7 @@ This means that we could write a robot for our navigation which will simply chec
 
 ##### What about the Snackbar
 
-Since everything in Compose is a composable, our Snackbar doesn't have anything special.  
+Since everything in Compose is a composable, our Snackbar doesn't have anything special.
 Put a tag on it and use the same finders and assertions.
 
 #### Test class setup
@@ -111,7 +113,7 @@ The setup is the mostly the same as for View so for the sake of simplicity let's
 
 
 ##### Initializing the UI
-We don't need an activity scenario. We will use instead `createComposeRule()` which will handle the host activity. 
+We don't need an activity scenario. We will use instead `createComposeRule()` which will handle the host activity.
 If you need a specific activity, use `createAndroidComposeRule<YourActivity>()`.
 
 ```kotlin
@@ -152,11 +154,15 @@ fun setup() {
 Network synchronization and mocking is the same as for View.
 
 ```kotlin
-private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule()
+private val mockServerScenarioSetupTestRule = MockServerScenarioSetupResetingTestRule(
+    networkSynchronizationTestRule = ComposeNetworkSynchronizationTestRule(composeTestRule)
+)
 private val mockServerScenarioSetup get() = mockServerScenarioSetupTestRule.mockServerScenarioSetup
 ```
 
-Coroutine setup is the same, except for `Dispatchers.setMain(dispatcher)`, which we don't need. 
+> ComposeNetworkSynchronizationTestRule is an equivalent to NetworkSynchronizationTestRule just registering the IdlingResource to ComposeTestRule instead of Espresso
+
+Coroutine setup is the same, except for `Dispatchers.setMain(dispatcher)`, which we don't need.
 
 ```kotlin
 private val dispatcherTestRule = DatabaseDispatcherTestRule()
@@ -214,12 +220,13 @@ composeTestRule.mainClock.autoAdvance = true // Let clock auto advance again
 
 Lastly we check the navigation was correct, meaning we should be on the home screen:
 ```kotlin
-composeTestRule.mainClock.awaitIdlingResources() // wait for login network call idling resource
 navigationRobot.assertHomeScreen()
 ```
 
-> `awaitIdlingResources` is an extension function to await all idling resources.
-> Note: Considering what the docs say this shouldn't be necessarily if the idling resources are setup in Espresso, since the compose test rule is aware of espresso and it waits for idle before every finder. In practice it only works with the line above. Could be a bug somewhere.
+> Note: Any node interactions call waitForIdle which waits for the Coroutine then the Network Call to finish. The Network call is running on OkHttps's own thread, so we use IdlingResources to synchronize with it. This is done in the ComposeNetworkSynchronizationTestRule.
+> waitForIdle blocks the current thread while the Resources are busy. There is an alternative awaitIdle() which can be useful in runTest suspendable tests, feel free to look inside the Interface of ComposeTestRule.
+> If you don't interact with a node but want to synchronize, then you will need waitForIdle. For example to verify something was called or written into like FakeLocalStorage in this example
+> Basically since we have OkHttpIdlingResource as an EspressoIdlingResource we adapt that to Compose's IdlingResource class and register it with the ComposeTestRule and unregister it at the end.
 
 ### 2. `emptyPasswordShowsProperErrorMessage`
 
@@ -240,7 +247,6 @@ robot.setUsername("banan")
 
 Finally we let coroutines go and verify the error is shown and we have not navigated:
 ```kotlin
-composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.password_is_invalid)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -260,7 +266,6 @@ robot
     .assertPassword("banan")
     .clickOnLogin()
 
-composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.username_is_invalid)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -293,7 +298,6 @@ composeTestRule.mainClock.autoAdvance = true
 
 Now at the end verify the error is shown properly:
 ```kotlin
-composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.credentials_invalid)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()
@@ -323,7 +327,6 @@ composeTestRule.mainClock.advanceTimeByFrame()
 robot.assertLoading()
 composeTestRule.mainClock.autoAdvance = true
 
-composeTestRule.mainClock.awaitIdlingResources()
 robot.assertErrorIsShown(R.string.something_went_wrong)
     .assertNotLoading()
 navigationRobot.assertAuthScreen()

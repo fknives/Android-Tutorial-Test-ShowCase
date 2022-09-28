@@ -18,7 +18,7 @@ import org.junit.rules.RuleChain
 import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
-open class SplashActivityInstrumentedSharedTest : KoinTest {
+abstract class SplashActivityInstrumentedSharedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<SplashActivity>
 

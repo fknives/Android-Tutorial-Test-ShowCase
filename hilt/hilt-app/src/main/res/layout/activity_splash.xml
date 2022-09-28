@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/colorSurface">
+
+    <ImageView
+        android:layout_width="@dimen/content_img_height"
+        android:layout_gravity="center"
+        app:srcCompat="@mipmap/ic_launcher_round"
+        android:layout_height="@dimen/content_img_height"
+        tools:ignore="ContentDescription" />
+
+</FrameLayout>

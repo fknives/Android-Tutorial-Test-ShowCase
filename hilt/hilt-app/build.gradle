@@ -1,0 +1,127 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "org.fnives.test.showcase.hilt"
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+        buildConfigField "String", "BASE_URL", '"https://606844a10add49001733fe6b.mockapi.io/"'
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+
+        testInstrumentationRunner "org.fnives.test.showcase.hilt.runner.HiltTestRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions 'di'
+
+    buildFeatures {
+        viewBinding true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = project.androidx_compose_version
+    }
+
+    sourceSets {
+        test {
+            java.srcDirs += "src/robolectricTest/java"
+        }
+    }
+
+    // needed for androidTest
+    packagingOptions {
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+    }
+}
+
+hilt {
+    enableAggregatingTask = true
+}
+
+afterEvaluate {
+    // making sure the :mockserver is assembled after :clean when running tests
+    testDebugUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+    testReleaseUnitTest.dependsOn tasks.getByPath(':mockserver:assemble')
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:$androidx_core_version"
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    implementation "com.google.android.material:material:$androidx_material_version"
+    implementation "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
+    implementation "androidx.constraintlayout:constraintlayout-compose:$androidx_compose_constraintlayout_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:$androidx_livedata_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidx_livedata_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_livedata_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefreshlayout_version"
+
+    implementation "androidx.activity:activity-compose:$activity_ktx_version"
+    implementation "androidx.navigation:navigation-compose:$androidx_navigation"
+
+    implementation "androidx.compose.ui:ui:$androidx_compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    implementation "androidx.compose.foundation:foundation:$androidx_compose_version"
+    implementation "androidx.compose.material:material:$androidx_compose_version"
+    implementation "androidx.compose.animation:animation-graphics:$androidx_compose_version"
+    implementation "com.google.accompanist:accompanist-insets:$google_accompanist_version"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    implementation "io.coil-kt:coil:$coil_version"
+    implementation "io.coil-kt:coil-compose:$coil_version"
+
+    implementation project(":hilt:hilt-core")
+
+    applyAppTestDependenciesTo(this)
+    applyComposeTestDependenciesTo(this)
+
+    androidTestImplementation project(':mockserver')
+
+    testImplementation project(':test-util-junit5-android')
+    testImplementation project(':test-util-shared-robolectric')
+    testImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-android')
+    androidTestImplementation project(':test-util-shared-android')
+
+    testImplementation testFixtures(project(":hilt:hilt-core"))
+    androidTestImplementation testFixtures(project(":hilt:hilt-core"))
+
+    testImplementation project(':hilt:hilt-app-shared-test')
+    androidTestImplementation project(':hilt:hilt-app-shared-test')
+
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
+}
+
+apply from: '../../gradlescripts/pull-screenshots.gradle'

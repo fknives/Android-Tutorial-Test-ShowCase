@@ -2,7 +2,6 @@ package org.fnives.test.showcase.ui.home
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.fnives.test.showcase.android.testutil.activity.SafeCloseActivityRule
 import org.fnives.test.showcase.android.testutil.activity.safeClose
 import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
@@ -21,12 +20,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
-import org.junit.runner.RunWith
 import org.koin.test.KoinTest
 
 @Suppress("TestFunctionName")
-@RunWith(AndroidJUnit4::class)
-open class MainActivityInstrumentedSharedTest : KoinTest {
+abstract class MainActivityInstrumentedSharedTest : KoinTest {
 
     private lateinit var activityScenario: ActivityScenario<MainActivity>
 

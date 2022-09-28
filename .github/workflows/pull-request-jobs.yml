@@ -75,7 +75,9 @@ jobs:
         if: always()
         with:
           name: JVM Test Results
-          path: ./**/build/reports/tests/**/*.html
+          path: |
+            ./**/build/reports/tests/**/*.html
+            ./**/**/build/reports/tests/**/*.html
           retention-days: 1
 
   run-tests-on-emulator:
@@ -126,7 +128,9 @@ jobs:
         if: always()
         with:
           name: Emulator-Test-Results-${{ matrix.api-level }}
-          path: ./**/build/reports/androidTests/**/*.html
+          path: |
+            ./**/build/reports/androidTests/**/*.html
+            ./**/**/build/reports/androidTests/**/*.html
           retention-days: 1
       - name: Upload Test Screenshots
         uses: actions/upload-artifact@v2

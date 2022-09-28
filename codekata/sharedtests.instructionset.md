@@ -39,7 +39,7 @@ Let's open `org.fnives.test.showcase.ui.login.codekata.CodeKataAuthActivityShare
 We can see it's identical as our original `org.fnives.test.showcase.ui.codekata.CodeKataAuthActivityInstrumentedTest`.
 So let's copy our existing code from the Robolectric test here. For that we can use the body of `org.fnives.test.showcase.ui.RobolectricAuthActivityInstrumentedTest`.
 
-Of course keep the `open` and the `CodeKataAuthActivitySharedTest` class name and package.
+Of course keep the `abstract`, the `CodeKataAuthActivitySharedTest` class name and package.
 We need to modify our robot:
 ```kotlin
 // Instead of this:
