@@ -40,4 +40,5 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation project(':mockserver')
     implementation "androidx.test.espresso:espresso-core:$espresso_version"
+    implementation project(":test-util-android")
 }

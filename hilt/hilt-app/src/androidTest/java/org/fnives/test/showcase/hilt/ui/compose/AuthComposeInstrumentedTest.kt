@@ -1,31 +1,31 @@
 package org.fnives.test.showcase.hilt.ui.compose
 
-import androidx.compose.ui.test.MainTestClock
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.fnives.test.showcase.android.testutil.intent.DismissSystemDialogsRule
 import org.fnives.test.showcase.android.testutil.screenshot.ScreenshotRule
-import org.fnives.test.showcase.android.testutil.viewaction.LoopMainThreadFor
 import org.fnives.test.showcase.hilt.R
 import org.fnives.test.showcase.hilt.compose.screen.AppNavigation
 import org.fnives.test.showcase.hilt.core.integration.fake.FakeUserDataLocalStorage
 import org.fnives.test.showcase.hilt.di.TestUserDataLocalStorageModule
 import org.fnives.test.showcase.hilt.test.shared.testutils.MockServerScenarioSetupTestRule
 import org.fnives.test.showcase.hilt.test.shared.testutils.idling.DatabaseDispatcherTestRule
-import org.fnives.test.showcase.hilt.test.shared.ui.NetworkSynchronizedActivityTest
+import org.fnives.test.showcase.hilt.ui.compose.idle.ComposeNetworkSyncHelper
 import org.fnives.test.showcase.network.mockserver.scenario.auth.AuthScenario
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
+class AuthComposeInstrumentedTest {
 
     private val composeTestRule = createComposeRule()
     private val stateRestorationTester = StateRestorationTester(composeTestRule)
@@ -36,6 +36,12 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
     private lateinit var robot: ComposeLoginRobot
     private lateinit var navigationRobot: ComposeNavigationRobot
 
+    @Inject
+    lateinit var composeNetworkSyncHelper: ComposeNetworkSyncHelper
+
+    @get:Rule
+    val hiltRule = HiltAndroidRule(this)
+
     @Rule
     @JvmField
     val ruleOrder: RuleChain = RuleChain.outerRule(DismissSystemDialogsRule())
@@ -44,16 +50,22 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
         .around(composeTestRule)
         .around(ScreenshotRule("test-showcase-compose"))
 
-    override fun setupBeforeInjection() {
+    @Before
+    fun setup() {
         TestUserDataLocalStorageModule.replacement = FakeUserDataLocalStorage()
-    }
+        hiltRule.inject()
 
-    override fun setupAfterInjection() {
         stateRestorationTester.setContent {
             AppNavigation()
         }
         robot = ComposeLoginRobot(composeTestRule)
         navigationRobot = ComposeNavigationRobot(composeTestRule)
+        composeNetworkSyncHelper.setup(composeTestRule)
+    }
+
+    @After
+    fun tearDown() {
+        composeNetworkSyncHelper.tearDown()
     }
 
     /** GIVEN non empty password and username and successful response WHEN signIn THEN no error is shown and navigating to home */
@@ -76,11 +88,10 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.awaitIdlingResources()
+        composeTestRule.waitForIdle()
         navigationRobot.assertHomeScreen()
     }
 
-    /** GIVEN empty password and username WHEN signIn THEN error password is shown */
     @Test
     fun emptyPasswordShowsProperErrorMessage() {
         composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
@@ -90,7 +101,7 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
             .assertUsername("banan")
             .clickOnLogin()
 
-        composeTestRule.mainClock.awaitIdlingResources()
+        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -107,7 +118,7 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
             .assertPassword("banan")
             .clickOnLogin()
 
-        composeTestRule.mainClock.awaitIdlingResources()
+        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -133,7 +144,7 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.awaitIdlingResources()
+        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.credentials_invalid)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -159,7 +170,7 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
         robot.assertLoading()
         composeTestRule.mainClock.autoAdvance = true
 
-        composeTestRule.mainClock.awaitIdlingResources()
+        composeTestRule.waitForIdle()
         robot.assertErrorIsShown(R.string.something_went_wrong)
             .assertNotLoading()
         navigationRobot.assertAuthScreen()
@@ -185,15 +196,5 @@ class AuthComposeInstrumentedTest : NetworkSynchronizedActivityTest() {
 
     companion object {
         private const val SPLASH_DELAY = 600L
-
-        // workaround, issue with idlingResources is tracked here https://github.com/robolectric/robolectric/issues/4807
-        /**
-         * Await the idling resource on a different thread while looping main.
-         */
-        fun MainTestClock.awaitIdlingResources() {
-            Espresso.onView(ViewMatchers.isRoot()).perform(LoopMainThreadFor(100L))
-
-            advanceTimeByFrame()
-        }
     }
 }

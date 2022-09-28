@@ -17,29 +17,33 @@ class OkHttp3IdlingResource private constructor(
 ) : IdlingResource {
     @Volatile
     var callback: IdlingResource.ResourceCallback? = null
+    @Volatile
     private var isIdleCallbackWasCalled: Boolean = true
+    private val idleSync = Any()
 
     init {
         val currentCallback = dispatcher.idleCallback
         dispatcher.idleCallback = Runnable {
-            sleepForDispatcherDefaultCallInRetrofitErrorState()
-            callback?.onTransitionToIdle()
-            currentCallback?.run()
-            isIdleCallbackWasCalled = true
+            synchronized(idleSync) {
+                sleepForDispatcherDefaultCallInRetrofitErrorState()
+                callback?.onTransitionToIdle()
+                currentCallback?.run()
+                isIdleCallbackWasCalled = true
+            }
         }
     }
 
     override fun getName(): String = name
 
-    override fun isIdleNow(): Boolean {
-        val isIdle = dispatcher.runningCallsCount() == 0
-        if (isIdle) {
-            // sometime the callback is just not properly called it seems, or maybe sync error.
-            // if it isn't called Espresso crashes, so we add this here.
-            callback?.onTransitionToIdle()
+    override fun isIdleNow(): Boolean =
+        synchronized(idleSync) {
+            val isIdle = dispatcher.runningCallsCount() == 0
+            if (!isIdle) {
+                isIdleCallbackWasCalled = false
+            }
+
+            return@synchronized isIdle && isIdleCallbackWasCalled
         }
-        return isIdle
-    }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         this.callback = callback

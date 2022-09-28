@@ -3,6 +3,7 @@ package org.fnives.test.showcase.hilt.network.testutil
 import androidx.annotation.CheckResult
 import androidx.test.espresso.IdlingResource
 import okhttp3.OkHttpClient
+import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.OkHttp3IdlingResource
 import org.fnives.test.showcase.hilt.network.di.SessionLessQualifier
 import org.fnives.test.showcase.hilt.network.di.SessionQualifier
 import javax.inject.Inject
