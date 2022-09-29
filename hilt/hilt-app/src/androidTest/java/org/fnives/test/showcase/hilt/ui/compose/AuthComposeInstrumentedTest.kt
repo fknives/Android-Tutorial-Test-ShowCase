@@ -131,7 +131,7 @@ class AuthComposeInstrumentedTest {
     @Test
     fun invalidCredentialsGivenShowsProperErrorMessage() {
         mockServerScenarioSetup.setScenario(
-            AuthScenario.InvalidCredentials(password = "alma", username = "banan")
+            AuthScenario.InvalidCredentials(username = "alma", password = "banan")
         )
 
         composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)
