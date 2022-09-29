@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
+import org.fnives.test.showcase.hilt.compose.di.ComposeEntryPoint.AppNavigationDependencies
+import org.fnives.test.showcase.hilt.compose.di.ComposeEntryPoint.rememberEntryPoint
 import org.fnives.test.showcase.hilt.compose.screen.auth.AuthScreen
 import org.fnives.test.showcase.hilt.compose.screen.auth.rememberAuthScreenState
 import org.fnives.test.showcase.hilt.compose.screen.home.HomeScreen
@@ -20,8 +22,11 @@ import org.fnives.test.showcase.hilt.core.login.IsUserLoggedInUseCase
 
 @Composable
 fun AppNavigation(
-    isUserLogeInUseCase: IsUserLoggedInUseCase = AppNavigationEntryPoint.get().isUserLoggedInUseCase
-) {
+    navigationDependencies: AppNavigationDependencies = rememberEntryPoint()
+) = AppNavigation(navigationDependencies.isUserLoggedInUseCase)
+
+@Composable
+fun AppNavigation(isUserLogeInUseCase: IsUserLoggedInUseCase) {
     val navController = rememberNavController()
 
     LaunchedEffect(isUserLogeInUseCase) {

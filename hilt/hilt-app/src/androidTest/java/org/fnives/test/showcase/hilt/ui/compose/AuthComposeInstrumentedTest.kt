@@ -99,6 +99,9 @@ class AuthComposeInstrumentedTest {
         robot.setUsername("banan")
             .assertUsername("banan")
             .clickOnLogin()
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.waitForIdle()
+        composeTestRule.mainClock.autoAdvance = true
 
         robot.assertErrorIsShown(R.string.password_is_invalid)
             .assertNotLoading()
@@ -115,6 +118,9 @@ class AuthComposeInstrumentedTest {
             .setPassword("banan")
             .assertPassword("banan")
             .clickOnLogin()
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.waitForIdle()
+        composeTestRule.mainClock.autoAdvance = true
 
         robot.assertErrorIsShown(R.string.username_is_invalid)
             .assertNotLoading()
@@ -125,7 +131,7 @@ class AuthComposeInstrumentedTest {
     @Test
     fun invalidCredentialsGivenShowsProperErrorMessage() {
         mockServerScenarioSetup.setScenario(
-            AuthScenario.InvalidCredentials(password = "alma", username = "banan")
+            AuthScenario.InvalidCredentials(username = "alma", password = "banan")
         )
 
         composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY)

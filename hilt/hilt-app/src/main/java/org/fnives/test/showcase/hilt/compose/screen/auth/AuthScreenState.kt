@@ -11,6 +11,8 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.fnives.test.showcase.hilt.compose.di.ComposeEntryPoint.AuthDependencies
+import org.fnives.test.showcase.hilt.compose.di.ComposeEntryPoint.rememberEntryPoint
 import org.fnives.test.showcase.hilt.core.login.LoginUseCase
 import org.fnives.test.showcase.model.auth.LoginCredentials
 import org.fnives.test.showcase.model.auth.LoginStatus
@@ -19,7 +21,19 @@ import org.fnives.test.showcase.model.shared.Answer
 @Composable
 fun rememberAuthScreenState(
     stateScope: CoroutineScope = rememberCoroutineScope { Dispatchers.Main },
-    loginUseCase: LoginUseCase = AuthEntryPoint.get().loginUseCase,
+    authDependencies: AuthDependencies = rememberEntryPoint(),
+    onLoginSuccess: () -> Unit = {},
+): AuthScreenState =
+    rememberAuthScreenState(
+        stateScope = stateScope,
+        loginUseCase = authDependencies.loginUseCase,
+        onLoginSuccess = onLoginSuccess
+    )
+
+@Composable
+fun rememberAuthScreenState(
+    stateScope: CoroutineScope = rememberCoroutineScope { Dispatchers.Main },
+    loginUseCase: LoginUseCase,
     onLoginSuccess: () -> Unit = {},
 ): AuthScreenState {
     return rememberSaveable(saver = AuthScreenState.getSaver(stateScope, loginUseCase, onLoginSuccess)) {

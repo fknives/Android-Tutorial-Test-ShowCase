@@ -111,7 +111,6 @@ Put a tag on it and use the same finders and assertions.
 
 The setup is the mostly the same as for View so for the sake of simplicity let's focus on the differences.
 
-
 ##### Initializing the UI
 We don't need an activity scenario. We will use instead `createComposeRule()` which will handle the host activity.
 If you need a specific activity, use `createAndroidComposeRule<YourActivity>()`.
@@ -224,9 +223,7 @@ navigationRobot.assertHomeScreen()
 ```
 
 > Note: Any node interactions call waitForIdle which waits for the Coroutine then the Network Call to finish. The Network call is running on OkHttps's own thread, so we use IdlingResources to synchronize with it. This is done in the ComposeNetworkSynchronizationTestRule.
-> waitForIdle blocks the current thread while the Resources are busy. There is an alternative awaitIdle() which can be useful in runTest suspendable tests, feel free to look inside the Interface of ComposeTestRule.
-> If you don't interact with a node but want to synchronize, then you will need waitForIdle. For example to verify something was called or written into like FakeLocalStorage in this example
-> Basically since we have OkHttpIdlingResource as an EspressoIdlingResource we adapt that to Compose's IdlingResource class and register it with the ComposeTestRule and unregister it at the end.
+> In ComposeNetworkSynchronizationTestRuleBasically since we have OkHttpIdlingResource as an EspressoIdlingResource we adapt that to Compose's IdlingResource class and register it with the ComposeTestRule and unregister it at the end.
 
 ### 2. `emptyPasswordShowsProperErrorMessage`
 
@@ -245,7 +242,18 @@ robot.setUsername("banan")
     .clickOnLogin()
 ```
 
-Finally we let coroutines go and verify the error is shown and we have not navigated:
+Now, we will let the coroutine go and await the network call:
+```kotlin
+composeTestRule.mainClock.autoAdvance = false
+composeTestRule.waitForIdle()
+composeTestRule.mainClock.autoAdvance = true
+```
+
+This may seem a bit odd, but what we want is to be sure that while waiting for the request or any idling resource we do not advance the Compose Clock. That's because Snackbar has a LaunchedEffect to dismiss, if we let the clock run, it could sometime dismiss the Snackbar which could result in a Flaky test.
+
+> autoAdvance=off, waitForIdle(), autoAdvance=on pattern can be used to await external resources without affecting Compose Side Effects.
+
+Finally we verify the error is shown and we have not navigated:
 ```kotlin
 robot.assertErrorIsShown(R.string.password_is_invalid)
     .assertNotLoading()
@@ -265,6 +273,9 @@ robot
     .setPassword("banan")
     .assertPassword("banan")
     .clickOnLogin()
+composeTestRule.mainClock.autoAdvance = false
+composeTestRule.waitForIdle()
+composeTestRule.mainClock.autoAdvance = true
 
 robot.assertErrorIsShown(R.string.username_is_invalid)
     .assertNotLoading()
@@ -295,6 +306,9 @@ composeTestRule.mainClock.advanceTimeByFrame()
 robot.assertLoading()
 composeTestRule.mainClock.autoAdvance = true
 ```
+
+> Note: `robot.assertLoading` since it is a node interaction already calls waitForIdle.
+> We only advance the time by one frame to be able to verify the Loading, otherwise it would already disappear.
 
 Now at the end verify the error is shown properly:
 ```kotlin
