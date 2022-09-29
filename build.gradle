@@ -15,11 +15,8 @@ buildscript {
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.1"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
     }
-}
-
-plugins {
-    id "io.gitlab.arturbosch.detekt" version "$detekt_version"
 }
 
 allprojects {

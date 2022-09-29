@@ -1,3 +1,4 @@
+apply plugin: "io.gitlab.arturbosch.detekt"
 
 detekt {
     toolVersion = "$detekt_version"
@@ -16,14 +17,15 @@ detekt {
     source = files(*projectPaths)
     config = files("$projectDir/detekt/detekt.yml")
     baseline = file("$projectDir/detekt/baseline.xml")
+}
+
+tasks.getByName("detekt") {
     reports {
-        txt {
-            enabled = true
-            destination = file("build/reports/detekt.txt")
-        }
-        html {
-            enabled = true
-            destination = file("build/reports/detekt.html")
-        }
+        txt.required.set(true)
+        txt.outputLocation.set(file("build/reports/detekt.txt"))
+        html.required.set(true)
+        html.outputLocation.set(file("build/reports/detekt.html"))
+        xml.required.set(false)
+        sarif.required.set(false)
     }
 }
