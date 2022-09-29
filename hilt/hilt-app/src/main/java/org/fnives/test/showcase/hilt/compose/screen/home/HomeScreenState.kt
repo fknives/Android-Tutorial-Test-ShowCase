@@ -9,6 +9,8 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
+import org.fnives.test.showcase.hilt.compose.di.ComposeEntryPoint.MainDependencies
+import org.fnives.test.showcase.hilt.compose.di.ComposeEntryPoint.rememberEntryPoint
 import org.fnives.test.showcase.hilt.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.hilt.core.content.FetchContentUseCase
 import org.fnives.test.showcase.hilt.core.content.GetAllContentUseCase
@@ -21,7 +23,7 @@ import org.fnives.test.showcase.model.shared.Resource
 @Composable
 fun rememberHomeScreenState(
     stateScope: CoroutineScope = rememberCoroutineScope(),
-    mainDependencies: HomeEntryPoint.MainDependencies = HomeEntryPoint.get(),
+    mainDependencies: MainDependencies = rememberEntryPoint(),
     onLogout: () -> Unit = {},
 ) =
     rememberHomeScreenState(

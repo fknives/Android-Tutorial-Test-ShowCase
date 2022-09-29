@@ -1,4 +1,4 @@
-package org.fnives.test.showcase.hilt.compose.screen.home
+package org.fnives.test.showcase.hilt.compose.di
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -11,13 +11,30 @@ import org.fnives.test.showcase.hilt.core.content.AddContentToFavouriteUseCase
 import org.fnives.test.showcase.hilt.core.content.FetchContentUseCase
 import org.fnives.test.showcase.hilt.core.content.GetAllContentUseCase
 import org.fnives.test.showcase.hilt.core.content.RemoveContentFromFavouritesUseCase
+import org.fnives.test.showcase.hilt.core.login.IsUserLoggedInUseCase
+import org.fnives.test.showcase.hilt.core.login.LoginUseCase
 import org.fnives.test.showcase.hilt.core.login.LogoutUseCase
 
-object HomeEntryPoint {
+object ComposeEntryPoint {
+
+    /**
+     * Helper method to easily remember and access Hilt Dependencies in Compose.
+     */
+    @Composable
+    inline fun <reified T : Any> rememberEntryPoint(component: Any = LocalContext.current.applicationContext): T =
+        remember(component) { EntryPoints.get(component, T::class.java) }
+
+    sealed interface EntryPointDependencies
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
-    interface MainDependencies {
+    interface AuthDependencies : EntryPointDependencies {
+        val loginUseCase: LoginUseCase
+    }
+
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface MainDependencies : EntryPointDependencies {
         val getAllContentUseCase: GetAllContentUseCase
         val logoutUseCase: LogoutUseCase
         val fetchContentUseCase: FetchContentUseCase
@@ -25,9 +42,9 @@ object HomeEntryPoint {
         val removeContentFromFavouritesUseCase: RemoveContentFromFavouritesUseCase
     }
 
-    @Composable
-    fun get(): MainDependencies {
-        val context = LocalContext.current.applicationContext
-        return remember { EntryPoints.get(context, MainDependencies::class.java) }
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface AppNavigationDependencies : EntryPointDependencies {
+        val isUserLoggedInUseCase: IsUserLoggedInUseCase
     }
 }
