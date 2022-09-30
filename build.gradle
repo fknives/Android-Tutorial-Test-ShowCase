@@ -8,6 +8,7 @@ buildscript {
     ext.compileSdkVersion = 32
     ext.minSdkVersion = 21
     ext.targetSdkVersion = 32
+    ext.jacoco_version = "0.8.8"
     repositories {
         mavenCentral()
         google()
@@ -20,6 +21,7 @@ buildscript {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.1"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
+        classpath "org.jacoco:org.jacoco.core:$jacoco_version"
     }
 }
 
@@ -50,3 +52,4 @@ apply from: 'gradlescripts/testoptions.gradle'
 apply from: 'gradlescripts/test.tasks.gradle'
 apply from: 'gradlescripts/testdependencies.gradle'
 apply from: 'gradlescripts/disable.test.task.gradle'
+apply from: 'gradlescripts/jacoco.config.gradle'
