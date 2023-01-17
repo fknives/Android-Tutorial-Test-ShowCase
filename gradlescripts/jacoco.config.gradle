@@ -1,3 +1,4 @@
+// filter of files that shouldn't be part of the report
 def androidFileFilter =
         [ //jdk
           'jdk.internal.*',
@@ -12,6 +13,7 @@ def androidFileFilter =
           '**/*Test*.*',
           'android/**/*.*',
           // kotlin
+          '**/META-INF/*',
           '**/*MapperImpl*.*',
           '**/*$ViewInjector*.*',
           '**/*$ViewBinder*.*',
@@ -37,6 +39,8 @@ def androidFileFilter =
           // room
           '**/*_Impl.class',
           '**/*_Impl*.*',
+          // hilt
+          '**/hilt_aggregated_deps/*'
         ]
 
 subprojects { module ->
@@ -53,6 +57,10 @@ subprojects { module ->
                     }))
                 }
             }
+
+            task unitTest(dependsOn: ["test"]) {
+                group = "verification"
+            }
         }
     }
 
@@ -68,6 +76,16 @@ subprojects { module ->
             android.buildTypes.debug.enableUnitTestCoverage true
 
             jacoco.toolVersion = "$jacoco_version"
+
+            task jacocoTestReport(dependsOn: ["createDebugUnitTestCoverageReport", "createDebugAndroidTestCoverageReport"]) {
+                group = "verification"
+            }
+            task jacocoUnitTestReport(dependsOn: ["createDebugUnitTestCoverageReport"]) {
+                group = "verification"
+            }
+            task jacocoAndroidTestReport(dependsOn: ["createDebugAndroidTestCoverageReport"]) {
+                group = "verification"
+            }
         }
     }
 
@@ -83,6 +101,84 @@ subprojects { module ->
             android.buildTypes.debug.enableUnitTestCoverage true
 
             jacoco.toolVersion = "$jacoco_version"
+
+            println(module.projectDir)
+            def hasAndroidTests = new File("${module.projectDir}/src/androidTest").exists()
+            def hasUnitTests = new File("${module.projectDir}/src/test").exists()
+            if (hasUnitTests) {
+                task jacocoUnitTestReport(dependsOn: ["createDebugUnitTestCoverageReport"]) {
+                    group = "verification"
+                }
+            } else {
+                task jacocoUnitTestReport() {
+                    group = "verification"
+                }
+            }
+            if (hasAndroidTests) {
+                task jacocoAndroidTestReport(dependsOn: ["createDebugAndroidTestCoverageReport"]) {
+                    group = "verification"
+                }
+            } else {
+                task jacocoAndroidTestReport() {
+                    group = "verification"
+                }
+            }
+
+            task jacocoTestReport(dependsOn: ["jacocoUnitTestReport", "jacocoAndroidTestReport"]) {
+                group = "verification"
+            }
+        }
+    }
+}
+
+configure(rootProject) {
+    apply plugin: "jacoco"
+
+    def testTypeName = "debug"
+    if (rootProject.extensions.extraProperties.has("testVariant")) {
+        testTypeName = rootProject.extensions.extraProperties.getByName("testVariant")
+    }
+
+    task runTestAndJacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+        description = 'Run Tests and Generates report from all subprojects'
+
+        def codeProjects = subprojects.findAll({ it.subprojects.isEmpty() })
+        codeProjects.forEach {
+            dependsOn += ["$it.path:jacocoTestReport"]
+        }
+
+        finalizedBy("jacocoRootReport")
+    }
+
+    task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+        description = 'Generates report from all subprojects'
+
+        def codeProjects = subprojects.findAll({ it.subprojects.isEmpty() })
+        sourceDirectories.from = files(codeProjects.collect { "${it.projectDir}/src/main/java" })
+        def filetrees = codeProjects.collect {
+            def javaTree = fileTree(dir: "${it.buildDir}/classes/java/main", excludes: androidFileFilter)
+            def kotlinTree = fileTree(dir: "${it.buildDir}/classes/kotlin/main", excludes: androidFileFilter)
+            def androidJavaTree = fileTree(dir: "${it.buildDir}/intermediates/javac/${testTypeName}/classes", excludes: androidFileFilter)
+            def androidKotlinTree = fileTree(dir: "${it.buildDir}/tmp/kotlin-classes/${testTypeName}", excludes: androidFileFilter)
+            files([javaTree, kotlinTree, androidJavaTree, androidKotlinTree])
+        }.flatten()
+
+        classDirectories.from = files(filetrees)
+        executionData.from = files(
+                codeProjects.collect {
+                    [
+                            fileTree(dir: "${it.buildDir}/outputs/code_coverage/${testTypeName}AndroidTest/connected/", includes: ["**/*.ec", "**/*.exec"]), // androidTest
+                            fileTree(dir: "${it.buildDir}/outputs/unit_test_code_coverage/", includes: ["**/*.ec", "**/*.exec"]), // android unitTest
+                            "${it.buildDir}/jacoco/test.exec" // java
+                    ]
+                }.flatten()
+        )
+
+        reports {
+            html {
+                required = true
+                destination file("${buildDir}/coverage-report")
+            }
         }
     }
 }
