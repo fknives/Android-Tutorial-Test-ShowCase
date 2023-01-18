@@ -230,5 +230,41 @@ androidTestImplementation "org.fnives.android.testutil:android:<latestVersion>" 
 androidTestImplementation "org.fnives.android.testutil:shared-android:<latestVersion>" // test-util-shared-android
 ```
 
+## Code Coverage Report
+
+For Code Coverage Reporting, Jacoco is setup in [jacoco.config.gradle](./gradlescripts/jacoco.config.gradle).
+
+- Each sub module has it's own code coverage report, enabled by the gradle script.
+- Additionally it contains gradle task for an aggregated code coverage report for the project as a whole.
+
+Feel free to use that script and tweak it for your project and module setup.
+
+The script is documented, to the best of my understanding, but specific to this project, not prepared for multiple buildFlavours or different buildTypes than debug.
+
+### Sub module reports
+To run tests and Jacoco report for a submodule, run task `jacocoTestReport`:
+- for java it will run unit tests and creates a report
+- for android it will run jacocoAndroidTestReport and jacocoUnitTestReport and create 2 separate reports.
+
+> Note:
+> - jacocoAndroidTestReport is alias to createDebugAndroidTestCoverageReport
+> - jacocoUnitTestReport is alias to createDebugUnitTestCoverageReport
+
+### Aggregated reports
+To see an aggregated code coverage report:
+- task `jacocoRootReport` will pull together all the submodules report and create a single one from them ($projectDir/build/coverage-report).
+- task `runTestAndJacocoRootReport` will run all the sub modules reports and tests then run `jacocoRootReport`.
+
+### Issues
+*One issue, is that the androidTest reports don't work with the sharedTest module setup, this issue is reported [here](https://issuetracker.google.com/issues/250130118)*
+
+By shared test module setup I mean a module like `app-shared-test`, which has a dependency graph of:
+- app-shared-test -> app.main
+- app.test -> app-shared-test
+
+### Reference
+Here are the two articles I used for the jacoco setup script: [jacoco-in-android](https://medium.com/swlh/multi-module-multi-flavored-test-coverage-with-jacoco-in-android-bc4fb4d135a3)
+[aggregate-test-coverage](https://lkrnac.net/blog/2016/10/aggregate-test-coverage-report/).
+
 ## License
 [License file](./LICENSE)
