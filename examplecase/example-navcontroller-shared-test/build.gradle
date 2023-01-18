@@ -41,7 +41,7 @@ dependencies {
     applyAppSharedTestDependenciesTo(this)
     implementation project(":examplecase:example-navcontroller")
     //noinspection FragmentGradleConfiguration
-    implementation "androidx.fragment:fragment-testing:1.5.3"
+    implementation "androidx.fragment:fragment-testing:1.5.5"
     implementation "androidx.navigation:navigation-testing:$navigation_version"
     implementation project(':test-util-android')
 }

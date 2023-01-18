@@ -46,7 +46,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
     applyAppTestDependenciesTo(this)
-    debugImplementation "androidx.fragment:fragment-testing:1.5.3"
+    debugImplementation "androidx.fragment:fragment-testing:1.5.5"
     testImplementation project(":examplecase:example-navcontroller-shared-test")
     androidTestImplementation project(":examplecase:example-navcontroller-shared-test")
 }
