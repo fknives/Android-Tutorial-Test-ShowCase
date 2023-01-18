@@ -18,6 +18,7 @@ import org.fnives.test.showcase.android.testutil.synchronization.idlingresources
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.Disposable
 import org.fnives.test.showcase.android.testutil.synchronization.idlingresources.IdlingResourceDisposable
 import org.fnives.test.showcase.hilt.R
+import org.fnives.test.showcase.hilt.network.testutil.HttpsConfigurationModuleTemplate
 import org.fnives.test.showcase.hilt.network.testutil.NetworkSynchronization
 import org.fnives.test.showcase.hilt.test.shared.di.TestBaseUrlHolder
 import org.fnives.test.showcase.hilt.test.shared.testutils.storage.TestDatabaseInitialization
@@ -56,8 +57,9 @@ class RobolectricAuthActivityInstrumentedTest {
         testDispatcher = dispatcher
         TestDatabaseInitialization.dispatcher = dispatcher
 
-        mockServerScenarioSetup = MockServerScenarioSetup()
-        TestBaseUrlHolder.url = mockServerScenarioSetup.start(false)
+        val (mockServerScenarioSetup, url) = HttpsConfigurationModuleTemplate.startWithHTTPSMockWebServer()
+        this.mockServerScenarioSetup = mockServerScenarioSetup
+        TestBaseUrlHolder.url = url
 
         hiltRule.inject()
         val idlingResources = networkSynchronization.networkIdlingResources()
