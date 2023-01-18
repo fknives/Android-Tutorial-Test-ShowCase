@@ -256,7 +256,8 @@ To see an aggregated code coverage report:
 - task `runTestAndJacocoRootReport` will run all the sub modules reports and tests then run `jacocoRootReport`.
 
 ### Issues
-*One issue, is that the androidTest reports don't work with the sharedTest module setup, this issue is reported [here](https://issuetracker.google.com/issues/250130118)*
+- One issue, is that the androidTest reports don't work with the sharedTest module setup, this issue is reported [here](https://issuetracker.google.com/issues/250130118)
+- Another issue, is that seems like the tests fail with Resource.NotFound on API 21 if `enableAndroidTestCoverage` is true, so I disabled that for CI.
 
 By shared test module setup I mean a module like `app-shared-test`, which has a dependency graph of:
 - app-shared-test -> app.main

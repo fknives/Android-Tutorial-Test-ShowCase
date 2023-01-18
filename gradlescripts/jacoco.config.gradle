@@ -64,8 +64,10 @@ def setupAndroidJacoco(Project module, ArrayList<String> fileFilter, String jaco
             jacoco.includeNoLocationClasses = true
             jacoco.excludes = fileFilter
         }
-        android.buildTypes.debug.enableAndroidTestCoverage true
-        android.buildTypes.debug.enableUnitTestCoverage true
+        // on API 21 enableAndroidTestCoverage makes the tests crash with resource not found issue
+        def disableAndroidTestCoverage = findProperty("disableAndroidTestCoverage") ?: false
+        android.buildTypes.debug.enableAndroidTestCoverage = !disableAndroidTestCoverage
+        android.buildTypes.debug.enableUnitTestCoverage = true
 
         jacoco.toolVersion = "$jacocoVersion"
 
