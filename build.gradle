@@ -3,7 +3,7 @@ buildscript {
     ext.kotlin_version = "1.7.10"
     ext.detekt_version = "1.19.0"
     ext.navigation_version = "2.4.2"
-    ext.hilt_version = "2.44"
+    ext.hilt_version = "2.45"
     ext.compose_compiler_version = "1.3.1"
     ext.compileSdkVersion = 32
     ext.minSdkVersion = 21
