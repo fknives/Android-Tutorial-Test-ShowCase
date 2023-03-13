@@ -295,5 +295,105 @@ Here are the two articles I used for the jacoco setup script: [jacoco-in-android
 
 ---
 
+## Screenshot Testing
+
+Screenshot testing example is not present in the repository, but here are my findings regarding the topic.
+
+<details>
+<summary>See details</summary>
+
+Screenshot testing can be valuable in a large project. The basic idea is that you have reference screenshots of screens / components which you check once manually. Based on these references you can verify that your changes did not modify other parts of the UI.
+
+## Comparision
+There are other people who already compared most of the libraries I found.
+Here are the list of valuable resources that go into more detail than I am doing here.
+- [article](an-introduction-to-snapshot-testing-on-android-in-2021) and [repo](https://github.com/sergio-sastre/Android-screenshot-testing-playground) Comparing multiple solutions.
+- Compose native [sample](https://github.com/android/compose-samples/blob/e6994123804b976083fa937d3f5bf926da4facc5/Rally/app/src/androidTest/java/com/example/compose/rally/ScreenshotComparator.kt)
+- Showkase library, that helps visualise your Compose previews. Can be integrated with screenshot testing as described [here](https://proandroiddev.com/automatic-screenshot-testing-for-all-your-compose-previews-6add202fecc7)
+- [Cookbook](https://android-ui-testing.github.io/Cookbook/basics/screenshot_testing/)
+
+## Libraries
+
+So here is a list of libraries I found that can be used for this purpose.
+### [screenshot-tests-for-android](https://github.com/facebook/screenshot-tests-for-android)
+This library creates images from your views inflated in your Instrumented Test classes. Can be used with activities launched as well.
+
+**Compose Support**: Inside activites, yes. As component no.
+
+#### Learn More
+- [documentation](https://facebook.github.io/screenshot-tests-for-android/#creating-a-screenshot)
+- [sample](https://github.com/facebook/screenshot-tests-for-android/tree/main/sample)
+- [article](https://www.runtastic.com/blog/en/screenshot-testing-for-android/)
+
+---
+
+### [Shot](https://github.com/pedrovgs/Shot) 
+
+Build on top of Facebook's screenshot tests, has all it's capabilities, Additionally generates side by side comparision when verifying. 
+
+**Compose Support**: Yes.
+
+#### Learn More
+- [article](https://medium.com/sampingan-tech/snapshot-testing-in-android-app-using-shot-library-1edbb3b8c76c)
+- [sample](https://github.com/pedrovgs/Shot/tree/master/shot-consumer)
+
+---
+
+### [android-testify](https://github.com/ndtp/android-testify/) 
+Extends ActivityTestRule and enables taking screenshots of your activities. Has extension for full screen, compose and accssibility! 
+
+**Compose Support**: Yes.
+
+#### Learn More
+- [article](https://levelup.gitconnected.com/testing-ui-in-android-with-screenshot-testing-7cc633836aad)
+- [sample](https://github.com/ndtp/android-testify/tree/main/Sample)
+
+---
+
+### [dropshots](https://github.com/dropbox/dropshots])
+
+Takes screenshots on the device and compares them to asset bitmaps.
+
+**Compose Support**: Yes inside activites.
+
+#### Learn more
+- [sample](https://github.com/dropbox/dropshots/tree/main/sample)
+
+---
+
+### [paparazzi](https://github.com/cashapp/paparazzi)
+
+JVM Based solution, renders the screens without Device. It is as limited as Studio's Preview.
+
+**Compose Support**: Yes.
+
+#### Learn more
+- [video](https://www.droidcon.com/2021/11/17/keeping-your-pixels-perfect-paparazzi-1-0-2/)
+- [article](https://betterprogramming.pub/sanely-test-your-android-ui-libraries-with-paparazzi-b6d46c55f6b0)
+- [sample](https://github.com/cashapp/paparazzi/tree/master/sample)
+
+### [kotlin-snapshot-testing](https://github.com/QuickBirdEng/kotlin-snapshot-testing)
+
+Inspired by [Swift snapshot testing library](https://github.com/pointfreeco/swift-snapshot-testing)
+
+It is not specific for Screenshots, but serializable data. For our purpose it's mainly compose based, but extensible if required.
+
+**Compose Support**: Yes.
+
+#### Learn more
+- [article](https://quickbirdstudios.com/blog/snapshot-testing-kotlin/)
+
+----
+
+### Writing your own 
+
+There are also critics of existing libraries, if you have been burned, you might want to write your own. Here is an [article](https://proandroiddev.com/easy-ui-and-screenshot-testing-on-android-2b138f6d1eb8) to get you started
+
+> Screenshots are also implemented in as somewhat custom way in this repository. Screenshots are taken when a test fail to see why it did. This can help identify failures like a System dialog showing so your Activity can't get focus.
+
+</details>
+
+---
+
 ## License
 [License file](./LICENSE)
