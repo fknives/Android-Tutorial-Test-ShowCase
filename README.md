@@ -14,7 +14,8 @@ As dependency injection / Service Locator [koin](https://insert-koin.io/) is use
 
 The application is separated into different modules each module is tested differently.
 
-### Modules
+<details>
+<summary><span style="font-size: 1.32rem">Modules<span></summary>
 
 - [model](#model)
 - [app](#app)
@@ -23,11 +24,11 @@ The application is separated into different modules each module is tested differ
 - [mockserver](#mock-server)
 - [examplecase](#example-case)
 
-#### Model
+### Model
 Self explanatory, contains all shared data classes (POJOs) and Exceptions used by the other modules.
 There is nothing to test here.
 
-#### App
+### App
 
 The android module of the application, contains the UI (Activities), Room-Database and ViewModels.
 
@@ -41,7 +42,7 @@ There are 3 kinds of tests in this module:
 - Shared Tests for Screens (shared between Robolectric and AndroidTests)
 - End to End Android Tests
 
-##### Unit tests
+#### Unit tests
 Verify the ViewModels are reacting to the mocked UseCases properly.
 
 [Kotlin-Mockito](https://github.com/mockito/mockito-kotlin) is used to mock out UseCases comming from the core module.
@@ -50,14 +51,14 @@ Verify the ViewModels are reacting to the mocked UseCases properly.
 
 [LiveData-Testing](https://github.com/jraska/livedata-testing) is used to verify the LiveData values of ViewModels.
 
-##### Robolectric
+#### Robolectric
 Verifies the DataBase interactions and also verifies the interactions on each Screen.
 
 Robolectric [website link](http://robolectric.org/androidx_test/).
 
 In [Unit](#unit-tests) and Robolectric tests [coroutine-test](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/) is used to switch out the mainThread thus enabling fine control over interactions.
 
-##### AndroidTest
+#### AndroidTest
 Verifies the interactions with the Screens.
 
 In [Robolectric](#robolectric) and AndroidTests [Espresso](https://developer.android.com/training/testing/espresso) is used to interact with UI.
@@ -68,7 +69,7 @@ In [Robolectric](#robolectric) and AndroidTests [Mock Server](mock-server) modul
 
 In [Robolectric](#robolectric) and AndroidTests [InstantTaskExecutor](https://developer.android.com/reference/androidx/arch/core/executor/testing/package-summary) is used to set LiveData values immediately and a Custom implementation in [Unit](#unit-tests) tests.
 
-#### Core
+### Core
 Business layer of the application. Contains Repositories and UseCases.
 
 Has dependency on the [network](#networking) module. Database/SharedPreferences LocalStorage classes are injected into the core module.
@@ -82,7 +83,7 @@ The tests are verifying the interactions between the RemoteSource and LocalSourc
 
 Has also Integration tests which verify multiple components working together, for this [Mock Server](mock-server) module is used to mock responses.
 
-#### Networking
+### Networking
 As the name suggests this is the module which sends requests to the Backend and parses the responses received. All responses and requests are mapped to and from models from the [model](#model) data classes.
 
 [Retrofit](https://square.github.io/retrofit/) + [OkHttp](https://square.github.io/okhttp/) + [Moshi](https://github.com/square/moshi) is used to send and parse requests.
@@ -95,7 +96,7 @@ The tests are verifying all the requests contain the correct arguments, headers,
 [Mock Server](mock-server) module and [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver)  is  used to respond to the requests sent by OkHttp.
 [JsonAssert](https://github.com/skyscreamer/JSONassert) is used to compare JSON models.
 
-#### Mock Server
+### Mock Server
 This module is not actually part of the APK. This module is only used to unify mocking of Network request between Instrumentation tests from [app](#app) module, [core](#core) integration tests and [network](#networking) module.
 
 It contains a way to setup responses to requests in a unified way. Contains all Response.json and expected Request.json files.
@@ -104,14 +105,23 @@ It contains a way to setup responses to requests in a unified way. Contains all 
 [JsonAssert](https://github.com/skyscreamer/JSONassert) is used to compare JSON models.
 [OkHttp-TLS](https://github.com/square/okhttp/tree/master/okhttp-tls) is used to have HTTPS requests on Android Tests.
 
-#### Example Case
+### Example Case
 
 This folder contains examples of specific cases such as NavController testing.
+
+</details>
+
+ ---
 
 ## Server
 The actual server when running the application is [mockapi.io](https://www.mockapi.io/) so don't expect actual functionalities in the application.
 
 ## Code Kata
+
+This section describes what you need to play with the exercises in the project.
+
+<details>
+<summary><span style="font-size: 1.32rem">Code Kata details</span></summary>
 
 ### Preparation
 Download the project, open it in [Android Studio](https://developer.android.com/studio?gclid=Cj0KCQjw1PSDBhDbARIsAPeTqrfKrSx8qD_B9FegOmpVgxtPWFHhBHeqnml8n4ak-I5wPvqlwGdwrUQaAtobEALw_wcB&gclsrc=aw.ds).
@@ -176,6 +186,9 @@ Open the [shared tests instruction set](./codekata/sharedtests.instructionset.md
 In this section we will see how can we share Robolectric test source with AndroidTests to run our same tests on actual device.
 We will also see how to write AndroidTest End to End Tests.
 
+</details>
+
+---
 
 ## Util classes
 
@@ -186,6 +199,9 @@ These contain all the reusable Test Util classes used in the showcase.
 The Testing setup is extracted into a separate gradle script, which with some modifications, you should be able to easily add to your own project.
 
 To use the TestUtil classes, you will need to add the GitHub Repository as a source for dependencies:
+
+<details>
+<summary> See details</summary>
 
 ```groovy
 // top level build.gradle
@@ -229,8 +245,16 @@ testImplementation "org.fnives.android.testutil:android:<latestVersion>"        
 androidTestImplementation "org.fnives.android.testutil:android:<latestVersion>"        // test-util-android
 androidTestImplementation "org.fnives.android.testutil:shared-android:<latestVersion>" // test-util-shared-android
 ```
+</details>
+
+---
 
 ## Code Coverage Report
+
+For Code Coverage Reporting, Jacoco is used.
+
+<details>
+<summary>See details</summary>
 
 For Code Coverage Reporting, Jacoco is setup in [jacoco.config.gradle](./gradlescripts/jacoco.config.gradle).
 
@@ -266,6 +290,10 @@ By shared test module setup I mean a module like `app-shared-test`, which has a 
 ### Reference
 Here are the two articles I used for the jacoco setup script: [jacoco-in-android](https://medium.com/swlh/multi-module-multi-flavored-test-coverage-with-jacoco-in-android-bc4fb4d135a3)
 [aggregate-test-coverage](https://lkrnac.net/blog/2016/10/aggregate-test-coverage-report/).
+
+</details>
+
+---
 
 ## License
 [License file](./LICENSE)
